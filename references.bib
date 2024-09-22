@@ -1,4 +1,4 @@
-@report{rfc6487,
+@report{rfc_rpki,
 	title = {A Profile for X.509 {PKIX} Resource Certificates},
 	abstract = {This document defines a standard profile for X.509 certificates for the purpose of supporting validation of assertions of "right-of-use" of Internet Number Resources ({INRs}). The certificates issued under this profile are used to convey the issuer's authorization of the subject to be regarded as the current holder of a "right-of-use" of the {INRs} that are described in the certificate. This document contains the normative specification of Certificate and Certificate Revocation List ({CRL}) syntax in the Resource Public Key Infrastructure ({RPKI}). This document also specifies profiles for the format of certificate requests and specifies the Relying Party {RPKI} certificate path validation procedure. [{STANDARDS}-{TRACK}]},
 	number = {{RFC} 6487},
@@ -7,6 +7,25 @@
 	author = {Huston, Geoff and Loomans, Robert and Michaelson, George G.},
 	date = {2012-02},
 	doi = {10.17487/RFC6487},
+}
+
+@online{apple_cert_lifetime,
+	title = {About upcoming limits on trusted certificates},
+	url = {https://support.apple.com/en-us/102028},
+	abstract = {In our ongoing efforts to improve web security for our users, Apple is reducing the maximum allowed lifetimes of {TLS} server certificates.},
+	titleaddon = {Apple Support},
+	urldate = {2024-09-22},
+	date = {2023-08-21},
+	langid = {english},
+}
+
+@online{apple_enforce_ct,
+	title = {Apple's Certificate Transparency policy – Apple Support ({UK})},
+	url = {https://support.apple.com/en-gb/103214},
+	abstract = {Find out how to comply with Apple's Certificate Transparency policy.},
+	titleaddon = {Apple Support},
+	urldate = {2024-09-22},
+	date = {2023-11-30},
 }
 
 @report{rfc_acme,
@@ -28,6 +47,22 @@
 	urldate = {2024-09-21},
 }
 
+@online{chrome_cert_lifetime,
+	title = {Certificate Lifetimes},
+	url = {https://chromium.googlesource.com/chromium/src/+/b9ee8e9f75279615be7c153ce2520a40cec4c14f/net/docs/certificate_lifetimes.md},
+	author = {{Ryan Sleevi}},
+	urldate = {2024-09-22},
+	date = {2020-06-23},
+}
+
+@online{chrome_enforce_ct,
+	title = {Certificate Transparency Enforcement in Google Chrome},
+	url = {https://groups.google.com/a/chromium.org/g/ct-policy/c/wHILiYf31DE/m/iMFmpMEkAQAJ},
+	author = {{Devon O'Brien}},
+	urldate = {2024-09-22},
+	date = {2018-07-02},
+}
+
 @online{chrome_root_store,
 	title = {Chrome root store},
 	url = {https://chromium.googlesource.com/chromium/src/+/main/net/data/ssl/chrome_root_store/root_store.md},
@@ -35,10 +70,35 @@
 	note = {Version: 16},
 }
 
+@article{diginotar,
+	title = {{DigiNotar}: Dissecting the First Dutch Digital Disaster},
+	volume = {6},
+	issn = {1944-0464, 1944-0472},
+	doi = {10.5038/1944-0472.6.2.4},
+	shorttitle = {{DigiNotar}},
+	abstract = {In the middle of the night on September 2, 2011, the Dutch Minister of the Interior and Kingdom Relations held an emergency press conference. {DigiNotar}, a Certificate Authority ({CA}), had been electronically ‘broken into’ and as a result intruders had managed to generate falsified certificates. As a {CA}, {DigiNotar} issued digital certificates to secure digital communication, but as a result of the breach the authenticity of such certificates could no longer be verified. The Dutch government subsequently revoked its trust in all certificates issued by {DigiNotar}. This was the beginning of the first digital disaster in the Netherlands. As a pioneering disaster, this article focuses on the implications of {DigiNotar} as a vital case study for future scenarios of digital disaster management. The main focus of this article is on the underlying ‘weaknesses’ of the {DigiNotar} incident, which allowed the situation to evolve from a problem into a disaster. These include lack of oversight, lack of security attention and risk awareness and the absence of an effective mitigation strategy. By identifying and subsequently analyzing the underlying problems, this article aims to demonstrate how future situations can be better contained if sufficient attention is granted to these factors and subsequent changes are introduced.},
+	pages = {46--58},
+	number = {2},
+	journaltitle = {Journal of Strategic Security},
+	shortjournal = {{JSS}},
+	author = {Van Der Meulen, Nicole},
+	date = {2013-06},
+	langid = {english},
+}
+
 @online{certificate_transparency,
 	title = {How {CT} Works : Certificate Transparency},
 	url = {https://certificate.transparency.dev/howctworks/},
 	urldate = {2024-03-23},
+}
+
+@online{ocsp_soft_fail,
+	title = {How Do Browsers Handle Revoked {SSL}/{TLS} Certificates?},
+	url = {https://www.ssl.com/blogs/how-do-browsers-handle-revoked-ssl-tls-certificates/},
+	abstract = {Details of current browser programs for checking the revocation status of {SSL}/{TLS} certificates, including a cross-browser test.},
+	titleaddon = {{SSL}.com},
+	urldate = {2024-09-22},
+	date = {2021-02-24},
 }
 
 @report{tls1.3_hybrid,
@@ -74,7 +134,7 @@
 	doi = {10.17487/RFC5280},
 }
 
-@report{rfc3647,
+@report{rfc_pki,
 	title = {Internet X.509 Public Key Infrastructure Certificate Policy and Certification Practices Framework},
 	abstract = {This document presents a framework to assist the writers of certificate policies or certification practice statements for participants within public key infrastructures, such as certification authorities, policy authorities, and communities of interest that wish to rely on certificates. In particular, the framework provides a comprehensive list of topics that potentially (at the writer's discretion) need to be covered in a certificate policy or a certification practice statement. This document supersedes {RFC} 2527.},
 	number = {{RFC} 3647},
@@ -123,6 +183,17 @@
 	author = {{National Institute of Standards and Technology}},
 	date = {2024-08-13},
 	doi = {10.6028/NIST.FIPS.204},
+}
+
+@online{ocsp_30p_faster,
+	title = {{OCSP} Stapling: How {CloudFlare} Just Made {SSL} 30\% Faster},
+	url = {https://blog.cloudflare.com/ocsp-stapling-how-cloudflare-just-made-ssl-30},
+	shorttitle = {{OCSP} Stapling},
+	abstract = {This week {CloudFlare} is announcing several things we're doing to significantly improve the performance of {SSL}. Too few sites are secured with {SSL}. One of the reasons sites don't implement {SSL} is that it can slow down web performance.},
+	titleaddon = {The Cloudflare Blog},
+	author = {{Matthew Prince}},
+	urldate = {2024-09-22},
+	date = {2012-10-29},
 }
 
 @inproceedings{raavi_performance_2021,
@@ -271,6 +342,15 @@
 	abstract = {Public key infrastructure ({PKI}) is defined as anything used to manage public key encryption methods. Learn more about how to create and use {PKI} here.},
 	urldate = {2024-09-21},
 	date = {2024-08-29},
+}
+
+@online{lets_encrypt_cert_lifetime,
+	title = {Why ninety-day lifetimes for certificates? - Let's Encrypt},
+	url = {https://letsencrypt.org/2015/11/09/why-90-days.html},
+	shorttitle = {Why ninety-day lifetimes for certificates?},
+	abstract = {We’re sometimes asked why we only offer certificates with ninety-day lifetimes. People who ask this are usually concerned that ninety days is too short and wish we would offer certificates lasting a year or more, like some other {CAs} do. Ninety days is nothing new on the Web. According to Firefox Telemetry, 29\% of {TLS} transactions use ninety-day certificates. That’s more than any other lifetime. From our perspective, there are two primary advantages to such short certificate lifetimes:},
+	urldate = {2024-09-22},
+	langid = {american},
 }
 
 @report{rfc_ocsp,

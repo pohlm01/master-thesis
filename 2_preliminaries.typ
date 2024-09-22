@@ -7,40 +7,95 @@ This section will recap on information relevant to understand the topic of this 
 It starts with an explanation on how present @pki works, followed by a summary of @tls and a list of post quantum secure signatures that are relevant for this thesis.
 
 == Public Key Infrastructure
-A @pki is a crucial part to ensure security in various different digital systems.
-Its core functionality is to bind a cryptographic public key to a set of information 
+// - binds a public key of a set of information 
+//   - typically an identity (WebPKI)
+//   - but may also be permissions (e.g., @rpki)
+// - Has the following components
+//   - @ca
+//     - Registration Authority
+//     - Validation Authority
+//   - 
+// - used for @okta_pki
+//   - Email encryption and authentication of the sender
+//   - Signing documents and software
+//   - Securing local networks and smart card authentication
+//   - Restricted access to #glspl("vpn")
 
-- binds a public key of a set of information @rfc3647
-  - typically an identity (WebPKI)
-  - but may also be permissions (e.g., @rpki @rfc6487)
-- Has the following components
-  - @ca
-    - Registration Authority
-    - Validation Authority
-  - 
-- used for @okta_pki
-  - Email encryption and authentication of the sender
-  - Signing documents and software
-  - Securing local networks and smart card authentication
-  - Restricted access to #glspl("vpn")
-  
+A @pki is a crucial part to ensure security in various digital systems.
+Its core functionality is to bind a cryptographic public key to a set of verified information @rfc_pki.
+Typically, this information represents an identity such as a domain name, company name, or the name of a natural person.
+In some cases, the verified information instead contains permission, or ownership, without an identity, such as the @rpki system, which is used to secure @bgp announcements and therefore harden the security of routing on the internet @rfc_rpki.
 
-=== Certificate Authority
+The verified information and public key are combined with a signature of the @ca and form a #emph([certificate]) that way.
+A #emph([relying party]) can subsequently verify the signature and trust the signed information if it trusts the @ca.
 
+Such certificates are can be used in email encryption and authentication of the sender, to sign documents or software, for authentication with a smart card, or to restrict access to a @vpn, for example @okta_pki.
+As part of this thesis, we will concentrate on the @pki infrastructure used to secure safe browsing of websites.
+It combines the domain name and possibly a company name with a public key, such that a user can verify to talk to the owner of the website.
+This @pki infrastructure is often referred to as #emph([WebPKI]).
+
+Certificates have only a limited lifetime.
+Since 2020 Chrome and Apple enforce new certificates to be valid for at most 398 days @chrome_cert_lifetime @apple_cert_lifetime.
+Let's Encrypt, which is responsible for 57~% of all currently valid certificates, issues certificates for just 90 days @merkle_town @lets_encrypt_cert_lifetime.
+Let's Encrypt provides two reasons for their comparably short certificate lifetimes:
+
++ They want to limit the damage a miss issuance or key compromise can do.
+
++ They want to encourage an automated issuance process, which they see as a crucial part of a widespread @https adoption.
+
+Nevertheless, it is important to have a mechanism in place to revoke certificates.
+This can be necessary if a private key leaked or the assured information is not accurate (anymore).
+There are two mechanisms in place for that:
+
++ #glspl("crl") are regularly published by the @ca in which all revoked certificates are listed.
+
++ @ocsp is a protocol that allows relying parties to query the @ca if a certificate was revoked in real time.
+
+As it will become relevant later on, the following section will explain @ocsp a bit more in depth.
 
 === OCSP
-@ocsp
+@ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates occasionally, but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
+The @ca includes a @https endpoint to an @ocsp responder in the certificates it issues, which relying parties such as browsers can query for recent information about whether a certificate is valid.
 @rfc_ocsp
-@rfc_ocsp_stapling[Section 8]
+
+In practice, this came with a couple of issues, though: Speed, high load on @ca servers, availability, and privacy.
+Every time a relying party checks a certificate, it requires an additional round trip to the @ocsp responder, which slows down the connection.
+This results in a slowdown of about 30~% for each connection @ocsp_30p_faster.
+Additionally, it requires the #glspl("ca") to deal with a lot of status requests.
+If an @ocsp responder is down, the relying party either cannot connect to the server or has to ignore the failure.
+Browsers opted for the second option in favor of service availability.
+This, however, limits the benefit of recent information, as an attacker can block access to this. @ocsp_soft_fail
+Furthermore, @ocsp is not very privacy-friendly, as #glspl("ca") are able to build profiles of users based on which certificates they query.
+
+@ocsp stapling mitigates these issues.
+Instead of the user querying the @ocsp responder, the server regularly does so and embeds the response in the certificate message of the @tls handshake. @rfc_ocsp_stapling[Section 8] @rfc_tls13[Section 4.4.2]
+This reduces the load on the @ca, eliminates the need for an additional round trip, fixes the privacy issues, and helps with service availability, as the @ocsp responses are cached by the website server for a limited time.
+
+Therefore, we have a system to revoke certificates that we know exists.
+The following section explains why knowing all certificates is not self-evident and how to ensure it anyway.
 
 === Certificate Transparency
-- WebPKI contains a lot of trusted CA (as of 21.09.2024: 153 Firefox @firefox_root_store, 135 Chrome @chrome_root_store)
-- Response to 2011 attack on DigiNotar
-- Any of them could be compromised and issue certificates for any website
-- Historically, this was hard to detect
-- Now, each issued certificate must be logged publically, such that domain owners can be notified about certificates issued on their name
+// - WebPKI contains a lot of trusted CA (as of 21.09.2024: 153 Firefox @firefox_root_store, 135 Chrome @chrome_root_store)
+// - Response to 2011 attack on DigiNotar
+// - Any of them could be compromised and issue certificates for any website
+// - Historically, this was hard to detect
+// - Now, each issued certificate must be logged publically, such that domain owners can be notified about certificates issued on their name
 
-@certificate_transparency
+Browser vendors ship a list of #glspl("ca") which are trusted to issue genuine certificates only.
+As of 21.09.2024, these are 153 trusted root #glspl("ca") for Firefox and 135 for Chrome @firefox_root_store @chrome_root_store.
+If only a single @ca is misbehaving, this can have huge impact on the whole system.
+One infamous example is the security breach of DigiNotar in 2011, which allowed the attacker to listen into the connection of about 300,000 Iranian citizens with Google. @diginotar
+This was only possible, because the owner of the domain, i.e., Google, could not know that there was a certificate issued on their name.
+
+As a direct consequence, Google initiated a program to ensure that all issued certificates must be logged publically such that a domain owner can recognize maliciously issued certificates and take action retroactively.
+This is achieved by the following system.
+
+To issue a certificate, a @ca must first send a pre-certificate to at least two independent #gls("ct")-logs, which will make sure the certificate will get logged publically to an append-only log.
+In return, the @ca gets a @sct to include in the final certificate.
+This pre-certificate is a slight adoption of the final certificate to break the cyclic dependency, as a #gls("ct")-log needs the certificate to create the @sct, but the @ca needs the @sct to create the certificate. @certificate_transparency
+
+Chrome and Apple require their trusted root #glspl("ca") to include at least two independent #glspl("sct") since 2018 and 2021, respectively.
+That way, effectively every certificate must be logged publically, which allows #gls("ct")-monitors to analyze certificates and #glspl("ca") for misbehavior. @chrome_enforce_ct @apple_enforce_ct
 
 
 == ACME
@@ -48,7 +103,7 @@ Its core functionality is to bind a cryptographic public key to a set of informa
 @rfc_acme
 
 - Used to issue "Domain Validation" (DV) certificates
-  - 93 % of all currently valid certificates (21.09.2024) are DV certificates (@merkle_town)
+  - 93~% of all currently valid certificates (21.09.2024) are DV certificates (@merkle_town)
   - Alternatively, there are "Organization Validation" (OV) and "Extended Validation" (EV)
 - Receiving a certificate used to be a manual task which hindered a widespread adoption
 

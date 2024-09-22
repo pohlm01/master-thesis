@@ -3,7 +3,9 @@
 
   show link: set text(fill: rgb(0, 0, 180))
   show ref: set text(fill: rgb(0, 0, 180))
-  set figure(gap: 2em)
+  set figure(gap: 1em)
+  set list(indent: 2em)
+  set enum(indent: 2em)
 
   counter(page).update(0)
   set page(numbering: "1", margin: (x: 8em, top:10em, bottom: 14em))

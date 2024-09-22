@@ -18,6 +18,10 @@
     (key: "acme", short: "ACME", long: "Automatic Certificate Management Environment"),
     (key: "ietf", short: "IETF", long: "Internet Engineering Task Force"),
     (key: "ssl", short: "SSL", long: "Secure Sockets Layer"),
-    (key: "nist", short: "NIST", long: "National Institute of Standards and Technology")
+    (key: "nist", short: "NIST", long: "National Institute of Standards and Technology"),
+    (key: "https", short: "HTTPS", long: "Hypertext Transfer Protocol Secure"),
+    (key: "http", short: "HTTP", long: "Hypertext Transfer Protocol"),
+    (key: "ct", short: "CT", long: "Certificate Transparency"),
+    (key: "sct", short: "SCT", long: "Signed Certificate Timestamp"),
   ),
   disable-back-references: true)
