@@ -1,5 +1,4 @@
 #import "figures.typ": mtc_overview
-#import "style/todo.typ": todo
 
 = Merkle Tree Certificates for TLS
 
@@ -32,9 +31,9 @@
 
 A @ca is defined by the following parameters that are publically known and cannot change:
 - `hash`: The hash function used. Currently, only SHA-256
-- `issuer_id`: A short, (unique?) id
-- `public_key`: #todo([Confirm that key rotation is not possible / requires a new CA])
-- `start_tipayloadme`: issuance time of first batch in as POSIX timestamp @posix[pp.~113]
+- `issuer_id`: A trust anchor identifier as defined in @id-tai. That is a relative @oid under the prefix 1.3.6.1.4.1. Organizations append their @pen registered at the @iana
+- `public_key`: Used to sign validity window. Currently no key rotation supported. Might be in the future: #link("https://github.com/davidben/merkle-tree-certs/issues/36", "#36")
+- `start_time`: issuance time of first batch in as POSIX timestamp @posix[pp.~113]
 - `batch_duration`: number of seconds between two batches
 - `lifetime`: number of seconds a batch is valid. Multiple of `batch_duration`
 - `validity_window_size`: `lifetime`/`batch_duration`

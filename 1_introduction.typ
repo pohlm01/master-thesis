@@ -21,7 +21,7 @@ Thus, the proposed architecture is meant as an addition to the current certifica
 
 Please note that the goal of this draft RFC is different from what is already being deployed in the real world.
 The draft RFC "Hybrid key exchange in TLS~1.3" @tls1.3_hybrid makes that clear.
-The attack known as #emph[harvest now, decrypt later] where an attacker stores captured traffic to decrypt it as soon as quantum computers are available, is only a thread to confidentiality.
+The attack known as #emph[harvest now, decrypt later] where an attacker stores captured traffic to decrypt it as soon as quantum computers are available is only a threat to confidentiality.
 Session authentication, on the other hand, cannot be broken retroactively.
 Nevertheless, it is important to investigate alternative authentication mechanisms already, as it takes time to develop and widely adopt them over the internet.
 

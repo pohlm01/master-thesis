@@ -1,7 +1,7 @@
 #set page("a4")
 
-#import "@preview/glossarium:0.4.1": make-glossary
 
+#import "imports.typ": *
 #import "style/radboud_cover.typ": title_page
 #import "style/ru_template.typ": report, appendix
 #import "style/todo.typ": outline-todos
@@ -27,14 +27,15 @@
 
 #outline-todos()
 
-#outline(indent: true)
+// #outline(indent: true, title: "Content")
 
-#show: doc => report(table_of_contents: false, doc)
+#show: doc => report(table_of_contents: true, doc)
 #show: make-glossary
 
 #include "1_introduction.typ"
-#include "2_background.typ"
+#include "2_preliminaries.typ"
 #include "3_mtc.typ"
+#include "4_contributions.typ"
 
 
 #show: appendix
