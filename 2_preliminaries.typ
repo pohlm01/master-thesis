@@ -1,5 +1,5 @@
 #import "imports.typ": *
-#import "figures.typ": acme_overview
+#import "figures.typ": acme_overview, tls_handshake_overview
 #import "tables.typ": pq_signatures
 
 = Preliminaries <sec:preliminaries>
@@ -55,7 +55,7 @@ As it will become relevant later on, the following section will explain @ocsp a 
 
 === OCSP
 @ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates occasionally, but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
-The @ca includes a @https endpoint to an @ocsp responder in the certificates it issues, which relying parties such as browsers can query for recent information about whether a certificate is valid.
+The @ca includes a @http endpoint to an @ocsp responder in the certificates it issues, which relying parties such as browsers can query for recent information about whether a certificate is valid.
 @rfc_ocsp
 
 In practice, this came with a couple of issues, though: Speed, high load on @ca servers, availability, and privacy.
@@ -99,8 +99,14 @@ That way, effectively every certificate must be logged publically, which allows 
 
 
 == ACME
-@acme
-@rfc_acme
+As mentioned earlier, present certificate lifetimes are often 90 days, but not longer the 398 days.
+Short certificate lifetimes require some kind of automation to not overload humans with constant certificate renewals.
+Therefore, Let's Encrypt initiated the development of the @acme protocol in 2015 and started issuing certificates in that highly automated way. @first_acme
+The @acme protocol finally became an @ietf internet standard in 2019. @rfc_acme
+
+Please note that the fully automated @acme mechanism allows for #emph([Domain Validation]) (DV) certificates only.
+This means, that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]) which require human interaction to verify the authenticity of the requesting organization.
+This is only a limited drawback, since 93~% of all valid certificates are DV certificates as of 2024-09-21 @merkle_town.
 
 - Used to issue "Domain Validation" (DV) certificates
   - 93~% of all currently valid certificates (21.09.2024) are DV certificates (@merkle_town)
@@ -127,6 +133,11 @@ That way, effectively every certificate must be logged publically, which allows 
   + `ClientHello` with `key_share`, `signature_algorithms`
   + `ServerHello` with `key_share`, and encrypted extensions: `Certificate`, `CertificateVerify`, `Finished`, and application data
   + `Finished` from client to server
+
+#figure(
+  tls_handshake_overview,
+  caption: [Simplified overview of the TLS 1.3 handshake @rfc_tls13]
+)
 
 == Post Quantum Signatures
 
