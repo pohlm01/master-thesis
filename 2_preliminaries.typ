@@ -119,25 +119,46 @@ This is only a limited drawback, since 93~% of all valid certificates are DV cer
 )
 
 == TLS
+// - Standardized by the @ietf
+// - successor of @ssl, developed by Netscape Communications in the 1990s
+// - Focus on newest version: @tls 1.3 from #cite(<rfc_tls13>, form: "year") specified in @rfc_tls13
 
-- Standardized by the @ietf
-- successor of @ssl, developed by Netscape Communications in the 1990s
-- Focus on newest version: @tls 1.3 from #cite(<rfc_tls13>, form: "year") specified in @rfc_tls13
+// - consists of two sub-protocols
+//   - Handshake for negotiation and key exchange
+//   - Record to transport data
+// - There are various optimizations that we skip here, such as 0-RTT or using a previously (out of band) negotiated key
+// - The handshake runs as follows:
+//   + `ClientHello` with `key_share`, `signature_algorithms`
+//   + `ServerHello` with `key_share`, and encrypted extensions: `Certificate`, `CertificateVerify`, `Finished`, and application data
+//   + `Finished` from client to server
 
-- consists of two sub-protocols
-  - Handshake for negotiation and key exchange
-  - Record to transport data
+@tls is building on a history back to the 1990s, when Netscape Communications published the first usable @ssl version, @ssl 2.0 in 1995 and shortly after @ssl 3.0 in 1996.
+Afterward, the @ietf took over the development, renamed the protocol to @tls and published @tls 1.0 in 1999.
+The development went further, and the @ietf published @tls versions 1.1 and 1.2 in 2006 and 2008 respectively.
+Ten years later, the major overhaul was published as @tls 1.3 in #cite(<rfc_tls13>, form: "year").
+It did not only improve the security, but incorporated protocol simplifications and speed improvements as well.
+@ssl_tls_book
 
-- There are various optimizations that we skip here, such as 0-RTT or using a previously (out of band) negotiated key
-- The handshake runs as follows:
-  + `ClientHello` with `key_share`, `signature_algorithms`
-  + `ServerHello` with `key_share`, and encrypted extensions: `Certificate`, `CertificateVerify`, `Finished`, and application data
-  + `Finished` from client to server
+The following will focus on @tls 1.3 only as it is used for 94~% of all HTTPS requests according to Cloudflare Radar at 2024-09-23 and support @tls 1.1 and older has been dropped by all relevant browsers in 2020. @cloudflare_radar @chrome_drop_tls @firefox_drop_tls @microsoft_drop_tls @apple_drop_tls
+
+The @tls protocol consists of two sub-protocols, the handshake protocol for authentication and negotiation of cryptographic ciphers followed by the record protocol to transmit the application data.
+The following concentrates on the handshake protocol and skip some functionality such as client certificates, the usage of previously or out-of-band negotiated keys, and 0-RTT data that can be used to send application data before the handshake finished.
+This allows focusing on the parts relevant for this thesis. 
+
+@tls_handshake_overview illustrates the messages and extensions sent during the @tls handshake and whether they are encrypted.
+A @tls connection is always initiated by the client though a `ClientHello` message.
+This message contains extensions with a key share and signature algorithms the client supports.
+The server responds with a `ServerHello` message, which contains a key share as an extension as well.
+Knowing both key shares, the server and client derive a shared symmetric secret only they know and use it to protect all subsequent messages.
+
+The following messages authenticate the server to the client by sending its certificate (chain) and a `CertificateVerify` message.
+The `CertifiacteVerify` message contains the signature over the handshake transcript up to that point.
+This proves the server is in the possession of the private key corresponding to the certificate and messages have not been tampered with.
 
 #figure(
   tls_handshake_overview,
   caption: [Simplified overview of the TLS 1.3 handshake @rfc_tls13]
-)
+) <tls_handshake_overview>
 
 == Post Quantum Signatures
 

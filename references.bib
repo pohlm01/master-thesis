@@ -70,6 +70,16 @@
 	note = {Version: 16},
 }
 
+@online{apple_drop_tls,
+	title = {Deprecation of Legacy {TLS} 1.0 and 1.1 Versions},
+	url = {https://webkit.org/blog/8462/deprecation-of-legacy-tls-1-0-and-1-1-versions/},
+	abstract = {Transport Layer Security ({TLS}) is a critical security protocol used to protect web traffic.},
+	titleaddon = {{WebKit}},
+	author = {Wood, Christopher},
+	urldate = {2024-09-23},
+	date = {2018-10-15},
+}
+
 @article{diginotar,
 	title = {{DigiNotar}: Dissecting the First Dutch Digital Disaster},
 	volume = {6},
@@ -184,6 +194,27 @@
 	note = {Num Pages: 47},
 }
 
+@online{microsoft_drop_tls,
+	title = {Modernizing {TLS} connections in Microsoft Edge and Internet Explorer 11},
+	url = {https://blogs.windows.com/msedgedev/2018/10/15/modernizing-tls-edge-ie11/},
+	abstract = {Update as of 8/14/2020: The plan to disable {TLS} 1.0/1.1 by default is being updated for Internet Explorer and Microsoft Edge Legacy. {TLS} 1.0 and {TLS} 1.1 will not be disabled by default for either browser until Spring of 2021 at the earliest. Organizations that wish to disable {TLS} 1.0 and {TLS} 1.1 before that},
+	titleaddon = {Microsoft Edge Blog},
+	author = {Blog, Microsoft Edge and Pflug, Kyle},
+	urldate = {2024-09-23},
+	date = {2018-10-15},
+}
+
+@online{chrome_drop_tls,
+	title = {Modernizing Transport Security},
+	url = {https://security.googleblog.com/2018/10/modernizing-transport-security.html},
+	abstract = {Posted by David Benjamin, Chrome networking   *Updated on October 17, 2018 with details about changes in other browsers   {TLS} (Transport Lay...},
+	titleaddon = {Google Online Security Blog},
+	author = {{David Benjamin}},
+	urldate = {2024-09-23},
+	date = {2018-10-15},
+	langid = {english},
+}
+
 @report{fips_204,
 	location = {Gaithersburg, {MD}},
 	title = {Module-Lattice-Based Digital Signature Standard},
@@ -233,6 +264,16 @@
 	keywords = {Post-quantum cryptography, Sponge construction, collapsing, collision-resistance, hash functions, quantum adversaries, quantum attack},
 }
 
+@online{firefox_drop_tls,
+	title = {Removing Old Versions of {TLS}},
+	url = {https://blog.mozilla.org/security/2018/10/15/removing-old-versions-of-tls},
+	abstract = {In March of 2020, Firefox will remove support for {TLS} 1.0 and {TLS} 1.1.},
+	titleaddon = {Mozilla Security Blog},
+	author = {Thomson, Martin},
+	urldate = {2024-09-23},
+	date = {2018-10-15},
+}
+
 @online{linux_kernel_rust,
 	title = {Rust — The Linux Kernel documentation},
 	url = {https://docs.kernel.org/rust/index.html#the-rust-experiment},
@@ -254,17 +295,16 @@
 	date = {2024},
 }
 
-@book{oppliger_ssl_2016,
-	title = {{SSL} and {TLS}: Theory and Practice, Second Edition},
-	isbn = {978-1-60807-999-5},
+@book{ssl_tls_book,
+	edition = {Third edition},
+	title = {{SSL} and {TLS}: Theory and Practice},
+	isbn = {978-1-68569-015-1},
+	series = {Artech House information security and privacy series},
 	shorttitle = {{SSL} and {TLS}},
-	abstract = {This completely revised and expanded second edition of {SSL} and {TLS}: Theory and Practice provides an overview and a comprehensive discussion of the Secure Sockets Layer ({SSL}), Transport Layer Security ({TLS}), and Datagram {TLS} ({DTLS}) protocols that are omnipresent in today\&\#39;s e-commerce and e-business applications and respective security solutions. It provides complete details on the theory and practice of the protocols, offering readers a solid understanding of their design principles and modes of operation. Updates to this edition include coverage of the recent attacks against the protocols, newly specified extensions and firewall traversal, as well as recent developments related to public key certificates and respective infrastructures. This book targets software developers, security professionals, consultants, protocol designers, and chief security officers who will gain insight and perspective on the many details of the {SSL}, {TLS}, and {DTLS} protocols, such as cipher suites, certificate management, and alert messages. The book also comprehensively discusses the advantages and disadvantages of the protocols compared to other Internet security protocols and provides the details necessary to correctly implement the protocols while saving time on the security practitioner\&\#39;s side.},
-	pagetotal = {301},
+	pagetotal = {352},
 	publisher = {Artech House},
 	author = {Oppliger, Rolf},
-	date = {2016-03-31},
-	note = {Google-Books-{ID}: jm6uDgAAQBAJ},
-	keywords = {Computers / Electronic Commerce, Computers / Security / General},
+	date = {2023},
 }
 
 @report{fips_205,
@@ -361,6 +401,13 @@
 	abstract = {We’re sometimes asked why we only offer certificates with ninety-day lifetimes. People who ask this are usually concerned that ninety days is too short and wish we would offer certificates lasting a year or more, like some other {CAs} do. Ninety days is nothing new on the Web. According to Firefox Telemetry, 29\% of {TLS} transactions use ninety-day certificates. That’s more than any other lifetime. From our perspective, there are two primary advantages to such short certificate lifetimes:},
 	urldate = {2024-09-22},
 	langid = {american},
+}
+
+@online{cloudflare_radar,
+	title = {Worldwide Adoption \& Usage {\textbar} Cloudflare Radar},
+	url = {https://radar.cloudflare.com/adoption-and-usage},
+	abstract = {Global Adoption \& Usage trends and insights.},
+	urldate = {2024-09-23},
 }
 
 @report{rfc_ocsp,
