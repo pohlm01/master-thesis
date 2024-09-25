@@ -23,5 +23,13 @@
     (key: "http", short: "HTTP", long: "Hypertext Transfer Protocol"),
     (key: "ct", short: "CT", long: "Certificate Transparency"),
     (key: "sct", short: "SCT", long: "Signed Certificate Timestamp"),
+    (key: "pq", short: "PQ", long: "Post-Quantum"),
+    (key: "mldsa", short: "ML-DSA", long: "Module-Lattice-Based Digital Signature Algorithm", 
+      desc: [@pq signature algorithm, previously known as CRYSTALS-Dilithium]),
+    (key: "slhdsa", short: "SLH-DSA", long: "Stateless Hash-Based Digital Signature Algorithm", 
+      desc: [@pq signature algorithm, previously known as Sphincs+]),
+    (key: "fndsa", short: "FN-DSA", long: "FFT (fast-Fourier transform) over NTRU-Lattice-Based Digital Signature Algorithm",
+      desc: [@pq signature algorithm, previously known as FALCON]),
+    (key: "sha", short: "SHA", long: "Secure Hash Algorithm")
   ),
   disable-back-references: true)

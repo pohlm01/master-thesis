@@ -16,7 +16,7 @@
       [Name], [PQ], [Public Key], [Signature], [Signing], [Verification]),
     
       [Ed25519],      [#emoji.crossmark],     [32],     [64],     [1 (baseline)], [1 (baseline)],
-      [Ed25519],      [#emoji.crossmark],     [256],    [256],    table.cell(fill: yellow.lighten(50%))[70],           [1],
+      [RSA-2048],      [#emoji.crossmark],     [256],    [256],    table.cell(fill: yellow.lighten(50%))[70],           [0.3],
       [ML-DSA-44],    [#emoji.checkmark.box], table.cell(fill: orange.lighten(50%))[1,312],  table.cell(fill: orange.lighten(50%))[2,420],  [4.8],          [0.5],
       [SLH-DSA-128s], [#emoji.checkmark.box], [32],     table.cell(fill: red.lighten(50%))[7,856],  table.cell(fill: red.lighten(50%))[8,000],        [2.8],
       [SLH-DSA-128f], [#emoji.checkmark.box], [32],     table.cell(fill: red.lighten(50%))[17,088], table.cell(fill: red.lighten(50%))[550],          [7],

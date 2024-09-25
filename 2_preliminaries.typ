@@ -101,6 +101,7 @@ That way, effectively every certificate must be logged publically, which allows 
 == ACME
 As mentioned earlier, present certificate lifetimes are often 90 days, but not longer the 398 days.
 Short certificate lifetimes require some kind of automation to not overload humans with constant certificate renewals.
+Additionally, automation facilitates a widespread adoption of @https as it lowers the (human) effort and therefore costs associated to its usage.
 Therefore, Let's Encrypt initiated the development of the @acme protocol in 2015 and started issuing certificates in that highly automated way. @first_acme
 The @acme protocol finally became an @ietf internet standard in 2019. @rfc_acme
 
@@ -108,10 +109,10 @@ Please note that the fully automated @acme mechanism allows for #emph([Domain Va
 This means, that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]) which require human interaction to verify the authenticity of the requesting organization.
 This is only a limited drawback, since 93~% of all valid certificates are DV certificates as of 2024-09-21 @merkle_town.
 
-- Used to issue "Domain Validation" (DV) certificates
-  - 93~% of all currently valid certificates (21.09.2024) are DV certificates (@merkle_town)
-  - Alternatively, there are "Organization Validation" (OV) and "Extended Validation" (EV)
-- Receiving a certificate used to be a manual task which hindered a widespread adoption
+// - Used to issue "Domain Validation" (DV) certificates
+//   - 93~% of all currently valid certificates (21.09.2024) are DV certificates (@merkle_town)
+//   - Alternatively, there are "Organization Validation" (OV) and "Extended Validation" (EV)
+// - Receiving a certificate used to be a manual task which hindered a widespread adoption
 
 #figure(
   acme_overview,
@@ -157,15 +158,36 @@ This proves the server is in the possession of the private key corresponding to 
 
 #figure(
   tls_handshake_overview,
-  caption: [Simplified overview of the TLS 1.3 handshake @rfc_tls13]
+  caption: [Overview of the simplified TLS 1.3 handshake @rfc_tls13]
 ) <tls_handshake_overview>
 
 == Post Quantum Signatures
+// - Two PQ signatures are standardized by @nist in @fips_204 (ML-DSA, formally known as CRYSTALS-Dilithium) and @fips_205 (SLH-DSA formally known as Sphincs+)
+// - The third - FN-DSA / Falcon - specified later. It relies on dangerous floating-point arithmetic that produces side-channel leakage.
+
+This section provides a short overview about the @pq signatures available today.
+It helps with understanding size and performance considerations later on.
+
+@pq_signature_comp shows a comparison of Ed25519 and RSA-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
+@mldsa was known as CRYSTALS-Dilithium and @nist standardized it as FIPS 204 in 2024, together with @slhdsa as FIPS 205 @fips_204 @fips_205
+A @nist draft for @fndsa is expected in late 2024.
+
+The @nist decided to specify three signature algorithms, as each of them has their benefits and drawbacks.
+@mldsa the recommended algorithm for most applications, as it has reasonable values in all categories.
+@slhdsa is currently the most trusted algorithm, as it relies on the security of the well established #gls("sha", long: false)--2 or #gls("sha")--3 hashing algorithms, that would need to be dramatically broken to harm the security of @slhdsa.
+This makes @slhdsa a good candidate for long term keys or situations there an upgrade is hard.
+@fndsa might seem to have the best statistics, but it has the big drawback of relying on of fast floating point operations for signature generation.
+Without that, signing is about 20 times slower.
+The challenge with floating point arithmetic is to implement it in constant time, and resistant against power analysis, as shown by side-channel attacks against existing @fndsa implementations // @falcon_down @falcon_power_analysis
+This is mainly a concern for signatures produced on-the-fly.
+If the signature is computed ahead-of-time, there is no timing leak to be observed.
+Also, verifying does not rely on floating point arithmetic and even if it does, there would not be a private key that could be leaked.
+@bas_westerbaan_state_2024
+
 
 #figure(
   pq_signatures,
-  caption: [Comparison of various (non) PQ secure signature schemes @bas_westerbaan_state_2024]
+  caption: [
+    Comparison of selected classical signature schemes with algorithms (to be) standardized by @nist. 
+    The #emoji.warning symbols fast, but dangerous floating point arithmetic. @bas_westerbaan_state_2024]
 ) <pq_signature_comp>
-
-- Two PQ signatures are standardized by @nist in @fips_204 (ML-DSA, formally known as CRYSTALS-Dilithium) and @fips_205 (SLH-DSA formally known as Sphincs+)
-- The third - FN-DSA / Falcon - specified later. It relies on dangerous floating-point arithmetic that produces side-channel leakage.

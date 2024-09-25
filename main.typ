@@ -30,7 +30,7 @@
 // #outline(indent: true, title: "Content")
 
 #show: doc => report(table_of_contents: true, doc)
-#show: make-glossary
+  #show: make-glossary
 
 #include "1_introduction.typ"
 #include "2_preliminaries.typ"
