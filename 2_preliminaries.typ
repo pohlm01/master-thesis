@@ -4,7 +4,7 @@
 
 = Preliminaries <sec:preliminaries>
 This section will recap on information relevant to understand the topic of this thesis.
-It starts with an explanation on how present @pki works, followed by a summary of @tls and a list of post quantum secure signatures that are relevant for this thesis.
+It starts with an explanation on how present @pki works, followed by a summary of @tls and a list of post-quantum secure signatures that are relevant for this thesis.
 
 == Public Key Infrastructure
 // - binds a public key of a set of information 
@@ -21,7 +21,7 @@ It starts with an explanation on how present @pki works, followed by a summary o
 //   - Securing local networks and smart card authentication
 //   - Restricted access to #glspl("vpn")
 
-A @pki is a crucial part to ensure security in various digital systems.
+A @pki is a crucial part of ensuring security in various digital systems.
 Its core functionality is to bind a cryptographic public key to a set of verified information @rfc_pki.
 Typically, this information represents an identity such as a domain name, company name, or the name of a natural person.
 In some cases, the verified information instead contains permission, or ownership, without an identity, such as the @rpki system, which is used to secure @bgp announcements and therefore harden the security of routing on the internet @rfc_rpki.
@@ -29,8 +29,8 @@ In some cases, the verified information instead contains permission, or ownershi
 The verified information and public key are combined with a signature of the @ca and form a #emph([certificate]) that way.
 A #emph([relying party]) can subsequently verify the signature and trust the signed information if it trusts the @ca.
 
-Such certificates are can be used in email encryption and authentication of the sender, to sign documents or software, for authentication with a smart card, or to restrict access to a @vpn, for example @okta_pki.
-As part of this thesis, we will concentrate on the @pki infrastructure used to secure safe browsing of websites.
+Such certificates can be used in email encryption and authentication of the sender, to sign documents or software, for authentication with a smart card, or to restrict access to a @vpn, for example. @okta_pki
+As part of this thesis, we will concentrate on the @pki infrastructure used to secure the safe browsing of websites.
 It combines the domain name and possibly a company name with a public key, such that a user can verify to talk to the owner of the website.
 This @pki infrastructure is often referred to as #emph([WebPKI]).
 
@@ -49,9 +49,9 @@ There are two mechanisms in place for that:
 
 + #glspl("crl") are regularly published by the @ca in which all revoked certificates are listed.
 
-+ @ocsp is a protocol that allows relying parties to query the @ca if a certificate was revoked in real time.
++ @ocsp is a protocol that allows relying parties to query the @ca if a certificate was revoked in real-time.
 
-As it will become relevant later on, the following section will explain @ocsp a bit more in depth.
+As it will become relevant later on, the following section will explain @ocsp a bit more in-depth.
 
 === OCSP
 @ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates occasionally, but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
@@ -65,13 +65,13 @@ Additionally, it requires the #glspl("ca") to deal with a lot of status requests
 If an @ocsp responder is down, the relying party either cannot connect to the server or has to ignore the failure.
 Browsers opted for the second option in favor of service availability.
 This, however, limits the benefit of recent information, as an attacker can block access to this. @ocsp_soft_fail
-Furthermore, @ocsp is not very privacy-friendly, as #glspl("ca") are able to build profiles of users based on which certificates they query.
+Furthermore, @ocsp is not very privacy-friendly, as #glspl("ca") can build profiles of users based on which certificates they query.
 
 @ocsp stapling mitigates these issues.
 Instead of the user querying the @ocsp responder, the server regularly does so and embeds the response in the certificate message of the @tls handshake. @rfc_ocsp_stapling[Section 8] @rfc_tls13[Section 4.4.2]
 This reduces the load on the @ca, eliminates the need for an additional round trip, fixes the privacy issues, and helps with service availability, as the @ocsp responses are cached by the website server for a limited time.
 
-Therefore, we have a system to revoke certificates that we know exists.
+Therefore, we have a system to revoke certificates that we know exist.
 The following section explains why knowing all certificates is not self-evident and how to ensure it anyway.
 
 === Certificate Transparency
@@ -82,10 +82,10 @@ The following section explains why knowing all certificates is not self-evident 
 // - Now, each issued certificate must be logged publically, such that domain owners can be notified about certificates issued on their name
 
 Browser vendors ship a list of #glspl("ca") which are trusted to issue genuine certificates only.
-As of 21.09.2024, these are 153 trusted root #glspl("ca") for Firefox and 135 for Chrome @firefox_root_store @chrome_root_store.
-If only a single @ca is misbehaving, this can have huge impact on the whole system.
+As of 21.09.2024, there are 153 trusted root #glspl("ca") for Firefox and 135 for Chrome @firefox_root_store @chrome_root_store.
+If only a single @ca is misbehaving, this can tremendously impact the whole system.
 One infamous example is the security breach of DigiNotar in 2011, which allowed the attacker to listen into the connection of about 300,000 Iranian citizens with Google. @diginotar
-This was only possible, because the owner of the domain, i.e., Google, could not know that there was a certificate issued on their name.
+This was only possible, because the owner of the domain, i.e., Google, could not know that there was a certificate issued in their name.
 
 As a direct consequence, Google initiated a program to ensure that all issued certificates must be logged publically such that a domain owner can recognize maliciously issued certificates and take action retroactively.
 This is achieved by the following system.
@@ -101,13 +101,13 @@ That way, effectively every certificate must be logged publically, which allows 
 == ACME
 As mentioned earlier, present certificate lifetimes are often 90 days, but not longer the 398 days.
 Short certificate lifetimes require some kind of automation to not overload humans with constant certificate renewals.
-Additionally, automation facilitates a widespread adoption of @https as it lowers the (human) effort and therefore costs associated to its usage.
+Additionally, automation facilitates widespread adoption of @https as it lowers the (human) effort and consequently costs associated with its usage.
 Therefore, Let's Encrypt initiated the development of the @acme protocol in 2015 and started issuing certificates in that highly automated way. @first_acme
 The @acme protocol finally became an @ietf internet standard in 2019. @rfc_acme
 
 Please note that the fully automated @acme mechanism allows for #emph([Domain Validation]) (DV) certificates only.
 This means, that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]) which require human interaction to verify the authenticity of the requesting organization.
-This is only a limited drawback, since 93~% of all valid certificates are DV certificates as of 2024-09-21 @merkle_town.
+This is only a limited drawback since 93~% of all valid certificates are DV certificates as of 2024-09-21 @merkle_town.
 
 // - Used to issue "Domain Validation" (DV) certificates
 //   - 93~% of all currently valid certificates (21.09.2024) are DV certificates (@merkle_town)
@@ -178,7 +178,7 @@ The @nist decided to specify three signature algorithms, as each of them has the
 This makes @slhdsa a good candidate for long term keys or situations there an upgrade is hard.
 @fndsa might seem to have the best statistics, but it has the big drawback of relying on of fast floating point operations for signature generation.
 Without that, signing is about 20 times slower.
-The challenge with floating point arithmetic is to implement it in constant time, and resistant against power analysis, as shown by side-channel attacks against existing @fndsa implementations // @falcon_down @falcon_power_analysis
+The challenge with floating point arithmetic is to implement it in constant time, and resistant against power analysis, as shown by side-channel attacks against existing @fndsa implementations @falcon_down @falcon_power_analysis.
 This is mainly a concern for signatures produced on-the-fly.
 If the signature is computed ahead-of-time, there is no timing leak to be observed.
 Also, verifying does not rely on floating point arithmetic and even if it does, there would not be a private key that could be leaked.

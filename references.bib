@@ -96,6 +96,19 @@
 	langid = {english},
 }
 
+@inproceedings{falcon_down,
+	title = {{FALCON} Down: Breaking {FALCON} Post-Quantum Signature Scheme through Side-Channel Attacks},
+	doi = {10.1109/DAC18074.2021.9586131},
+	shorttitle = {{FALCON} Down},
+	abstract = {This paper proposes the first side-channel attack on {FALCON}—a {NIST} Round-3 finalist for the post-quantum digital signature standard. We demonstrate a known-plaintext attack that uses the electromagnetic measurements of the device to extract the secret signing keys, which then can be used to forge signatures on arbitrary messages. The proposed attack targets the unique floating-point multiplications within {FALCON}’s Fast Fourier Transform through a novel extend-and-prune strategy that extracts the sign, mantissa, and exponent variables without false positives. The extracted floating-point values are then mapped back to the secret key’s coefficients. Our attack, notably, does not require pre-characterizing the power profile of the target device or crafting special inputs. Instead, the statistical differences on obtained traces are sufficient to successfully execute our proposed differential electromagnetic analysis. The results on an {ARM}-Cortex-M4 running the {FALCON} {NIST}’s reference software show that approximately 10k measurements are sufficient to extract the entire key.},
+	eventtitle = {2021 58th {ACM}/{IEEE} Design Automation Conference ({DAC})},
+	pages = {691--696},
+	booktitle = {2021 58th {ACM}/{IEEE} Design Automation Conference ({DAC})},
+	author = {Karabulut, Emre and Aysu, Aydin},
+	date = {2021-12},
+	keywords = {Electromagnetic analysis, Electromagnetic measurements, Fast Fourier transforms, {NIST}, Quantum computing, Side-channel attacks, Software, digital signatures, post-quantum cryptography, side-channel attacks},
+}
+
 @online{first_acme,
 	title = {First Let’s Encrypt Free Certificate Goes Live},
 	url = {https://threatpost.com/first-lets-encrypt-free-certificate-goes-live/114675/},
@@ -141,6 +154,20 @@
 	note = {Conference Name: {IEEE} Std 1003.1-2017 (Revision of {IEEE} Std 1003.1-2008)},
 }
 
+@inproceedings{falcon_power_analysis,
+	location = {Cham},
+	title = {Improved Power Analysis Attacks on Falcon},
+	doi = {10.1007/978-3-031-30634-1_19},
+	abstract = {Falcon is one of the three post-quantum signature schemes selected for standardization by {NIST}. Due to its low bandwidth and high efficiency, Falcon is seen as an attractive option for quantum-safe embedded systems. In this work, we study Falcon’s side-channel resistance by analysing its Gaussian samplers. Our results are mainly twofold.},
+	pages = {565--595},
+	booktitle = {Advances in Cryptology – {EUROCRYPT} 2023},
+	publisher = {Springer Nature Switzerland},
+	author = {Zhang, Shiduo and Lin, Xiuhan and Yu, Yang and Wang, Weijia},
+	editor = {Hazay, Carmit and Stam, Martijn},
+	date = {2023},
+	langid = {english},
+}
+
 @report{boeyen_internet_2008,
 	title = {Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List ({CRL}) Profile},
 	url = {https://datatracker.ietf.org/doc/rfc5280},
@@ -181,7 +208,7 @@
 	note = {commit: 21eea5c},
 }
 
-@report{benjamin_merkle_2024,
+@report{rfc_mtc,
 	title = {Merkle Tree Certificates for {TLS}},
 	url = {https://datatracker.ietf.org/doc/draft-davidben-tls-merkle-tree-certs-03},
 	abstract = {This document describes Merkle Tree certificates, a new certificate type for use with {TLS}. A relying party that regularly fetches information from a transparency service can use this certificate type as a size optimization over more conventional mechanisms with post- quantum signatures. Merkle Tree certificates integrate the roles of X.509 and Certificate Transparency, achieving comparable security properties with a smaller message size, at the cost of more limited applicability.},
@@ -191,7 +218,6 @@
 	author = {Benjamin, David and O'Brien, Devon and Westerbaan, Bas},
 	urldate = {2024-09-19},
 	date = {2024-09-05},
-	note = {Num Pages: 47},
 }
 
 @online{microsoft_drop_tls,

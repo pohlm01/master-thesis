@@ -38,7 +38,7 @@
     grid(
       gutter: (0pt, 0pt, 0pt, 10pt),
       columns: (5pt * calc.binom(it.level - 1, 2) + (it.level - 1) * 2em, 5pt * (it.level - 1) + 2em, auto, 1fr, auto),
-      [],it.body.children.first(), it.body.children.at(2, default: ""), it.fill, align(end, it.page)
+      [],it.body.children.first(), it.body.children.slice(2, it.body.children.len()).fold([], (it, acc) => it + acc), it.fill, align(end, it.page)
     )
   }
   
@@ -49,7 +49,6 @@
     strong(it.body.children.first()),
     strong(it.body.children.at(2)),
     strong(align(end, it.page))
-
     )
   }
 

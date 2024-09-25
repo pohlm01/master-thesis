@@ -14,7 +14,7 @@ These certificates contain several signatures.
 Making TLS secure against attacks by quantum computers comes with a couple of challenges to solve.
 In particular, the bigger signature sizes of today's quantum-resistant schemes cause performance problems and even broken connections due to non-standard conform implementations that worked fine so far~@david_adrian_tldrfail_2023.
 
-A new draft RFC~@benjamin_merkle_2024 tries to mitigate the issue of big signatures with a new architecture of certificate infrastructures.
+A new draft RFC~@rfc_mtc tries to mitigate the issue of big signatures with a new architecture of certificate infrastructures.
 It uses Merkle Trees and inclusion proofs to them, to reduce the message sizes based on hashes.
 It aims to reduce the message sizes in most common cases by sacrificing general applicability.
 Thus, the proposed architecture is meant as an addition to the current certificate infrastructure and not as a substitution.

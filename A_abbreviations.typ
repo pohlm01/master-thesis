@@ -30,6 +30,10 @@
       desc: [@pq signature algorithm, previously known as Sphincs+]),
     (key: "fndsa", short: "FN-DSA", long: "FFT (fast-Fourier transform) over NTRU-Lattice-Based Digital Signature Algorithm",
       desc: [@pq signature algorithm, previously known as FALCON]),
-    (key: "sha", short: "SHA", long: "Secure Hash Algorithm")
+    (key: "sha", short: "SHA", long: "Secure Hash Algorithm"),
+    (key: "mtc", short: "MTC", long: "Merkle Tree Certificate"),
+    (key: "rp", short: "RP", long: "Relying Party"),
+    (key: "dns", short: "DNS", long: "Domain Name System"),
+    (key: "ip", short: "IP", long: "Internet Protocol"),
   ),
   disable-back-references: true)

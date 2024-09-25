@@ -1,29 +1,40 @@
 #import "@preview/fletcher:0.5.1" as fletcher: node, edge
 
 #let global_diagram_params = (
-  // debug: 3,
+  debug: 3,
   mark-scale: 150%,
+  node-fill: white,
 )
 
-#let mtc_overview = fletcher.diagram(
+#let mtc_overview = {
+  set enum(indent: 0em)
+  
+  fletcher.diagram(
   ..global_diagram_params,
   node-stroke: .1em,
   spacing: 4em,
-  node((0,0), [Subscriber], inset: 1em),
-  edge((0,0), (0,1), "-|>", shift: 6pt, label-side: left, [7. inclusion proof]),
-  edge((0,0), (0,1), "<|-", shift: -6pt, [6. accepted tree heads]),
-  node((0,1), [Relying Party], inset: 1em),
+  node-inset: 1em,
+  node((0,0), [Subscriber], name: <subscriber>),
+  
+  node((0,1), [Relying Party], name: <rp>),
 
-  node((3,0), [Certification Authority], inset: 1em),
-  edge("-|>", label-side: left, [2. sign and publish tree]),
-  node((3,1), [Transparency Service], inset: 1em),
-  edge("-|>", label-side: left, [4. mirror tree]),
-  node((3,2), [Monitors], inset: 1em),
+  node((3,0), [Certification Authority], name: <ca>),
+  
+  node((3,1), [Transparency Service], name: <ts>),
+  node((rel: (1.5mm, 1.5mm)), [Transparency Service], layer: -1),
+  
+  node((3,2), [Monitor], name: <monitor>),
+  node((rel: (1.5mm, 1.5mm)), [Monitor], layer: -1),
 
-  edge((0,0), (3,0), "-|>", shift: 6pt, [1. issuance request]),
-  edge((0,0), (3,0), "<|-", shift: -6pt, label-side: right, [3. inclusion proof]),
-  edge((0,1), (3,1), "<|-", label-side: right, [5. batch tree heads]),
+  edge(<subscriber>,  <ca>,       "-|>", shift:  6pt,                     [1. issuance request]),
+  edge(<ca>,          <ts>,       "-|>",              label-side: left,   [2. sign and publish tree]),
+  edge(<subscriber>,  <ca>,       "<|-", shift: -6pt, label-side: right,  [3. inclusion proof]),
+  edge(<ts>,          <monitor>,  "-|>",              label-side: left,   [4. mirror tree]),
+  edge(<rp>,          <ts>,       "<|-",              label-side: right,  [5. batch tree heads]),
+  edge(<subscriber>,  <rp>,       "<|-", shift: -6pt,                     [6. accepted tree heads]),
+  edge(<subscriber>,  <rp>,       "-|>", shift:  6pt, label-side: left,   [7. inclusion proof]),
 )
+}
 
 
 #let default_width = 45mm
