@@ -33,7 +33,9 @@
 #show: doc => report(table_of_contents: true, doc)
 
 #include "1_introduction.typ"
+// #word-count(total => [
 #include "2_preliminaries.typ"
+// #total.words words in total])
 #include "3_mtc.typ"
 #include "4_contributions.typ"
 

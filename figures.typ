@@ -1,7 +1,7 @@
 #import "@preview/fletcher:0.5.1" as fletcher: node, edge
 
 #let global_diagram_params = (
-  debug: 3,
+  // debug: 3,
   mark-scale: 150%,
   node-fill: white,
 )
