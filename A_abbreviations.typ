@@ -35,5 +35,8 @@
     (key: "rp", short: "RP", long: "Relying Party"),
     (key: "dns", short: "DNS", long: "Domain Name System"),
     (key: "ip", short: "IP", long: "Internet Protocol"),
+    (key: "imap", short: "IMAP", long: "Internet Message Access Protocol"),
+    (key: "smtp", short: "SMTP", long: "Simple Mail Transfer Protocol"),
+    (key: "ldap", short: "LDAP", long: "Lightweight Directory Access Protocol"),
   ),
   disable-back-references: true)

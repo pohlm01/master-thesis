@@ -7,11 +7,16 @@ It is not clear when quantum computers will be capable of breaking today's schem
 Still, it is important to develop new ciphers and protocols already as it takes time and a lot of research to become confident enough in the security of a new cryptographic system.
 
 #gls("tls", long: false), acronym for Transport Layer Security, is one of the most important encryption protocols used.
-Nearly all websites use it to protect the integrity, authenticity, and confidentiality of the communication with the browser.
-Besides HTTPS used for websites, more protocols use TLS to secure their communication.
-To name a few: IMAP and SMTP used for e-mail exchange and LDAP, which is often used as a central place to store credentials in a corporate network, have secured variants that build on TLS.
+Websites use it to protect the integrity, authenticity, and confidentiality of the communication with the browser.
+About 83~% of all page loads worldwide -- and even 94~% in the USA -- are secured by #gls("https", long: false), which is based on @tls, according to Firefox telemetry data @firefox_telemetry from October 2024.
+Besides @https, more protocols use @tls to secure the communication.
+#gls("imap", long: false) and #gls("smtp", long: false) used for e-mail exchange and #gls("ldap", long: false), which is often used as a central place to store credentials in a corporate network, have secured variants that build on @tls.
 
-Making TLS secure against attacks by quantum computers comes with a couple of challenges to solve.
+Securing @tls against attacks by quantum computers consists of two parts; protecting the confidentiality and protecting the authenticity.
+The first is more urgent as it can be broken retroactively by a #emph[harvest now, decrypt later] attack.
+The draft RFC "Hybrid key exchange in TLS~1.3" @tls1.3_hybrid describes a solution to that, and browsers are in the process of rolling it out already. 
+
+ comes with a couple of challenges to solve.
 To prove ownership of a website, Certificate Authorities (CAs) hand out a certificate to the legitimate website owner.
 These certificates contain several signatures.
 The big signature sizes of today's quantum-resistant schemes cause performance problems and even broken connections due to non-standard conform implementations that worked fine so far~@david_adrian_tldrfail_2023.
