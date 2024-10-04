@@ -20,15 +20,15 @@
 
 This section summarizes the @ietf draft that describes #glspl("mtc") for @tls. @rfc_mtc
 
-Note that @mtc does not aim to replace the certificate infrastructure as we know it today but instead functions as an optional optimization.
+Note that @mtc does not aim to replace the certificate infrastructure as we know it today; instead, it functions as an optional optimization.
 Compared to today's Web@pki it has a reduced scope and assumes more prerequisites to function properly.
 @mtc_pki_comparison elaborates on these differences, the following focuses more on the technical details of @mtc.
 
 First, we introduce some roles and terminology:
-- A #emph([Subscriber]) is an entity to be authenticated, for example a web server.
+- A #emph([Subscriber]) is an entity to be authenticated, such as a web server.
 - A #emph(gls("rp", long: true)) authenticates a subscriber by verifying the certificate. This could be a browser, for example.
 - A #emph(gls("ca", long: true)) collects assertions from subscribers, validates them, and issues certificates.
-- A #emph([Transparency Service]) mirrors the #glspl("ca"), validates the batches and forwards them to the #glspl("rp").
+- A #emph([Transparency Service]) mirrors the #glspl("ca"), validates the batches, and forwards them to the #glspl("rp").
 - A #emph([Monitor]) monitors the transparency services for suspicious or unauthorized certificates.
 - An #emph([Assertion]) information that a subscriber gets certified by a @ca, i.e., a public key and one or multiple @dns name(s) and/or @ip address(es).
 - An #emph([Abridged Assertion]) hashes the public key stored in an assertion to reduce the required size, especially for large @pq keys.
