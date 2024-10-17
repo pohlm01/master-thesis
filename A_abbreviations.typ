@@ -1,4 +1,4 @@
-#import "imports.typ": print-glossary
+#import "imports.typ": *
 
 = Abbreviations
 
@@ -38,5 +38,12 @@
     (key: "imap", short: "IMAP", long: "Internet Message Access Protocol"),
     (key: "smtp", short: "SMTP", long: "Simple Mail Transfer Protocol"),
     (key: "ldap", short: "LDAP", long: "Lightweight Directory Access Protocol"),
+    (key: "kem", short: "KEM", long: "Key Encapsulation Mechanism"),
+    (key: "kemtls", short: "KEMTLS",
+      desc: [A alternative to the @tls 1.3 handshake that uses #glspl("kem") instead of signatures for server authentication]),
+    (key: "mac", short: "MAC", long: "Message Authentication Code"),
+    (key: "ap", short: "AP", long: "Authenticating Party"),
+    (key: "tai", short: "TAI", long: "Trust Anchor Identifier"),
+    (key: "ecdsa", short: "ECDSA", long: "Elliptic Curve Digital Signature Algorithm"),
   ),
   disable-back-references: true)

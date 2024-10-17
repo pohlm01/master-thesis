@@ -25,9 +25,7 @@
   )),
 )
 
-#outline-todos()
-
-// #outline(indent: true, title: "Content")
+// #outline-todos()
 
 #show: make-glossary
 #show: doc => report(table_of_contents: true, doc)

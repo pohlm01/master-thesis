@@ -1,5 +1,5 @@
 #import "imports.typ": *
-#import "figures.typ": acme_overview, tls_handshake_overview
+#import "figures.typ": *
 #import "tables.typ": pq_signatures
 
 = Preliminaries <sec:preliminaries>
@@ -49,30 +49,30 @@ There are two mechanisms in place for that:
 
 + #glspl("crl") are regularly published by the @ca in which all revoked certificates are listed.
 
-+ @ocsp is a protocol that allows relying parties to query the @ca if a certificate was revoked in real-time.
++ The #gls("ocsp", long: true) allows relying parties to query the @ca if a certificate was revoked in real-time.
 
 As it will become relevant later on, the following section will explain @ocsp a bit more in-depth.
 
 === OCSP
 @ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates occasionally, but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
-The @ca includes a @http endpoint to an @ocsp responder in the certificates it issues, which relying parties such as browsers can query for recent information about whether a certificate is valid.
+The @ca includes an #gls("http", long: false) endpoint to an @ocsp responder in the certificates it issues, which relying parties such as browsers can query for recent information about whether a certificate is valid.
 @rfc_ocsp
 
-In practice, this comes with a couple of issues, though: Speed, high load on @ca servers, availability, and privacy.
+In practice, this comes with a couple issues: Speed, high load on @ca servers, availability, and privacy.
 Every time a relying party checks a certificate, it requires an additional round trip to the @ocsp responder, which slows down the connection.
 This results in a slowdown of about 30~% for each connection @ocsp_30p_faster.
-The #glspl("ca") have to to all these status requests which results in a high server load and therefore costs.
-If an @ocsp responder is down, the relying party either cannot connect to the server or has to ignore the failure.
+The #glspl("ca") have to answer these status requests, which results in a high server load and therefore costs.
+If an @ocsp responder is not reachable, the relying party either cannot connect to the server or has to ignore the failure.
 Browsers opted for the second option in favor of service availability.
-This, however, limits the benefit of recent information, as an attacker can block access to this. @ocsp_soft_fail
+This decision, however, limits the benefit of recent information, as an attacker can block access to the @ocsp endpoint. @ocsp_soft_fail
 Furthermore, @ocsp is not very privacy-friendly, as #glspl("ca") can build profiles of users based on which certificates they query.
 
 @ocsp stapling mitigates these issues.
 Instead of the user querying the @ocsp responder, the server regularly does so and embeds the response in the certificate message of the @tls handshake. @rfc_ocsp_stapling[Section 8] @rfc_tls13[Section 4.4.2]
 This reduces the load on the @ca, eliminates the need for an additional round trip, fixes the privacy issues, and helps with service availability, as the @ocsp responses are cached by the website server for a limited time.
 
-Therefore, we have a system to revoke certificates that we know exist.
-The following section explains why knowing all certificates is not self-evident and how to ensure it anyway.
+Knowing about the existence of a certificate might be less obvious but undoubtedly essential building block to revocation.
+The following section explains why this is not self-evident and how to ensure it anyway.
 
 === Certificate Transparency
 // - WebPKI contains a lot of trusted CA (as of 21.09.2024: 153 Firefox @firefox_root_store, 135 Chrome @chrome_root_store)
@@ -82,8 +82,8 @@ The following section explains why knowing all certificates is not self-evident 
 // - Now, each issued certificate must be logged publically, such that domain owners can be notified about certificates issued on their name
 
 Browser vendors ship a list of #glspl("ca") which are trusted to issue genuine certificates only.
-As of 21.09.2024, there are 153 trusted root #glspl("ca") for Firefox and 135 for Chrome @firefox_root_store @chrome_root_store.
-If only a single @ca misbehaves, this can tremendously impact the whole system.
+As of 21.09.2024, there are 153 trusted root #glspl("ca") built into Firefox and 135 in Chrome @firefox_root_store @chrome_root_store.
+If only a single @ca misbehaves, this can tremendously impact the security of the whole system.
 One infamous example is the security breach of DigiNotar in 2011, which allowed the attacker to listen into the connection of about 300,000 Iranian citizens with Google. @diginotar
 This was possible, because the domain owner, i.e., Google, could not know that a certificate was issued in their name.
 
@@ -91,7 +91,7 @@ As a direct consequence, Google initiated a program to ensure that all issued ce
 This is referred to as @ct.
 
 #figure(
-  image("with-CT(mix)_v3.svg", width: 50%),
+  ct_overview,
   caption: [Certificate issuance with @ct @certificate_transparency]
 ) <ct_overview>
 
@@ -108,8 +108,8 @@ This allows #gls("ct")-monitors to analyze certificates and #glspl("ca") for mis
 As mentioned earlier, present certificate lifetimes are often 90 days, but not longer than 398 days.
 Short certificate lifetimes require some kind of automation to not overload humans with constant certificate renewals.
 Additionally, automation facilitates widespread adoption of @https as it lowers the (human) effort -- and consequently costs -- associated with its usage.
-Therefore, Let's Encrypt initiated the development of the @acme protocol in 2015 and started issuing certificates in that highly automated way. @first_acme
-The @acme protocol finally became an @ietf standard in 2019. @rfc_acme
+Therefore, Let's Encrypt initiated the development of the #gls("acme", long: false) protocol in 2015 and started issuing certificates in that highly automated way. @first_acme
+The @acme protocol finally became an #gls("ietf", long: false) standard in 2019. @rfc_acme
 
 Please note that the fully automated @acme mechanism allows for #emph([Domain Validation]) (DV) certificates only.
 This means, that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]) which require human interaction to verify the authenticity of the requesting organization.
@@ -143,17 +143,17 @@ This is only a limited drawback since 93~% of all valid certificates are DV cert
 Afterward, the @ietf took over the development, renamed the protocol to @tls, and published @tls 1.0 in 1999.
 The development went further, and the @ietf published @tls versions 1.1 and 1.2 in 2006 and 2008 respectively.
 Ten years later, the major overhaul was published as @tls 1.3 in #cite(<rfc_tls13>, form: "year").
-It did not only improve the security but incorporated protocol simplifications and speed improvements as well.
+It improved security and incorporated protocol simplifications and speed improvements.
 @ssl_tls_book
 
 The following will focus on @tls 1.3 as it is used for 94~% of all @https requests according to Cloudflare Radar on 2024-09-23 and support for @tls 1.1 and older has been dropped by all relevant browsers in 2020. @cloudflare_radar @chrome_drop_tls @firefox_drop_tls @microsoft_drop_tls @apple_drop_tls
 
-The @tls protocol consists of two sub-protocols, the handshake protocol for authentication and negotiation of cryptographic ciphers followed by the record protocol to transmit the application data.
+@tls consists of two sub-protocols, the handshake protocol for authentication and negotiation of cryptographic ciphers, followed by the record protocol to transmit the application data.
 The following concentrates on the handshake protocol and skips some functionality such as client certificates, the usage of previously or out-of-band negotiated keys, and 0-RTT data that can be used to send application data before the handshake is finished.
 This allows focus on the parts relevant to this thesis. 
 
 @tls_handshake_overview illustrates the messages and extensions sent during the @tls handshake and whether they are encrypted.
-A @tls connection is always initiated by the client though a `ClientHello` message.
+A @tls connection is always initiated by the client through a `ClientHello` message.
 This message contains extensions with a key share and signature algorithms the client supports.
 The server responds with a `ServerHello` message, which contains a key share as an extension as well.
 Knowing both key shares, the server and client derive a shared symmetric secret only they know and use it to protect all subsequent messages.
@@ -161,6 +161,10 @@ Knowing both key shares, the server and client derive a shared symmetric secret 
 The following messages authenticate the server to the client by sending its certificate (chain) and a `CertificateVerify` message.
 The `CertifiacteVerify` message contains the signature over the handshake transcript up to that point.
 This proves the server is in the possession of the private key corresponding to the certificate and messages have not been tampered with.
+The handshake ends with a `Finished` message each side sends and verifies.
+It contains a @mac over the transcript and thus assures the integrity of the handshake and prevents message replay attacks.
+
+After the successful handshake, the application data are exchanged.
 
 #figure(
   tls_handshake_overview,
