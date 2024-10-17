@@ -6,7 +6,7 @@
 This section will recap information relevant to understanding the topic of this thesis.
 It starts with an explanation of how the present @pki works, followed by a summary of the @tls protocol and a list of post-quantum secure signatures relevant to this thesis.
 
-== Public Key Infrastructure
+== Public Key Infrastructure <sec:pki>
 // - binds a public key of a set of information 
 //   - typically an identity (WebPKI)
 //   - but may also be permissions (e.g., @rpki)
@@ -170,6 +170,8 @@ After the successful handshake, the application data are exchanged.
   tls_handshake_overview,
   caption: [Overview of the simplified TLS 1.3 handshake @rfc_tls13]
 ) <tls_handshake_overview>
+
+=== KEMTLS
 
 == Post Quantum Signatures
 // - Two PQ signatures are standardized by @nist in @fips_204 (ML-DSA, formally known as CRYSTALS-Dilithium) and @fips_205 (SLH-DSA formally known as Sphincs+)

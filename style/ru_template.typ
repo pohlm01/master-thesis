@@ -3,6 +3,7 @@
 
   show link: set text(fill: rgb(0, 0, 180))
   show ref: set text(fill: rgb(0, 0, 180))
+  show table: set text(size: 9pt)
   set figure(gap: 1em)
   set list(indent: 2em)
   set enum(indent: 2em)
