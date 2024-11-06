@@ -1,3 +1,14 @@
+@online{lets_encrypt_new_crl,
+	title = {A New Life for Certificate Revocation Lists},
+	url = {https://letsencrypt.org/2022/09/07/new-life-for-crls/},
+	abstract = {This month, Let\&rsquo;s Encrypt is turning on new infrastructure to support revoking certificates via Certificate Revocation Lists. Despite having been largely supplanted by the Online Certificate Status Protocol for over a decade now, {CRLs} are gaining new life with recent browser updates. By collecting and summarizing {CRLs} for their users, browsers are making reliable revocation of certificates a reality, improving both security and privacy on the web. Let\&rsquo;s talk about exactly what this new infrastructure does, and why it\&rsquo;s important.},
+	titleaddon = {Let's Encrypt},
+	author = {{Aaron Gable}},
+	urldate = {2024-10-31},
+	date = {2022-09-07},
+	langid = {american},
+}
+
 @report{rfc_rpki,
 	title = {A Profile for X.509 {PKIX} Resource Certificates},
 	abstract = {This document defines a standard profile for X.509 certificates for the purpose of supporting validation of assertions of "right-of-use" of Internet Number Resources ({INRs}). The certificates issued under this profile are used to convey the issuer's authorization of the subject to be regarded as the current holder of a "right-of-use" of the {INRs} that are described in the certificate. This document contains the normative specification of Certificate and Certificate Revocation List ({CRL}) syntax in the Resource Public Key Infrastructure ({RPKI}). This document also specifies profiles for the format of certificate requests and specifies the Relying Party {RPKI} certificate path validation procedure. [{STANDARDS}-{TRACK}]},
@@ -41,6 +52,16 @@
 	doi = {10.17487/RFC8555},
 }
 
+@software{cab_ocsp_optional_crl_mandatory,
+	title = {Baseline Requirements for the Issuance and Management of Publicly-Trusted {TLS} Server Certificates},
+	url = {https://github.com/cabforum/servercert/blob/d820f37f9e1550805c210dcaf5162b7f86ccfb69/docs/BR.md},
+	abstract = {Repository for the {CA}/Browser Forum Server Certificate Chartered Working Group - cabforum/servercert},
+	version = {2.0.8},
+	author = {{Iñigo Barreira} and {Clint Wilson}},
+	urldate = {2024-10-31},
+	date = {2024-10-02},
+}
+
 @online{firefox_root_store,
 	title = {{CA}/Included Certificates - {MozillaWiki}},
 	url = {https://wiki.mozilla.org/CA/Included_Certificates},
@@ -63,11 +84,42 @@
 	date = {2018-07-02},
 }
 
+@online{lets_encrypt_challange_types,
+	title = {Challenge Types},
+	url = {https://letsencrypt.org/docs/challenge-types/},
+	abstract = {When you get a certificate from Let’s Encrypt, our servers validate that you control the domain names in that certificate using “challenges,” as defined by the {ACME} standard. Most of the time, this validation is handled automatically by your {ACME} client, but if you need to make some more complex configuration decisions, it’s useful to know more about them. If you’re unsure, go with your client’s defaults or with {HTTP}-01.},
+	urldate = {2024-10-31},
+	date = {2023-02-13},
+	langid = {american},
+}
+
 @online{chrome_root_store,
 	title = {Chrome root store},
 	url = {https://chromium.googlesource.com/chromium/src/+/main/net/data/ssl/chrome_root_store/root_store.md},
 	urldate = {2024-09-21},
 	note = {Version: 16},
+}
+
+@inproceedings{crlite_paper,
+	title = {{CRLite}: A Scalable System for Pushing All {TLS} Revocations to All Browsers},
+	url = {https://ieeexplore.ieee.org/document/7958597},
+	doi = {10.1109/SP.2017.17},
+	shorttitle = {{CRLite}},
+	abstract = {Currently, no major browser fully checks for {TLS}/{SSL} certificate revocations. This is largely due to the fact that the deployed mechanisms for disseminating revocations ({CRLs}, {OCSP}, {OCSP} Stapling, {CRLSet}, and {OneCRL}) are each either incomplete, insecure, inefficient, slow to update, not private, or some combination thereof. In this paper, we present {CRLite}, an efficient and easily-deployable system for proactively pushing all {TLS} certificate revocations to browsers. {CRLite} servers aggregate revocation information for all known, valid {TLS} certificates on the web, and store them in a space-efficient filter cascade data structure. Browsers periodically download and use this data to check for revocations of observed certificates in real-time. {CRLite} does not require any additional trust beyond the existing {PKI}, and it allows clients to adopt a fail-closed security posture even in the face of network errors or attacks that make revocation information temporarily unavailable. We present a prototype of name that processes {TLS} certificates gathered by Rapid7, the University of Michigan, and Google's Certificate Transparency on the server-side, with a Firefox extension on the client-side. Comparing {CRLite} to an idealized browser that performs correct {CRL}/{OCSP} checking, we show that {CRLite} reduces latency and eliminates privacy concerns. Moreover, {CRLite} has low bandwidth costs: it can represent all certificates with an initial download of 10 {MB} (less than 1 byte per revocation) followed by daily updates of 580 {KB} on average. Taken together, our results demonstrate that complete {TLS}/{SSL} revocation checking is within reach for all clients.},
+	eventtitle = {2017 {IEEE} Symposium on Security and Privacy ({SP})},
+	pages = {539--556},
+	booktitle = {2017 {IEEE} Symposium on Security and Privacy ({SP})},
+	author = {Larisch, James and Choffnes, David and Levin, Dave and Maggs, Bruce M. and Mislove, Alan and Wilson, Christo},
+	urldate = {2024-10-31},
+	date = {2017-05},
+	note = {{ISSN}: 2375-1207},
+	keywords = {Bloom filter, Browsers, {CRL}, Certificate Transparency, Cryptography, {OCSP}, Privacy, Protocols, Prototypes, Revocation, Servers, Transport Layer Security},
+}
+
+@online{chrome_crlsets,
+	title = {{CRLSets}},
+	url = {https://www.chromium.org/Home/chromium-security/crlsets/},
+	urldate = {2024-10-31},
 }
 
 @online{apple_drop_tls,
@@ -109,6 +161,15 @@
 	keywords = {Electromagnetic analysis, Electromagnetic measurements, Fast Fourier transforms, {NIST}, Quantum computing, Side-channel attacks, Software, digital signatures, post-quantum cryptography, side-channel attacks},
 }
 
+@online{reddit_ocsp_firefox,
+	title = {Firefox - The only browser doing certificate revocation checks right},
+	url = {www.reddit.com/r/firefox/comments/1bb89vl/firefox_the_only_browser_doing_certificate/},
+	titleaddon = {r/firefox},
+	author = {{MorrocMaster}},
+	urldate = {2024-10-31},
+	date = {2024-03-10},
+}
+
 @online{firefox_125_nightly,
 	title = {Firefox Nightly 125.0a1, See All New Features, Updates and Fixes},
 	url = {https://www.mozilla.org/en-US/firefox/125.0a1/releasenotes/},
@@ -128,6 +189,14 @@
 	date = {2015-09-15},
 }
 
+@online{crl_sets_effectiveness,
+	title = {{GRC}'s {\textbar} Chrome's {CRLSet} Effectiveness Evaluation},
+	url = {https://www.grc.com/revocation/crlsets.htm},
+	titleaddon = {Gibson Research Corporation},
+	urldate = {2024-10-31},
+	date = {2014-05-08},
+}
+
 @online{certificate_transparency,
 	title = {How {CT} Works : Certificate Transparency},
 	url = {https://certificate.transparency.dev/howctworks/},
@@ -141,6 +210,13 @@
 	titleaddon = {{SSL}.com},
 	urldate = {2024-09-22},
 	date = {2021-02-24},
+}
+
+@online{tls_issuance_delay,
+	title = {How long does it take to issue an {SSL} certificate?},
+	url = {https://support.dnsimple.com/articles/how-long-to-issue-ssl-certificate/},
+	titleaddon = {{DNSimple} Help},
+	urldate = {2024-10-31},
 }
 
 @report{tls1.3_hybrid,
@@ -175,6 +251,18 @@
 	editor = {Hazay, Carmit and Stam, Martijn},
 	date = {2023},
 	langid = {english},
+}
+
+@online{lets_encrypt_end_ocsp,
+	title = {Intent to End {OCSP} Service},
+	url = {https://letsencrypt.org/2024/07/23/replacing-ocsp-with-crls/},
+	abstract = {Today we are announcing our intent to end Online Certificate Status Protocol ({OCSP}) support in favor of Certificate Revocation Lists ({CRLs}) as soon as possible. {OCSP} and {CRLs} are both mechanisms by which {CAs} can communicate certificate revocation information, but {CRLs} have significant advantages over {OCSP}. Let\&rsquo;s Encrypt has been providing an {OCSP} responder since our launch nearly ten years ago. We added support for {CRLs} in 2022.
+Websites and people who visit them will not be affected by this change, but some non-browser software might be.},
+	titleaddon = {Let's Encrypt},
+	author = {{Josh Aas}},
+	urldate = {2024-10-31},
+	date = {2024-07-23},
+	langid = {american},
 }
 
 @report{boeyen_internet_2008,
@@ -261,6 +349,14 @@
 	doi = {10.6028/NIST.FIPS.204},
 }
 
+@online{mtc_fallback_estimate,
+	title = {{MTC} Fallback Estimates},
+	url = {https://github.com/davidben/merkle-tree-certs/issues/89},
+	author = {{Lena Heimberger} and {Bas Westerbaan} and {Devon O'Brien}},
+	urldate = {2024-10-31},
+	date = {2024-08-26},
+}
+
 @online{ocsp_30p_faster,
 	title = {{OCSP} Stapling: How {CloudFlare} Just Made {SSL} 30\% Faster},
 	url = {https://blog.cloudflare.com/ocsp-stapling-how-cloudflare-just-made-ssl-30},
@@ -337,6 +433,14 @@
 	langid = {american},
 }
 
+@jurisdiction{apple_45_days_cert,
+	title = {{SC}-081: Introduce Schedule of Reducing Validity and Data Reuse Periods by clintwilson},
+	url = {https://github.com/cabforum/servercert/pull/553},
+	author = {{Clint Wilson}},
+	urldate = {2024-10-30},
+	date = {2024-10-10},
+}
+
 @report{google_view_rust,
 	title = {Secure by Design: Google's Perspective on Memory Safety},
 	institution = {Google Security Engineering},
@@ -371,6 +475,16 @@
 	author = {{National Institute of Standards and Technology}},
 	date = {2024-08-13},
 	doi = {10.6028/NIST.FIPS.205},
+}
+
+@online{mozilla_crlite,
+	title = {The End-to-End Design of {CRLite}},
+	url = {https://blog.mozilla.org/security/2020/01/09/crlite-part-2-end-to-end-design},
+	abstract = {The end-to-end design of {CRLite} gives us a new way to handle revocations in the Web {PKI}},
+	titleaddon = {Mozilla Security Blog},
+	author = {Jones, J. C.},
+	urldate = {2024-11-06},
+	date = {2020-01-09},
 }
 
 @online{bas_westerbaan_state_2024,

@@ -7,12 +7,19 @@
   set figure(gap: 1em)
   set list(indent: 2em)
   set enum(indent: 2em)
+  set bibliography(style: "./ieee.csl")
+  set cite(style: "springer-basic")
 
-  counter(page).update(0)
-  set page(numbering: "1", margin: (x: 8em, top:10em, bottom: 14em))
+  show figure.caption: set par(first-line-indent: 0em, hanging-indent: 1cm)
+  show figure.caption: cap => {
+    box(align(left, cap))
+  }
+  show figure: set block(spacing: 2em)
+
+
+
   set heading(numbering: "1.1")
-  set par(leading: 0.55em, first-line-indent: 1.8em, justify: true)
-  show par: set block(spacing: 0.55em)
+  set par(spacing: 0.55em, leading: 0.55em, first-line-indent: 1.8em, justify: true)
 
   show heading: it => block({
     if counter(heading).get() != (0,) {
@@ -55,11 +62,14 @@
 
 
   if table_of_contents {
-    show par: set block(spacing: 0.0em)
+    set par(spacing: 0.0em)
     
     heading(outlined: false, "Contents", numbering: none, level: 1)
     box(outline(title: none, fill: repeat(" .")))
   }
+
+  counter(page).update(0)
+  set page(numbering: "1", margin: (x: 8em, top:10em, bottom: 14em))
 
   doc
 }

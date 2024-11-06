@@ -2,7 +2,7 @@
 
 = Abbreviations
 
-#print-glossary((
+#let abbreviations = (
     (key: "tls", short: "TLS", long: "Transport Layer Security"),
     (key: "ocsp", short: "OCSP", long: "Online Certificate Status Protocol"),
     (key: "ca", short: "CA", long: "Certificate Authority"),
@@ -45,5 +45,6 @@
     (key: "ap", short: "AP", long: "Authenticating Party"),
     (key: "tai", short: "TAI", long: "Trust Anchor Identifier"),
     (key: "ecdsa", short: "ECDSA", long: "Elliptic Curve Digital Signature Algorithm"),
-  ),
-  disable-back-references: true)
+)
+
+#print-glossary(abbreviations, disable-back-references: true)

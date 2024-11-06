@@ -59,7 +59,7 @@ The @ca includes an #gls("http", long: false) endpoint to an @ocsp responder in 
 @rfc_ocsp
 
 In practice, this comes with a couple issues: Speed, high load on @ca servers, availability, and privacy.
-Every time a relying party checks a certificate, it requires an additional round trip to the @ocsp responder, which slows down the connection.
+Every time a relying party checks a certificate, an additional round trip to the @ocsp responder is required, which slows down the connection.
 This results in a slowdown of about 30~% for each connection @ocsp_30p_faster.
 The #glspl("ca") have to answer these status requests, which results in a high server load and therefore costs.
 If an @ocsp responder is not reachable, the relying party either cannot connect to the server or has to ignore the failure.
@@ -112,7 +112,7 @@ Therefore, Let's Encrypt initiated the development of the #gls("acme", long: fal
 The @acme protocol finally became an #gls("ietf", long: false) standard in 2019. @rfc_acme
 
 Please note that the fully automated @acme mechanism allows for #emph([Domain Validation]) (DV) certificates only.
-This means, that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]) which require human interaction to verify the authenticity of the requesting organization.
+This means that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]) which require human interaction to verify the authenticity of the requesting organization.
 This is only a limited drawback since 93~% of all valid certificates are DV certificates as of 2024-09-21 @merkle_town.
 
 // - Used to issue "Domain Validation" (DV) certificates
@@ -159,7 +159,7 @@ The server responds with a `ServerHello` message, which contains a key share as 
 Knowing both key shares, the server and client derive a shared symmetric secret only they know and use it to protect all subsequent messages.
 
 The following messages authenticate the server to the client by sending its certificate (chain) and a `CertificateVerify` message.
-The `CertifiacteVerify` message contains the signature over the handshake transcript up to that point.
+The `CertificateVerify` message contains the signature over the handshake transcript up to that point.
 This proves the server is in the possession of the private key corresponding to the certificate and messages have not been tampered with.
 The handshake ends with a `Finished` message each side sends and verifies.
 It contains a @mac over the transcript and thus assures the integrity of the handshake and prevents message replay attacks.

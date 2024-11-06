@@ -1,7 +1,8 @@
 #import "@preview/fletcher:0.5.1" as fletcher: node, edge
+#import "@preview/treet:0.1.1": *
 
 #let global_diagram_params = (
-  debug: 3,
+  // debug: 3,
   mark-scale: 100%,
   node-fill: white,
   edge-stroke: .08em,
@@ -146,6 +147,11 @@
   node-stroke: .07em,
 
   {
+    node((-4, 0), [level 2:], stroke: none, inset: 0em)
+    node((-4, 1), [level 1:], stroke: none, inset: 0em)
+    node((-4, 2), [level 0:], stroke: none, inset: 0em)
+
+    
     node((0, 0), [root], name: <root>)
     
     node((-2, 1), $t_10$, name: <t10>)
@@ -156,9 +162,9 @@
     node((1, 2), $t_02$, name: <t02>)
     node((3, 2), [empty], name: <t03>)
 
-    node((-3, 3), $a_0$, name: <a0>)
-    node((-1, 3), $a_1$, name: <a1>)
-    node((1, 3), $a_2$, name: <a2>)
+    node((-3, 3), $"aa"_0$, name: <a0>)
+    node((-1, 3), $"aa"_1$, name: <a1>)
+    node((1, 3), $"aa"_2$, name: <a2>)
 
     edge(<root>, "l,ld")
     edge(<root>, "r,rd")
@@ -173,3 +179,36 @@
     edge(<t02>, "d")
   }
 )
+
+#let mtc_client_file_tree = {
+  set align(left)
+  show list: tree-list
+  set text(font: "New Computer Modern Mono")
+  
+  [
+  etc\
+  - ssl
+    - mtc
+      - \<tai\>
+        - ca-params
+        - validity-window
+        - signature\*
+  ]
+}
+
+#let mtc_server_file_tree = {
+  set align(left)
+  show list: tree-list
+  set text(font: "New Computer Modern Mono")
+  
+  [
+  \<some_dir>\
+  - \<tai\>
+    - 0.mtc
+    - 1.mtc
+    - 2.mtc
+    - ...
+    - ca-params
+    - private-key.pem
+  ]
+}
