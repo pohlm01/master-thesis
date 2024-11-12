@@ -38,7 +38,7 @@
     (key: "imap", short: "IMAP", long: "Internet Message Access Protocol"),
     (key: "smtp", short: "SMTP", long: "Simple Mail Transfer Protocol"),
     (key: "ldap", short: "LDAP", long: "Lightweight Directory Access Protocol"),
-    (key: "kem", short: "KEM", long: "Key Encapsulation Mechanism"),
+    (key: "kem", short: "KEM", long: "Key-Encapsulation Mechanism"),
     (key: "kemtls", short: "KEMTLS",
       description: [An alternative to the @tls 1.3 handshake that uses #glspl("kem") instead of signatures for server authentication]),
     (key: "mac", short: "MAC", long: "Message Authentication Code"),
@@ -46,6 +46,12 @@
     (key: "tai", short: "TAI", long: "Trust Anchor Identifier"),
     (key: "ecdsa", short: "ECDSA", long: "Elliptic Curve Digital Signature Algorithm"),
     (key: "api", short: "API", long: "Application Programming Interface"),
+    (key: "rsa", short: "RSA", long: "Rivest–Shamir–Adleman",
+      description: [Old and widely adopted asymmetric crypto system developed by Ron Rivest, Adi Shamir and Leonard Adleman. Not secure against Quantum computers.]),
+    (key: "mlkem", short: "ML-KEM", long: [Module-Lattice-Based Key-Encapsulation Mechanism],
+      description: [@pq @kem algorithm, previously known as CRYSTALS-Kyber]),
+    (key: "asn1", short: "ASN.1", long: "Abstract Syntax Notation One"),
+    (key: "der", short: "DER", long: "Distinguished Encoding Rules"),
 )
 
 #print-glossary(abbreviations, disable-back-references: true)

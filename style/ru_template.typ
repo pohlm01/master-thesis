@@ -16,6 +16,8 @@
     box(align(left, cap))
   }
   show figure: set block(spacing: 2em)
+  show list: set block(spacing: 2em)
+  show enum: set block(spacing: 2em)
 
 
 

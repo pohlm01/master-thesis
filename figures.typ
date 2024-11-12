@@ -1,4 +1,4 @@
-#import "@preview/fletcher:0.5.1" as fletcher: node, edge
+#import "@preview/fletcher:0.5.2" as fletcher: node, edge
 #import "@preview/treet:0.1.1": *
 
 #let global_diagram_params = (

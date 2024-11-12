@@ -108,22 +108,22 @@
     
     table.header([Handshake], [Public Key], [Proof Length], [$sum$], [PQ]),
 
-    [ECDSA],  [ECDSA],  [280M subscribers],  [], [],
+    [ECDSA],  [ECDSA],  [280M active @ap:pl],  [], [],
     [64],     [32],     [672],            [768], [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [280M subscribers],  [], [],
+    [ML-DSA], [ML-DSA], [280M active @ap:pl],  [], [],
     [2,420],  [1,312],  [672],            [4,404], [#emoji.checkmark.box],
 
-    y[ML-KEM], y[ML-KEM], [280M subscribers],  [], [],
+    y[ML-KEM], y[ML-KEM], [280M active @ap:pl],  [], [],
     [1,088],    [1,184],  [672],            [2,944], [#emoji.checkmark.box],
     
-    [ECDSA],  [ECDSA],  [1B subscribers],  [], [],
+    [ECDSA],  [ECDSA],  [1B active @ap:pl],  [], [],
     [64],     [32],     [832],            [928], [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [1B subscribers],  [], [],
+    [ML-DSA], [ML-DSA], [1B active @ap:pl],  [], [],
     [2,420],  [1,312],  [832],            [4,564], [#emoji.checkmark.box],
 
-    y[ML-KEM], y[ML-KEM], [1B subscribers],  [], [],
+    y[ML-KEM], y[ML-KEM], [1B active @ap:pl],  [], [],
     [1,088],    [1,184],  [832],            [3,104], [#emoji.checkmark.box],
     
   )
@@ -145,7 +145,7 @@
       ),
       
       [gooogle.com], [256-bit ECDSA],  [2x 256-bit ECDSA],  [RSA-2048],  [RSA-4096],
-      [`31:82:1B:51:E6:1F:D4:D5:18:9B:0C:1B:07:BD:4F:A9: 54:5B:26:A9:BC:A5:3C:E7:CE:0A:A9:F3:72:24:93:2C`],
+      [`37:9A:80:C9:25:2C:66:A1:BB:89:D6:C0:C8:83:33:39: 55:1D:E6:0F:D3:75:58:5C:F9:A3:18:37:03:57:A0:D6`],
       
       [apple.com], [RSA-2048], [4x 256-bit ECDSA], [RSA-2048], [RSA-2048],
       [`8B:29:CD:F1:D9:4E:D6:19:13:19:BF:47:AB:05:20:16: 8D:0D:21:D5:80:3E:5E:CA:A2:FE:40:A7:BA:BE:1B:AD`],

@@ -48,8 +48,8 @@ A @ca is defined by the following parameters that are publically known and canno
 - `batch_duration`: The time between two batches given in full seconds.
 - `lifetime`: The number of seconds a batch is valid. It must be a multiple of `batch_duration`.
 - The `validity_window_size` defines the number of tree heads that are valid at the same time. It is calculated as the `lifetime` divided by the `batch_duration`.
-\
-The authors of the Internet Draft suggest a `batch_duration` of one hour and a `lifetime` of 14 days. This results in a `validity_window_size` of 336.
+
+The authors of the Internet-Draft suggest a `batch_duration` of one hour and a `lifetime` of 14 days. This results in a `validity_window_size` of 336.
 
 #figure(
   mtc_overview,
@@ -67,7 +67,7 @@ The authors of the Internet Draft suggest a `batch_duration` of one hour and a `
 + #glspl("rp") regularly update their trust anchors to the most recent Batch Tree Heads that have been validated by their trusted Transparency Service(s).
 + When connecting to an @ap, the @rp signals which trust anchors it supports, i.e., which tree heads it trusts.
 + If the subscriber has a valid inclusion proof for the assertions, i.e., a certificate, for one of the supported trust anchors, it will send this instead of a classical X.509 certificate.
-\
+
 The following sections elaborate on the responsibilities and objectives of the components involved. 
 
 == Certificate Authority
@@ -224,11 +224,11 @@ For our analysis, we ignore this fact, as it serves the same objective, namely a
 
 @tab:x509_size contains one optimistic and one conservative but realistic estimate for each, a @pq and non @pq secure setup.
 Additionally, it contains one setup for @kemtls.
-The optimistic estimate assumes the usage of 256-bit ECDSA signatures and keys across the whole chain.
-About 24~% of all currently active certificates are issued for a ECDSA key, with about 53~% using a 384-bit and 47~% using a 256-bit key length.
+The optimistic estimate assumes the usage of 256-bit @ecdsa signatures and keys across the whole chain.
+About 24~% of all currently active certificates are issued for an @ecdsa key, with about 53~% using a 384-bit and 47~% using a 256-bit key length.
 The remaining 76~% of all current EE certificates use an RSA algorithm. @merkle_town
 For the root @ca:pl stored in the Firefox root program, the numbers are a bit different.
-44~% (78) use a 4096-bit RSA key, 26~% (46) use a 2048-bit RSA key, 27~% use a 384-bit ECDSA key and only 2~% (4) use a 256-bit ECDSA key @firefox_root_store.
+44~% (78) use a 4096-bit RSA key, 26~% (46) use a 2048-bit RSA key, 27~% use a 384-bit @ecdsa key and only 2~% (4) use a 256-bit @ecdsa key @firefox_root_store.
 Without telemetry data from browsers, it is unfortunately very hard to judge which are the most common combinations just from the percentage of certificates issued and the configuration of root @ca:pl, as there is a big imbalance on which @ca:pl and certificates are heavily used and which are not.
 We tried to get an impression by manually checking the certificate chains for the top 10 domains according to Cloudflare Radar @cloudflare_radar_domains.
 The results in @tab:top_10_signatures show that the landscape of used signatures is diverse.
@@ -286,9 +286,53 @@ It is interesting to realize that for every doubling of @ap:pl, the proof size g
   caption: [Bytes of authentication-related cryptographic material exchanged during the @tls handshake using @mtc.]
 ) <tab:bikeshed_size>
 
-Comparing @tab:x509_size and @tab:bikeshed_size shows that 
+Comparing @tab:x509_size and @tab:bikeshed_size shows that @mtc has big size advantages, especially when using @pq algorithms.
+Focusing at the classical case first:
+In the best X.509 case, when using only 256-bit @ecdsa for all signatures, @mtc performs slightly worse in terms of the number of authentication bytes.
+While the X.509 case requires 448 authentication-related bytes, @mtc requires 768 bytes, which is a absolute difference of 320 bytes corresponding to 41.67~%.
+Comparing @mtc to a mostly #gls("rsa", long: false)-based certificate, @mtc shows it advantages, as the X.509 certificate grows to 1,728~bytes.
+Therefore, the @mtc is 960 or 800 bytes smaller, depending on the number of active @ap:pl in the @mtc system.
+This corresponds to a reduction of 55.56~% or 46.30~%, respectively.
+Moving on to the @pq algorithms, the drastic improvement of @mtc shows up.
+Compared to the best X.509 case using only @mldsa signatures, @mtc saves 12,740 or 12,580 bytes, resulting in 74.31~% or 73.38~% depending on the number of active @ap:pl.
+Moreover, it seems realistic that a @ca would use @slhdsa instead of @mldsa due to its higher security guarantees.
+This further increases the advantage of @mtc to 80.05~% or 79.79~%, saving 18,176 or 18,016 byte, respectively.
+When replacing the @mldsa key and signature with @mlkem, the handshake is 1,460 bytes smaller, independent of @mtc or X.509.
+Nevertheless, the relative gain of @kemtls is bigger for @mtc as it exchanges less bytes in the baseline scenario.
 
-TODO Mention that there are also other size improvements due to the Bikeshed certificate format
+// - In the best classical case, X.509 contains less authentication bytes
+// - Compared to a realistic setup, @mtc with classical crypto already saves about 1000 bytes.
+// - The best (non-KEMTLS) case saves $17,144-4,404=12,740$, i.e., 74.31~%
+// - It seems realistic the the @ca will use SLH-DSA (in the beginning), which will increase the difference to $22,580-4,404=18,176$, i.e., 80.05~%
+// - A big increase in @ap does not change a lot: $17,144-4,564=12,580$, i.e., 73.38~% / $22,580-4,564=18,016$, i.e., 79.79~%
+// - @kemtls makes the savings slightly more impressive: $15,684 - 2,944 = 12740$, i.e., 81.23~% or $15,684 - 2,944 = 12580$, i.e., 80.21~%
+
+// TODO Mention that there are also other size improvements due to the Bikeshed certificate format
+In addition size improvements related to authentication cryptography, @mtc brings additional size improvements by using a new certificate format.
+X.509 is based on @asn1 and certificates are transferred in @der encoding.
+The @mtc Internet-Draft defines a new certificate format called Bikeshed certificate.
+The name is meant as a placeholder, and the authors aim to replace it before it potentially becomes a standard.
+@der uses a  type-length-value encoding, meaning that each value in the certificate explicitly has a type and length encoded.
+The encoding of @mtc on the contrary is more efficient because types and lengths of fields are implicit, i.e., fixed, where possible.
+Besides the encoding, the Bikeshed certificate type saves bytes by leaving out information that is superfluous in the new setting.
+The following fields are not stored in a Bikeshed certificate, that are not already covered by the size considerations above:
+- Not before timestamp
+- Not after timestamp
+- @crl endpoint
+- @ocsp endpoint
+- @sct timestamps and log IDs
+- key usage restrictions
+- subject and authority key identifier
+
+To give an example:
+The certificate chain for `www.google.com`#footnote([SHA-265 fingerprint \ `37:9A:80:C9:25:2C:66:A1:BB:89:D6:C0:C8:83:33:39:55:1D:E6:0F:D3:75:58:5C:F9:A3:18:37:03:57:A0:D6`]) has 2,486 bytes in @der format.
+The chain contains 256-bit ECDSA, RSA-2048, and RSA-4096 bit keys and signatures.
+Summing them up, the authentication related bytes transmitted in the certificate chain result in 1,248 bytes.
+Note that this does not contain the @ocsp staple or handshake signature included in @tab:x509_size as they are not included in the certificate chain itself.
+In comparison, a comparable Bikeshed certificate with a 256-bit ECDSA key would contain 704 authentication related bytes, assuming $280 dot 10^9$ active @ap:pl.
+The full certificate would be 785 bytes in size.
+Thus, the X.509 certificate chain has an overhead of 1,238 bytes or 99~% while the Bikeshed certificate has an overhead of 81 bytes or 12~%.
+Even though this is only a single example, this shows that the X.509/@asn1 format produces a significant overhead, that can be reduced by introducing a new certificate format.
 
 == Update mechanism considerations
 - Size
