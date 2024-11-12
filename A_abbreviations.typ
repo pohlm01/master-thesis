@@ -25,11 +25,11 @@
     (key: "sct", short: "SCT", long: "Signed Certificate Timestamp"),
     (key: "pq", short: "PQ", long: "Post-Quantum"),
     (key: "mldsa", short: "ML-DSA", long: "Module-Lattice-Based Digital Signature Algorithm", 
-      desc: [@pq signature algorithm, previously known as CRYSTALS-Dilithium]),
+      description: [@pq signature algorithm, previously known as CRYSTALS-Dilithium]),
     (key: "slhdsa", short: "SLH-DSA", long: "Stateless Hash-Based Digital Signature Algorithm", 
-      desc: [@pq signature algorithm, previously known as Sphincs+]),
+      description: [@pq signature algorithm, previously known as Sphincs+]),
     (key: "fndsa", short: "FN-DSA", long: "FFT (fast-Fourier transform) over NTRU-Lattice-Based Digital Signature Algorithm",
-      desc: [@pq signature algorithm, previously known as FALCON]),
+      description: [@pq signature algorithm, previously known as FALCON]),
     (key: "sha", short: "SHA", long: "Secure Hash Algorithm"),
     (key: "mtc", short: "MTC", long: "Merkle Tree Certificate"),
     (key: "rp", short: "RP", long: "Relying Party"),
@@ -40,11 +40,12 @@
     (key: "ldap", short: "LDAP", long: "Lightweight Directory Access Protocol"),
     (key: "kem", short: "KEM", long: "Key Encapsulation Mechanism"),
     (key: "kemtls", short: "KEMTLS",
-      desc: [A alternative to the @tls 1.3 handshake that uses #glspl("kem") instead of signatures for server authentication]),
+      description: [An alternative to the @tls 1.3 handshake that uses #glspl("kem") instead of signatures for server authentication]),
     (key: "mac", short: "MAC", long: "Message Authentication Code"),
     (key: "ap", short: "AP", long: "Authenticating Party"),
     (key: "tai", short: "TAI", long: "Trust Anchor Identifier"),
     (key: "ecdsa", short: "ECDSA", long: "Elliptic Curve Digital Signature Algorithm"),
+    (key: "api", short: "API", long: "Application Programming Interface"),
 )
 
 #print-glossary(abbreviations, disable-back-references: true)

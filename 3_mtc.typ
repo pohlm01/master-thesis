@@ -162,7 +162,7 @@ Furthermore, certificate transparency is built into @mtc, as opposed to the X.50
 A significant downside of @mtc compared to the classical certificate infrastructure are the longer issuance times.
 There are two aspects to this: First, the issuance of the certificate itself takes up to `batch_duration` seconds, i.e., one hour assuming the default values, and second, the time the new tree heads propagated to a relevant number of @rp:pl.
 The first one will not make up for the major part of the difference in practice.
-For either certificate type -- X509 or @mtc -- the effective control over the domain needs to be validated upfront, which depending on the challenge type, requires @dns entries to propagate or @http pages to propagate across multiple servers and data centers for big deployments @lets_encrypt_challange_types @tls_issuance_delay.
+For either certificate type -- X509 or @mtc -- the effective control over the domain needs to be validated upfront, which, depending on the challenge type, requires @dns entries to propagate or @http pages to propagate across multiple servers and data centers for big deployments @lets_encrypt_challange_types @tls_issuance_delay.
 The second part, the propagation delay of new tree heads to the @rp:pl, will be more relevant.
 X.509 certificates are trusted by @rp:pl immediately after they are issued.
 In contrast to that, to verify @mtc:pl, the @rp must be up-to-date with the batch tree head for successful verification.
@@ -211,27 +211,84 @@ For this analysis, we compare the sizes of pre- and post-quantum ready @tls hand
 
 // Correction: Root certs are typically not sent. There may be multiple certificates with the same CN #emoji.face.explode.
 
+The analysis focuses on the authentication related cryptographic material exchanged during the handshake.
+This means, we do not include the bytes that encode the domain name, key usage constraints, `not_before` or `not_after` timestamps, and similar.
+We do also ignore the bytes required to establish a shared key used for the record layer, which is used for the encryption and authentication of the payload messages.
+Therefore, an X.509 handshake contains the following components.
+One signature for active authentication of the handshake, two signatures for @sct:pl, one signature for an @ocsp staple, one signature of the intermediate @ca on the End-Entity (EE) certificate, and one signature of the root @ca on the intermediate @ca.
+In addition, the EE and intermediate certificate contain one public key each.
+Summing this up, we count six signatures and two public keys.
+The last case in @tab:x509_size marked in yellow is a bit of a special case.
+It uses @kemtls and therefore sends a key encapsulation instead of a signature.
+For our analysis, we ignore this fact, as it serves the same objective, namely actively authenticating the handshake.
+
+@tab:x509_size contains one optimistic and one conservative but realistic estimate for each, a @pq and non @pq secure setup.
+Additionally, it contains one setup for @kemtls.
+The optimistic estimate assumes the usage of 256-bit ECDSA signatures and keys across the whole chain.
+About 24~% of all currently active certificates are issued for a ECDSA key, with about 53~% using a 384-bit and 47~% using a 256-bit key length.
+The remaining 76~% of all current EE certificates use an RSA algorithm. @merkle_town
+For the root @ca:pl stored in the Firefox root program, the numbers are a bit different.
+44~% (78) use a 4096-bit RSA key, 26~% (46) use a 2048-bit RSA key, 27~% use a 384-bit ECDSA key and only 2~% (4) use a 256-bit ECDSA key @firefox_root_store.
+Without telemetry data from browsers, it is unfortunately very hard to judge which are the most common combinations just from the percentage of certificates issued and the configuration of root @ca:pl, as there is a big imbalance on which @ca:pl and certificates are heavily used and which are not.
+We tried to get an impression by manually checking the certificate chains for the top 10 domains according to Cloudflare Radar @cloudflare_radar_domains.
+The results in @tab:top_10_signatures show that the landscape of used signatures is diverse.
+The significance is very limited, though, as five of the ten top domains do not serve a website and are purely used for @api calls (root-servers.net, googleapis.com, gstatic.com, tiktokcdn.com, amazonaws.com).
+The remaining five domains serve a website, but it seems likely that the majority of calls still originates from @api calls.
+Moreover, the server may adopt the presented certificate based on a specific subdomain and the user agent, which further complicates a holistic view.
+Nevertheless, we are convinced that the chosen combinations represent adequate examples.
+
+@tab:bikeshed_size shows example sizes for various parameters used for a @mtc setup.
+From the number of columns, it gets obvious that a @mtc contains way less asymmetric cryptography.
+The certificate contains a single key used to protect the integrity of the handshake.
+Together with the length of the inclusion proof, they determine the size of the authentication related cryptography.
+The size of the inclusion proof logarithmically depends on the number of certificates in a batch.
+To estimate the size for the inclusion proof, we checked the number of active certificates for the biggest @ca, Let's Encrypt.
+According to their own statistics, there exists about 420 million active certificates in October 2024, which matches with observations based on certificate transparency logs @merkle_town @lets_encrypt_stats.
+The logs further show that there are around one billion active certificates in total.
+For the first estimate on proof length, we take Let's Encrypt's recommendation to renew certificates every 60 days.
+Knowing that certificates issued by Let's Encrypt are always valid for 90 days, we can deduce that there exist around $420 dot 10^9 dot 60/90 = 280 dot 10^9$ authenticating parties using the services of Let's Encrypt.
+In a @mtc setup, @ap:pl are recommended to renew their certificates every ten days.
+Assuming that a batch lasts for one hour, each batch contains $(280 dot 10^9)/(10 dot 24) = 1.16 dot 10^9$ certificates.
+To accommodate this number of assertions, the Merkle Tree requires $ceil(log_2 1.16 dot 10^9)  = 21$ level, resulting in a proof length of 21 hashes.
+The current draft only allows #gls("sha")-256 as hashing algorithm and also future iterations are unlikely to extend the length of the digest, even if changing the algorithm.
+Therefore, the proof length for this scenario is $21 dot 32 "bytes" = 672 "bytes"$.
+
+The second scenario indicates a worst case scenario, assuming a big increase in @ap:pl or centralization to few certificate authorities.
+We map the one billion currently active certificates to one billion @ap:pl, which is very conservative as it ignores the transition periods, which we considered in the first scenario.
+Assuming again that each @ap renews their certificate every ten days and a batch size of one hour, the above calculation results in a proof length of $832 "bytes"$.
+It is interesting to realize that for every doubling of @ap:pl, the proof size grows by 32 bytes, as the tree depth grows logarithmically.
+
+// - 78 RSA 4096 bits
+// - 46 RSA 2048 bits
+// - 4  EC secp256r1
+// - 48 EC secp384r1
+
+\
+
+// - There exist ~420M active certificates issued by Let's Encrypt, the biggest of all CAs (Merkle Town 17.10.2024)
+// - Let's Encrypt reports ~420M active certificates (https://letsencrypt.org/stats/ 14.10.2024)
+// - Merkle Town reports \~1B active certificates in total (17.10.2024)
+// - It is recommended to renew the cert every 60 days
+//   - this would result in $420M dot 60/90 = 280M$ active subscribers.
+//   - In @mtc authenticating parties should reissue their certificate every 10 days. This results in $frac(280M, 10 dot 24) = 1.16M$ certificates in every batch.
+//   - This results in a path length of $log_2(1.16M) = 20.14 => 21$
+//   - Proof length $21 dot 32 "byte" = 672 "byte"$
+//   - For all active certificates: Conservatively assuming that there are 1B authenticating parties. $frac(1B, 10 dot 24) = 41.6M => log_2(41.6M) => 25.3 => 26 dot 32 = 832 "byte"$
+//   - logarithmic, thus each doubling in subscribers results in 32 bytes more
+
 #figure(
   x509_certificate_sizes,
   caption: [Bytes of authentication-related cryptographic material exchanged during the @tls handshake for various algorithms in the X.509 infrastructure.]
 ) <tab:x509_size>
 
-- There exist ~420M active certificates issued by Let's Encrypt, the biggest of all CAs (Merkle Town 17.10.2024)
-- Let's Encrypt reports ~420M active certificates (https://letsencrypt.org/stats/ 14.10.2024)
-- Merkle Town reports ~1B active certificates in total (17.10.2024)
-- It is recommended to renew the cert every 60 days
-  - this would result in $420M dot 60/90 = 280M$ active subscribers.
-  - In @mtc authenticating parties should reissue their certificate every 10 days. This results in $frac(280M, 10 dot 24) = 1.16M$ certificates in every batch.
-  - This results in a path length of $log_2(1.16M) = 20.14 => 21$
-  - Proof length $21 dot 32 "byte" = 672 "byte"$
-  - For all active certificates: Conservatively assuming that there are 1B authenticating parties. $frac(1B, 10 dot 24) = 41.6M => log_2(41.6M) => 25.3 => 26 dot 32 = 832 "byte"$
-  - logarithmic, thus each doubling in subscribers results in 32 bytes more
-
-
 #figure(
   bikeshed_certificate_sizes,
   caption: [Bytes of authentication-related cryptographic material exchanged during the @tls handshake using @mtc.]
 ) <tab:bikeshed_size>
+
+Comparing @tab:x509_size and @tab:bikeshed_size shows that 
+
+TODO Mention that there are also other size improvements due to the Bikeshed certificate format
 
 == Update mechanism considerations
 - Size

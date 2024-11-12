@@ -3,8 +3,8 @@
 #import "tables.typ": pq_signatures
 
 = Preliminaries <sec:preliminaries>
-This section will recap information relevant to understanding the topic of this thesis.
-It starts with an explanation of how the present @pki works, followed by a summary of the @tls protocol and a list of post-quantum secure signatures relevant to this thesis.
+This section will recap information relevant to understanding the architecture and its implications of @mtc, the topic of this thesis.
+It starts with an explanation of how the present @pki works, followed by a summary of the @tls protocol and a list of relevant post-quantum secure signatures.
 
 == Public Key Infrastructure <sec:pki>
 // - binds a public key of a set of information 
@@ -24,7 +24,8 @@ It starts with an explanation of how the present @pki works, followed by a summa
 A @pki is a crucial part of ensuring security in various digital systems.
 Its core functionality is to bind a cryptographic public key to a set of verified information @rfc_pki.
 Typically, this information represents an identity such as a domain name, company name, or the name of a natural person.
-In some cases, the verified information instead contains permission, or ownership, without an identity, such as the @rpki system, which is used to secure @bgp announcements and therefore harden the security of routing on the internet @rfc_rpki.
+However, in some cases, the verified information instead contains permissions, or ownership, without an identity.
+An example for that is the @rpki, which is used to secure @bgp announcements and therefore harden the security of routing on the internet @rfc_rpki.
 
 The verified information and public key are combined with a signature of the @ca and form a #emph([certificate]) that way.
 A #emph([relying party]) can subsequently verify the signature and trust the signed information given that it trusts the @ca.
@@ -36,7 +37,7 @@ This @pki infrastructure is often referred to as #emph([WebPKI]).
 
 Certificates have only a limited lifetime.
 Since 2020 Chrome and Apple enforce new certificates to be valid for at most 398 days @chrome_cert_lifetime @apple_cert_lifetime.
-Let's Encrypt, which is responsible for 57~% of all currently valid certificates, issues certificates for just 90 days @merkle_town @lets_encrypt_cert_lifetime.
+Let's Encrypt, which is responsible 57~% of all currently valid certificates, issues certificates for just 90 days @merkle_town @lets_encrypt_cert_lifetime.
 Let's Encrypt provides two reasons for their comparably short certificate lifetimes:
 
 + They want to limit the damage a miss issuance or key compromise can do.
@@ -54,7 +55,7 @@ There are two mechanisms in place for that:
 As it will become relevant later on, the following section will explain @ocsp a bit more in-depth.
 
 === OCSP
-@ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates occasionally, but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
+@ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates #underline[occasionally], but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
 The @ca includes an #gls("http", long: false) endpoint to an @ocsp responder in the certificates it issues, which relying parties such as browsers can query for recent information about whether a certificate is valid.
 @rfc_ocsp
 
@@ -65,7 +66,7 @@ The #glspl("ca") have to answer these status requests, which results in a high s
 If an @ocsp responder is not reachable, the relying party either cannot connect to the server or has to ignore the failure.
 Browsers opted for the second option in favor of service availability.
 This decision, however, limits the benefit of recent information, as an attacker can block access to the @ocsp endpoint. @ocsp_soft_fail
-Furthermore, @ocsp is not very privacy-friendly, as #glspl("ca") can build profiles of users based on which certificates they query.
+Furthermore, @ocsp raises privacy concerns, as #glspl("ca") can build profiles of users based on which certificates they query.
 
 @ocsp stapling mitigates these issues.
 Instead of the user querying the @ocsp responder, the server regularly does so and embeds the response in the certificate message of the @tls handshake. @rfc_ocsp_stapling[Section 8] @rfc_tls13[Section 4.4.2]
@@ -82,7 +83,7 @@ The following section explains why this is not self-evident and how to ensure it
 // - Now, each issued certificate must be logged publically, such that domain owners can be notified about certificates issued on their name
 
 Browser vendors ship a list of #glspl("ca") which are trusted to issue genuine certificates only.
-As of 21.09.2024, there are 153 trusted root #glspl("ca") built into Firefox and 135 in Chrome @firefox_root_store @chrome_root_store.
+As of November 6, 2024, there are 176 trusted root #glspl("ca") built into Firefox and 134 in Chrome @firefox_root_store @chrome_root_store.
 If only a single @ca misbehaves, this can tremendously impact the security of the whole system.
 One infamous example is the security breach of DigiNotar in 2011, which allowed the attacker to listen into the connection of about 300,000 Iranian citizens with Google. @diginotar
 This was possible, because the domain owner, i.e., Google, could not know that a certificate was issued in their name.

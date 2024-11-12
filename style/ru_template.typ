@@ -3,7 +3,7 @@
 
   show link: set text(fill: rgb(0, 0, 180))
   show ref: set text(fill: rgb(0, 0, 180))
-  show table: set text(size: 9pt)
+  show table: set text(size: 8pt)
   set figure(gap: 1em)
   set list(indent: 2em)
   set enum(indent: 2em)
@@ -12,6 +12,7 @@
 
   show figure.caption: set par(first-line-indent: 0em, hanging-indent: 1cm)
   show figure.caption: cap => {
+    // cap.body = box(cap.body)
     box(align(left, cap))
   }
   show figure: set block(spacing: 2em)

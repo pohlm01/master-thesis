@@ -39,7 +39,7 @@
   }
   
   table(
-    columns: 7,
+    columns: 8,
     
     fill: (x, y) => {
       if calc.odd(y) and y > 1 {
@@ -48,9 +48,9 @@
     },
 
     align: (x, y) => {
-      if calc.odd(y) and y > 1 {
+      if calc.odd(y) and y > 1 and x != 7{
         right
-      } else if y > 1 {
+      } else if y > 1 and x != 7{
         left
       } else {
         center
@@ -58,24 +58,24 @@
     },
 
     table.header(
-      table.cell(colspan: 4)[Signatures],             table.cell(colspan: 2)[Public Keys],  [$sum$],
-      [Handshake],[SCT + OCSP], [EE], [Intermediate], [EE], [Intermediate],                 [],
+      table.cell(colspan: 4)[Signatures],             table.cell(colspan: 2)[Public Keys],  [$sum$], [PQ],
+      [Handshake],[SCT + OCSP], [EE], [Intermediate], [EE], [Intermediate],                 [], []
     ),
     
-    [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [],
-    [64],     [192],    [64],     [64],     [32],     [32],     [448],
+    [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [],               [],
+    [64],     [192],    [64],     [64],     [32],     [32],     [448],            [#emoji.crossmark],
     
-    [ECDSA],  [ECDSA],  [RSA-2048], [RSA-4096], [RSA-2048], [RSA-2048], [],
-    [64],     [192],    [256],      [512],      [256],      [256],      [1,536],
+    [RSA-2048], [ECDSA],  [RSA-2048], [RSA-4096], [RSA-2048], [RSA-2048], [],       [],
+    [256],      [192],    [256],      [512],      [256],      [256],      [1,728],  [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [],
-    [2,420],  [7,260],  [2,420],  [2,420],  [1,312],  [1,312],  [17,144],
+    [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [],               [],
+    [2,420],  [7,260],  [2,420],  [2,420],  [1,312],  [1,312],  [17,144],         [#emoji.checkmark.box],
     
-    [ML-DSA], [ML-DSA], [ML-DSA], [SLH-DSA-128s], [ML-DSA], [ML-DSA], [],
-    [2,420],  [7,260],  [2,420],  [7,856],        [1,312],  [1,312],  [22,580],
+    [ML-DSA], [ML-DSA], [ML-DSA], [SLH-DSA-128s], [ML-DSA], [ML-DSA], [],         [],
+    [2,420],  [7,260],  [2,420],  [7,856],        [1,312],  [1,312],  [22,580],   [#emoji.checkmark.box],
 
-    y[ML-KEM], [ML-DSA], [ML-DSA], [ML-DSA],  y[ML-KEM],  [ML-DSA], [],
-     [1,088],  [7,260],  [2,420],  [2,420],   [1,184],    [1,312],  [15,684],
+    y[ML-KEM], [ML-DSA], [ML-DSA], [ML-DSA],  y[ML-KEM],  [ML-DSA], [],           [],
+     [1,088],  [7,260],  [2,420],  [2,420],   [1,184],    [1,312],  [15,684],     [#emoji.checkmark.box],
   )
 }
 
@@ -89,11 +89,11 @@
   }
 
   table(
-    columns: 4,
+    columns: 5,
     align: (x, y) => {
-      if calc.even(y) and y > 0 {
+      if calc.even(y) and y > 0 and x != 4{
         right
-      } else if y > 0 {
+      } else if y > 0  and x != 4{
         left
       } else {
         center
@@ -106,25 +106,57 @@
       }
     },
     
-    table.header([Handshake Authentication], [Public Key], [Proof Length], [$sum$]),
+    table.header([Handshake], [Public Key], [Proof Length], [$sum$], [PQ]),
 
-    [ECDSA],  [ECDSA],  [280M subscribers],  [],
-    [64],     [32],     [672],            [768],
+    [ECDSA],  [ECDSA],  [280M subscribers],  [], [],
+    [64],     [32],     [672],            [768], [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [280M subscribers],  [],
-    [2,420],  [1,312],  [672],            [4,404],
+    [ML-DSA], [ML-DSA], [280M subscribers],  [], [],
+    [2,420],  [1,312],  [672],            [4,404], [#emoji.checkmark.box],
 
-    y[ML-KEM], y[ML-KEM], [280M subscribers],  [],
-    [1,088],    [1,184],  [672],            [2,944],
+    y[ML-KEM], y[ML-KEM], [280M subscribers],  [], [],
+    [1,088],    [1,184],  [672],            [2,944], [#emoji.checkmark.box],
     
-    [ECDSA],  [ECDSA],  [1B subscribers],  [],
-    [64],     [32],     [832],            [928],
+    [ECDSA],  [ECDSA],  [1B subscribers],  [], [],
+    [64],     [32],     [832],            [928], [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [1B subscribers],  [],
-    [2,420],  [1,312],  [832],            [4,564],
+    [ML-DSA], [ML-DSA], [1B subscribers],  [], [],
+    [2,420],  [1,312],  [832],            [4,564], [#emoji.checkmark.box],
 
-    y[ML-KEM], y[ML-KEM], [1B subscribers],  [],
-    [1,088],    [1,184],  [832],            [3,104],
+    y[ML-KEM], y[ML-KEM], [1B subscribers],  [], [],
+    [1,088],    [1,184],  [832],            [3,104], [#emoji.checkmark.box],
     
   )
+}
+
+#let x509_certificates_top_10 = {
+  show table.cell: it => {
+    if it.y == 0 {
+      strong(it)
+    } else {
+      it
+    }
+  }
+    table(
+      columns: 6,
+  
+      table.header(
+        [Domain], [Handshake], [SCT], [EE], [Intermediate], [SHA-256 fingerprint],
+      ),
+      
+      [gooogle.com], [256-bit ECDSA],  [2x 256-bit ECDSA],  [RSA-2048],  [RSA-4096],
+      [`31:82:1B:51:E6:1F:D4:D5:18:9B:0C:1B:07:BD:4F:A9: 54:5B:26:A9:BC:A5:3C:E7:CE:0A:A9:F3:72:24:93:2C`],
+      
+      [apple.com], [RSA-2048], [4x 256-bit ECDSA], [RSA-2048], [RSA-2048],
+      [`8B:29:CD:F1:D9:4E:D6:19:13:19:BF:47:AB:05:20:16: 8D:0D:21:D5:80:3E:5E:CA:A2:FE:40:A7:BA:BE:1B:AD`],
+      
+      [facebook.com], [256-bit ECDSA], [3x 256-bit ECDSA], [RSA-2048],  [RSA-2048],
+      [`AA:52:70:47:1F:CB:25:A5:47:0D:2F:04:21:52:23:2A: 80:7C:EE:D5:C0:D0:F8:41:54:B4:C3:C7:EF:FA:84:B4`],
+      
+      [microsoft.com], [RSA-2048], [3x 256-bit ECDSA], [RSA-4096], [RSA-2048],
+      [`5E:7E:E1:BF:7B:02:DE:64:07:57:84:02:E6:8F:30:E4: 07:4A:4C:68:04:DA:E9:B7:12:50:70:E2:6E:A5:6B:F0`],
+  
+      [cloudflare.com], [256-bit ECDSA], [2x 256-bit ECDSA], [256-bit ECDSA], [384-bit ECDSA], 
+      [`5A:18:79:DD:30:77:B1:51:E6:96:E2:BA:6D:D6:9F:E2: 77:EB:2E:BE:D6:82:D2:00:1E:A2:05:DB:94:A1:09:FA`]
+    )
 }

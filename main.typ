@@ -39,17 +39,19 @@
 
 #register-glossary(abbreviations)
 
-#include "1_introduction.typ"
 // #word-count(total => [
-#include "2_preliminaries.typ"
+#include "1_introduction.typ"
 // #total.words words in total])
+#include "2_preliminaries.typ"
 #include "3_mtc.typ"
 #include "5_contributions.typ"
 #include "6_conclusion.typ"
 
 
+
 #show: appendix
 #include "A_abbreviations.typ"
+#include "B_appendix.typ"
 
 = Bibliography
 #bibliography("references.bib", title: none)
