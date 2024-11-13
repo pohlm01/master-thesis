@@ -205,9 +205,7 @@
   \<some_dir>\
   - \<tai\>
     - 0.mtc
-    - 1.mtc
-    - 2.mtc
-    - ...
+    - 240.mtc
     - ca-params
     - private-key.pem
   ]

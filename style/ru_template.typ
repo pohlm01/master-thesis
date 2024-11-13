@@ -8,7 +8,8 @@
   set list(indent: 2em)
   set enum(indent: 2em)
   set bibliography(style: "./ieee.csl")
-  set cite(style: "springer-basic")
+  set cite(style: "./ieee.csl")
+  // set cite(style: "springer-basic")
 
   show figure.caption: set par(first-line-indent: 0em, hanging-indent: 1cm)
   show figure.caption: cap => {

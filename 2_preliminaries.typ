@@ -55,7 +55,7 @@ There are two mechanisms in place for that:
 As it will become relevant later on, the following section will explain @ocsp a bit more in-depth.
 
 === OCSP
-@ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates #underline[occasionally], but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
+@ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list with all blocked certificates occasionally, but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
 The @ca includes an #gls("http", long: false) endpoint to an @ocsp responder in the certificates it issues, which relying parties such as browsers can query for recent information about whether a certificate is valid.
 @rfc_ocsp
 

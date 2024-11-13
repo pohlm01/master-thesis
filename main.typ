@@ -44,6 +44,7 @@
 // #total.words words in total])
 #include "2_preliminaries.typ"
 #include "3_mtc.typ"
+#include "4_comparison.typ"
 #include "5_contributions.typ"
 #include "6_conclusion.typ"
 
