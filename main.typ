@@ -22,11 +22,11 @@
   ),
   (
     function: "Second Reader",
-    name: "TBD",
+    name: "dr. Simona Samardjiska",
   ),
   (
     function: "Daily Supervisor",
-    name: "Marlon Baeten",
+    name: "Marlon Baeten M.Sc.",
   )),
 )
 
