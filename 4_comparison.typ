@@ -4,15 +4,15 @@
 
 = Comparison of MTC with the Current WebPKI <sec:mtc_pki_comparison>
 
-From the introduction to @pki in @sec:pki and the explanation of @mtc in @sec:mtc, it might already be become obvious that there are big differences between these architectures.
+From the introduction to @pki in @sec:pki and the explanation of @mtc in @sec:mtc, it becomes obvious that there are big differences between these architectures.
 This chapter presents the results of the analysis we conducted about the differences and the advantages and disadvantages the architectures result in.
 
 The most obvious change is the significant reduction of the certificate lifetime.
 The authors of @mtc propose a lifetime of 14 days.
-As of October 2024, @tls certificates may be issued for at most 13 months, i.e., 398 days @chrome_cert_lifetime @apple_cert_lifetime and are often issued for 90 days, which is still more than 6 times as long as the lifetime of @mtc.
+As of October 2024, @tls certificates may be issued for at most 13 months, i.e., 398 days @chrome_cert_lifetime @apple_cert_lifetime and are often issued for 90 days, which is still more than six times as long as the lifetime of @mtc.
 At the same time, it is likely that the validity periods of classical certificates will decrease further.
-In October 2024, Apple published a proposal to the CA/Browser Forum suggesting a gradual reduction of the maximum certificate lifetime to 45 days by September 2027. @apple_45_days_cert
-It is unclear if this proposal will get accepted, but it is clear that the maximum certificate lifetime will only decrease in the future, reducing the gap to @mtc.
+In October 2024, Apple published a proposal to the CA/Browser Forum suggesting a gradual reduction of the maximum certificate lifetime to 45 days by September 2027 @apple_45_days_cert.
+It is unclear if this proposal will be accepted, but it is clear that the maximum certificate lifetime will only decrease in the future, reducing the gap to @mtc.
 
 Another notable difference is that the @mtc draft explicitly ignores certificate revocation.
 This is a direct result of the short certificate lifetimes; if certificates live as long as it takes for a revocation to effectively propagate, certificate revocation is not necessary anymore.
@@ -26,16 +26,18 @@ Instead, the CA/Browser forum tightens the requirements for @crl:pl and Mozilla 
 Furthermore, certificate transparency is built into @mtc, as opposed to the X.509 certificate infrastructure, where it was added later on.
 
 A significant downside of @mtc compared to the classical certificate infrastructure are the longer issuance times.
-There are two aspects to this: First, the issuance of the certificate itself takes up to `batch_duration` seconds, i.e., one hour assuming the default values, and second, the time the new tree heads propagated to a relevant number of @rp:pl.
+There are two aspects to this: First, the issuance of the certificate itself takes up to `batch_duration` seconds, i.e., one hour assuming the default values, and second, the time the new tree heads propagate to a relevant number of @rp:pl.
 The first one will not make up for the major part of the difference in practice.
 For either certificate type -- X509 or @mtc -- the effective control over the domain needs to be validated upfront, which, depending on the challenge type, requires @dns entries to propagate or @http pages to propagate across multiple servers and data centers for big deployments @lets_encrypt_challange_types @tls_issuance_delay.
+Therefore, classical certificate issuance often takes up to an hour as well, though in specific configurations it may work a lot faster.
 The second part, the propagation delay of new tree heads to the @rp:pl, will be more relevant.
 X.509 certificates are trusted by @rp:pl immediately after they are issued.
 In contrast to that, to verify @mtc:pl, the @rp must be up-to-date with the batch tree head for successful verification.
-In practice, we do not expect updates from the trust services to the @rp happening substantially more frequently than every six hours.
+In practice, we do not expect updates from the Transparency Service to the @rp happening substantially more frequently than every six hours.
 Therefore, the delay until a new @mtc is broadly usable may be up to a few days in the worst case.
 
-To determine how big the impact of the long issuance delay is, it is helpful to understand under which circumstances it requires a fast issuance fallback.
+To determine how big the impact of the long issuance delay is, it is helpful to understand which circumstances require fast certificate issuance.
+In such a situation, the Internet-Draft assumes the existence of a fallback mechanism for fast issuance.
 This could be an X.509 certificate or another, future mechanism that allows for fast issuance.
 The size, and therefore performance, downside of large certificate chains only last for a limited time, until @rp:pl updated their trust stores to include the new tree heads and can again use the size efficient @mtc mechanism.
 There are two main reasons why a fast issuance is required; for a new domain and for an unplanned move of the domain.
@@ -57,12 +59,6 @@ This shows that the chance of hitting a fallback is very unlikely, and thus the 
 //   - Certificates are short-lived and therefore revocation mechanisms such as @ocsp and @crl are not necessary anymore.
 
 == Certificate Size <sec:certificate_size>
-The main improvement of @mtc over classical X.509 certificates is the size transmitted between the @ap and @rp during a @tls handshake.
-This section investigates this difference in more detail and analysis the newly required transmissions from the Transparency Service to the @rp.
-On a large scale, every byte saved during a @tls handshake equates in a relevant reduction as the handshakes take place before almost every connection.
-For this analysis, we compare the sizes of pre- and post-quantum ready @tls handshakes using the current Web@pki infrastructure (@tab:x509_size) with the size estimated for @mtc.
-
-
 // - A standard certificate chain contains the following signatures
 //   - EE  
 //     - 2x SCT
@@ -76,15 +72,18 @@ For this analysis, we compare the sizes of pre- and post-quantum ready @tls hand
 // That are 6 signatures in total and 3 public keys (+1 signature in the `CertificateVerify` if not KEMTLS)
 
 // Correction: Root certs are typically not sent. There may be multiple certificates with the same CN #emoji.face.explode.
-
+On a large scale, every byte saved during a @tls handshake is a relevant reduction, as the handshakes take place before almost every connection.
+Therefore, we investigate the main improvement of @mtc over classical X.509 certificates in this section, namely the size reduction of the @tls handshake.
+//Additionally, we analyze the newly required updates from the Transparency Service to the @rp.
 The analysis focuses on the authentication related cryptographic material exchanged during the handshake.
-This means, we do not include the bytes that encode the domain name, key usage constraints, `not_before` or `not_after` timestamps, and similar.
+This means, we do not include the bytes that encode the domain name, key usage constraints, validity timestamps, and similar.
 We do also ignore the bytes required to establish a shared key used for the record layer, which is used for the encryption and authentication of the payload messages.
 Therefore, an X.509 handshake contains the following components.
-One signature for active authentication of the handshake, two signatures for @sct:pl, one signature for an @ocsp staple, one signature of the intermediate @ca on the End-Entity (EE) certificate, and one signature of the root @ca on the intermediate @ca.
-In addition, the EE and intermediate certificate contain one public key each.
+One signature for active authentication of the handshake, two signatures for @sct:pl, one signature for an @ocsp staple, one signature of the intermediate @ca on the @ee certificate, and one signature of the root @ca on the intermediate @ca.
+In addition, the @ee and intermediate certificate contain one public key each.
+The root certificate is typically not sent to the @rp, as it is expected to know it already.
 Summing this up, we count six signatures and two public keys.
-The last case in @tab:x509_size marked in yellow is a bit of a special case.
+The last case in @tab:x509_size, marked in yellow, is a special case.
 It uses @kemtls and therefore sends a key encapsulation instead of a signature.
 For our analysis, we ignore this fact, as it serves the same objective, namely actively authenticating the handshake.
 
@@ -92,26 +91,31 @@ For our analysis, we ignore this fact, as it serves the same objective, namely a
 Additionally, it contains one setup for @kemtls.
 The optimistic estimate assumes the usage of 256-bit @ecdsa signatures and keys across the whole chain.
 About 24~% of all currently active certificates are issued for an @ecdsa key, with about 53~% using a 384-bit and 47~% using a 256-bit key length.
-The remaining 76~% of all current EE certificates use an RSA algorithm. @merkle_town
+The remaining 76~% of all current @ee certificates use an RSA algorithm. @merkle_town
 For the root @ca:pl stored in the Firefox root program, the numbers are a bit different.
 44~% (78) use a 4096-bit RSA key, 26~% (46) use a 2048-bit RSA key, 27~% use a 384-bit @ecdsa key and only 2~% (4) use a 256-bit @ecdsa key @firefox_root_store.
-Without telemetry data from browsers, it is unfortunately very hard to judge which are the most common combinations just from the percentage of certificates issued and the configuration of root @ca:pl, as there is a big imbalance on which @ca:pl and certificates are heavily used and which are not.
+Without telemetry data from browsers, it is not possible to judge which are the most common combinations just from the percentage of certificates issued and the configuration of root @ca:pl, as there is a big imbalance on which @ca:pl and certificates are heavily used and which are not.
 We tried to get an impression by manually checking the certificate chains for the top 10 domains according to Cloudflare Radar @cloudflare_radar_domains.
 The results in @tab:top_10_signatures show that the landscape of used signatures is diverse.
 The significance is very limited, though, as five of the ten top domains do not serve a website and are purely used for @api calls (root-servers.net, googleapis.com, gstatic.com, tiktokcdn.com, amazonaws.com).
-The remaining five domains serve a website, but it seems likely that the majority of calls still originates from @api calls.
-Moreover, the server may adopt the presented certificate based on a specific subdomain and the user agent, which further complicates a holistic view.
+The remaining five domains serve a website, but it seems likely that the majority of calls still originates from @api calls, which may use different certificate chains.
+Moreover, the server may adopt the presented certificate based on a specific subdomain, the user agent, and other factors, which further complicates a holistic view.
 Nevertheless, we are convinced that the chosen combinations represent adequate examples.
 
+The signatures for @sct:pl is more uniform.
+RFC 6962 @rfc_ct, the specification of certificate transparency, only allows either a 256-bit @ecdsa or a @rsa signature.
+The Chrome source code solely contains logs that sign with a 256-bit @ecdsa @chromium_ct_log_list.
+Therefore, we assume a 256-bit @ecdsa for the @sct:pl in all cases.
+
 @tab:bikeshed_size shows example sizes for various parameters used for a @mtc setup.
-From the number of columns, it gets obvious that a @mtc contains way less asymmetric cryptography.
+From the number of columns, it becomes obvious that a @mtc contains way less asymmetric cryptography.
 The certificate contains a single key used to protect the integrity of the handshake.
 Together with the length of the inclusion proof, they determine the size of the authentication related cryptography.
 The size of the inclusion proof logarithmically depends on the number of certificates in a batch.
 To estimate the size for the inclusion proof, we checked the number of active certificates for the biggest @ca, Let's Encrypt.
 According to their own statistics, there exists about 420 million active certificates in October 2024, which matches with observations based on certificate transparency logs @merkle_town @lets_encrypt_stats.
 The logs further show that there are around one billion active certificates in total.
-For the first estimate on proof length, we take Let's Encrypt's recommendation to renew certificates every 60 days.
+For the first estimate of the proof length, we take Let's Encrypt's recommendation to renew certificates every 60 days.
 Knowing that certificates issued by Let's Encrypt are always valid for 90 days, we can deduce that there exist around $420 dot 10^9 dot 60/90 = 280 dot 10^9$ authenticating parties using the services of Let's Encrypt.
 In a @mtc setup, @ap:pl are recommended to renew their certificates every ten days.
 Assuming that a batch lasts for one hour, each batch contains $(280 dot 10^9)/(10 dot 24) = 1.16 dot 10^9$ certificates.
@@ -153,28 +157,28 @@ It is interesting to realize that for every doubling of @ap:pl, the proof size g
 ) <tab:bikeshed_size>
 
 Comparing @tab:x509_size and @tab:bikeshed_size shows that @mtc has big size advantages, especially when using @pq algorithms.
-Focusing at the classical case first:
+Focusing on the classical case first:
 In the best X.509 case, when using only 256-bit @ecdsa for all signatures, @mtc performs slightly worse in terms of the number of authentication bytes.
-While the X.509 case requires 448 authentication-related bytes, @mtc requires 768 bytes, which is a absolute difference of 320 bytes corresponding to 41.67~%.
+While the X.509 case requires 448 authentication-related bytes, @mtc requires 768 bytes, which is an absolute difference of 320 bytes, i.e., the X.509 certificate is 41.67~% smaller than the @mtc.
 Comparing @mtc to a mostly #gls("rsa", long: false)-based certificate, @mtc shows it advantages, as the X.509 certificate grows to 1,728~bytes.
 Therefore, the @mtc is 960 or 800 bytes smaller, depending on the number of active @ap:pl in the @mtc system.
 This corresponds to a reduction of 55.56~% or 46.30~%, respectively.
 Moving on to the @pq algorithms, the drastic improvement of @mtc shows up.
-Compared to the best X.509 case using only @mldsa signatures, @mtc saves 12,740 or 12,580 bytes, resulting in 74.31~% or 73.38~% depending on the number of active @ap:pl.
+Compared to the best X.509 case using only @mldsa signatures, @mtc saves 12,740 or 12,580 bytes, resulting in a reduction by 74.31~% or 73.38~% depending on the number of active @ap:pl.
 Moreover, it seems realistic that a @ca would use @slhdsa instead of @mldsa due to its higher security guarantees.
-This further increases the advantage of @mtc to 80.05~% or 79.79~%, saving 18,176 or 18,016 byte, respectively.
+This further increases the advantage of @mtc to 80.05~% or 79.79~%, saving 18,176 or 18,016 bytes, respectively.
 When replacing the @mldsa key and signature with @mlkem, the handshake is 1,460 bytes smaller, independent of @mtc or X.509.
-Nevertheless, the relative gain of @kemtls is bigger for @mtc as it exchanges less bytes in the baseline scenario.
+Nevertheless, the relative gain of @kemtls is bigger for @mtc as it exchanges fewer bytes in the baseline scenario.
 
 // - In the best classical case, X.509 contains less authentication bytes
 // - Compared to a realistic setup, @mtc with classical crypto already saves about 1000 bytes.
 // - The best (non-KEMTLS) case saves $17,144-4,404=12,740$, i.e., 74.31~%
-// - It seems realistic the the @ca will use SLH-DSA (in the beginning), which will increase the difference to $22,580-4,404=18,176$, i.e., 80.05~%
+// - It seems realistic that the @ca will use SLH-DSA (in the beginning), which will increase the difference to $22,580-4,404=18,176$, i.e., 80.05~%
 // - A big increase in @ap does not change a lot: $17,144-4,564=12,580$, i.e., 73.38~% / $22,580-4,564=18,016$, i.e., 79.79~%
 // - @kemtls makes the savings slightly more impressive: $15,684 - 2,944 = 12740$, i.e., 81.23~% or $15,684 - 2,944 = 12580$, i.e., 80.21~%
 
 // TODO Mention that there are also other size improvements due to the Bikeshed certificate format
-In addition, size improvements related to authentication cryptography, @mtc brings additional size improvements by using a new certificate format.
+In addition to size improvements related to authentication cryptography, @mtc brings additional size improvements by using a new certificate format.
 X.509 is based on @asn1 and certificates are transferred in @der encoding.
 The @mtc Internet-Draft defines a new certificate format called Bikeshed certificate.
 The name is meant as a placeholder, and the authors aim to replace it before it potentially becomes a standard.
@@ -195,7 +199,7 @@ The certificate chain for `www.google.com`#footnote([SHA-256 fingerprint \ `37:9
 The chain contains 256-bit ECDSA, RSA-2048, and RSA-4096 bit keys and signatures.
 Summing them up, the authentication related bytes transmitted in the certificate chain result in 1,248 bytes.
 Note that this does not contain the @ocsp staple or handshake signature included in @tab:x509_size as they are not included in the certificate chain itself.
-In comparison, a comparable Bikeshed certificate with a 256-bit ECDSA key would contain 704 authentication related bytes, assuming $280 dot 10^9$ active @ap:pl.
+In comparison, a comparable Bikeshed certificate with a 256-bit ECDSA key would contain 704 authentication related bytes, assuming 280 million active @ap:pl.
 The full certificate would be 785 bytes in size.
 Thus, the X.509 certificate chain has an overhead of 1,238 bytes or 99~% while the Bikeshed certificate has an overhead of 81 bytes or 12~%.
 Even though this is only a single example, this shows that the X.509/@asn1 format produces a significant overhead, that can be reduced by introducing a new certificate format.
@@ -204,16 +208,18 @@ Even though this is only a single example, this shows that the X.509/@asn1 forma
 As with many optimizations, one does not get the results from @sec:certificate_size without a trade.
 The @mtc architecture requires the @rp to regularly update the tree heads it trusts, as shown in Step 5 of @fig:mtc_overview.
 To pull the updates, the @rp regularly requires a connection to the Transparency Service.
-For the @tls use cases, this is barely a problem.
-There are a few common use cases:
+
+This update mechanism is the reason why the @mtc architecture cannot replace all X.509 based @pki:pl.
+For the @tls use cases, the updates are feasible.
+There are a few common use cases for @tls:
 For public websites served via @https and visited by a browser, the browser requires a connection to the internet anyway.
 For public @api:pl, the connecting @rp requires an internet connection as well.
 For services hosted in a corporate network that does not allow connections to the public internet, it should not be a problem either.
-In this case, corporate networks should use internal @ca:pl, instead of relying on public @ca.
-On the contrary, non @tls use cases that X.509 certificates are not covered by the @mtc architecture, which is also clearly stated in the Internet-Draft.
-For example, smart cards could not regularly the stored certificates, as they do not have internet connection.
+In this case, corporate networks should use an internal @ca, instead of relying on public @ca:pl.
+On the contrary, non @tls use cases that rely on X.509 certificates are not covered by the @mtc architecture, which is also clearly stated in the Internet-Draft.
+For example, smart cards could not regularly update the stored certificates, as they do not have an internet connection.
 Signing documents or code would not work either, as an entity verifying the signature would need to remember all trusted batch tree heads of the past.
-In other words, validating the signature should happen temporally close to the certificate issuance, in the order of few weeks at most.
+In other words, validating the signature produced by the certified key should happen temporally close to the certificate issuance, in the order of few weeks at most.
 
 // - @rp:pl have to be updated regularly.
 // - Requires a constant connection to the internet and validation of the certificate temporally close to certificate issuance
@@ -223,7 +229,7 @@ In other words, validating the signature should happen temporally close to the c
 //     - secure boot
 //     - document or code signing
 
-An important metric for the update mechanism is the amount of data that needs to be transferred from the Transparency Service to the @rp:pl.
+For the use cases that allow a regular update, an important metric for the update mechanism is the amount of data that needs to be transferred from the Transparency Service to the @rp:pl.
 We base this estimation on a web surfing use case with the following assumptions:
 We assume 150 trusted root @ca:pl, which is somewhere between the number of @ca:pl currently in the root store of Firefox and Chrome @firefox_root_store @chrome_root_store.
 Furthermore, we assume each @ca uses a batch duration of one hour and lifetime of 14 days, as recommended in the Internet-Draft @rfc_mtc[Section 5.1].
@@ -231,13 +237,13 @@ According to a recent post by Devon O’Brien, working in the Chrome Security te
 Therefore, we assume six hours as the default browser update frequency for @mtc tree heads.
 Lastly, we assume each @ca to use #gls("slhdsa")-128s to sign their validity window as the security guarantees for this algorithm are better compared to @mldsa, which is relevant for a long-lasting key.
 
-In addition to the basic assumptions, there are a few options on what exactly a @rp pulls from the Transparency Service.
+In addition to the basic assumptions, the update size depends on what exactly a @rp pulls from the Transparency Service.
 The straight forward way is to regularly pull all signed validity windows of all trusted root @ca:pl.
 Each validity window contains 7,856 bytes for the signature, 4 bytes for the batch number, and $24 dot 14 dot 32 = 10,752$ bytes for the three heads.
 Multiplying this with 150 trusted @ca:pl, each update transfers around 2.8 Megabyte, independent of the update cadence.
 As an optimization, the transfer could only contain the tree heads that the @rp does not know yet.
-This reduces the bytes transferred for the tree heads to $6 dot 32 = 192$ bytes in the case that a @rp updates exactly every six hours.
-The signature would match the most recent batch number transferred, as it covers the tree heads for all valid batch tree heads anyway.
+This reduces the bytes transferred for the tree heads to $6 dot 32 = 192$ bytes if a @rp updates exactly every six hours.
+The signature would match the most recent batch number transferred, as it covers all valid batch tree heads anyway.
 In other words: The Transparency Service does not need to transfer one signature for each batch tree head, but only one per update per @ca.
 Together, this results in $150 dot (7,856 + 4 + 192) approx 1.2$~Megabyte for each update every six hours.
 During a day, that accumulates to 4.8 Megabytes per @rp.
@@ -251,9 +257,10 @@ As mentioned, leaving out the @ca signatures requires trust in Transparency Serv
 It is important to note that the Transparency Service that the browser uses to retrieve its updates is likely operated by the browser vendor.
 In practice, users must trust their browser vendor in the first place to not build in any backdoors or install untrusted @ca:pl.
 To mitigate potential damage from this trust relation, a browser vendor could set up a verifiable, transparent update log that all updates must be pushed to before they can be installed by the browser.
-A similar setup -- namely Firmware transparency -- is described as part of the Tillian project which consists of software to build a transparency log, mostly used for #gls("ct", long: true) @trillian_firmware_transparency.
-However, the precise realization is not straightforward as the present transparency log implementation relies on classical signatures such as @rsa or @ecdsa.
-
+A similar setup -- namely Firmware transparency -- is described as part of the Tillian project containing software to build a transparency log, mostly used for #gls("ct", long: true) @trillian_firmware_transparency.
+However, the precise realization is not straightforward as the present transparency log implementations rely on classical signatures such as @rsa or @ecdsa.
+Additionally, the mechanism to bootstrap the updates requires some engineering, as it cannot be assumed that the browser knows recent @mtc roots that could be used to set up a @tls based update connection.
+Potentially, the update mechanism requires large X.509 certificates with @pq cryptography, at least in some cases.
 
 // - Size
 //   - Should not send whole signed validity window every day
@@ -268,24 +275,57 @@ However, the precise realization is not straightforward as the present transpare
 //       - Times the number of CAs: $150 dot 18,608 = 2,791,200 => 2.7 "MB"$
 //     - Daily update without the signatures:
 
-Besides small update sizes, it is desirable to have a common data and file structure on an operating system.
+Besides small update sizes, it is desirable to store @mtc related data on a common place on an @os.
+Having a common place for certificates on a single machine has the multiple advantages.
+Firstly, it reduces the number of updates required in the @mtc architecture.
+Instead of every application pulling their own updates, the @os can take care of it for various applications depending on up-to-date tree heads.
+Furthermore, applications do not have to implement the update logic themselves.
+This does save development resources and reduces the attack surface as there exist fewer different implementations.
+
 Nowadays, Linux based operating systems such as Debian, RHEL, or Android store certificates on a well known location for other programs to access it @go_root_store.
-Debian, as an example, provides the trusted root certificates as a normal system package, which can be updated with the built-in package manager @debian_ca_certificates.
-We use the X.509 file structure of Debian as an inspiration for the proposed file structure.
+// Debian, as an example, provides the trusted root certificates as a normal system package, which can be updated with the built-in package manager @debian_ca_certificates.
+We use the X.509 file structure of Debian as an inspiration to propose a common file structure.
 @fig:mtc_client_file_tree shows the file structure we propose for a @rp.
 The absolute path (`/etc/ssl/mtc`) might vary per distribution.
 The structure thereafter is more interesting.
+We propose that each @ca lives in its own subdirectory, with the Issuer ID as the directory name.
+The Issuer ID for @mtc:pl is an @oid, so directory names would look like `123.54.2`.
+The directory contains the @ca parameters, the root hashes of the validity window and optionally the signature of the validity window.
+As mentioned above, the signature is not necessary if the @rp trusts the Transparency Service and update mechanism.
+In this case, the Transparency Service is not operated by a browser vendor, but maybe by the @os vendor.
+Still, the argument remains that a user needs to trust its @os vendor either way and may therefore skip synchronizing the signature.
+In the proposed structure, the validity window contains the same data as specified in the Internet-Draft, namely the batch number and the hashes of all valid tree heads.
+The @ca parameters contain the following information:
+- The issuer ID, i.e., the @oid of the @ca
+- The signature scheme used to sign the validity windows
+- The public key of the @ca. It must match the signature scheme.
+- The proof type used for inclusion proof in the certificates. As of now, the only option is a #gls("sha")-256 based Merkle Tree inclusion proof.
+- The start time of the @ca, i.e., the time the @ca was set up. This is required to calculate the validity of a certificate based on its batch number.
+- The batch duration. This is required to calculate the validity of a certificate based on its batch number as well.
+- The validity window size. Again, This is required to calculate the validity of a certificate based on its batch number.
+
 
 #figure(
   box(mtc_client_file_tree),
-  caption: [Proposed file structure on a @rp. The signature only exists on @rp:pl that are willing to perform the @pq signature check themselves. The public key is part of the @ca parameters]
+  caption: [Proposed file structure on a @rp. The signature only exists on @rp:pl that are willing to perform the @pq signature check themselves. The public key of the @ca is part of the @ca parameters.]
 ) <fig:mtc_client_file_tree>
+
+For a server setup, it is likely not as important to aim for a homogeneous file structure.
+Nevertheless, it is worth making explicit what data is required by an @ap to function in the @mtc architecture.
+@fig:mtc_server_file_tree provides an example file structure that could be used.
+As for the file structure of the @rp, we propose to create one directory per Issuer ID.
+Within that, the valid @mtc certificates are stored, named as `<batch_number>.mtc`.
+Adhering to the recommended parameters, there are either one or two valid certificates at a time, because of the overlapping of old and new certificates.
+For the @ap, the only relevant information from the @ca parameters are the start time, batch duration, and validity window size to be able to calculate if a certificate is expired.
+The Issuer ID is included in the certificates, but it is likely handy to include it in the @ca parameters nevertheless.
+We propose to keep the format for the @ca parameters the same for @rp and @ap, such that they can share the same parser logic.
+At the same time, storing some information on the @ap that is not strictly required, does not seem to entail significant downsides.
+
 
 #figure(
   box(mtc_server_file_tree),
-  caption: [Proposed file structure on an @ap.]
+  caption: [Example file structure on an @ap.]
 ) <fig:mtc_server_file_tree>
 
-- Server memory efficiency can be improved by only storing the different proofs, but not the full certificate. Instead, the public key is stored only once and the cert is dynamically built.
 
-- The signature over the validity window has the advantage that a CA would need to keep a split view over the whole window instead of for a single batch. See https://github.com/davidben/merkle-tree-certs/issues/84
+// - The signature over the validity window has the advantage that a CA would need to keep a split view over the whole window instead of for a single batch. See https://github.com/davidben/merkle-tree-certs/issues/84

@@ -7,3 +7,4 @@
 - Integrate Trust Anchor Identifiers into example CA implementation https://github.com/bwesterb/mtc/issues/3
 - Use array embedding for Certificate message https://github.com/davidben/merkle-tree-certs/pull/95
 - Discussion on TAI for certificate type negotiation: https://github.com/davidben/tls-trust-expressions/issues/76
+- Propose file/data structure https://github.com/davidben/merkle-tree-certs/issues/97

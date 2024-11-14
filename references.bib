@@ -70,6 +70,19 @@
 	date = {2020-06-23},
 }
 
+@report{rfc_ct,
+	title = {Certificate Transparency},
+	url = {https://datatracker.ietf.org/doc/rfc6962},
+	abstract = {This document describes an experimental protocol for publicly logging the existence of Transport Layer Security ({TLS}) certificates as they are issued or observed, in a manner that allows anyone to audit certificate authority ({CA}) activity and notice the issuance of suspect certificates as well as to audit the certificate logs themselves. The intent is that eventually clients would refuse to honor certificates that do not appear in a log, effectively forcing {CAs} to add all issued certificates to the logs. Logs are network services that implement the protocol operations for submissions and queries that are defined in this document.},
+	number = {{RFC} 6962},
+	institution = {Internet Engineering Task Force},
+	type = {Request for Comments},
+	author = {Laurie, Ben and Langley, Adam and Kasper, Emilia},
+	urldate = {2024-11-14},
+	date = {2013-06},
+	doi = {10.17487/RFC6962},
+}
+
 @online{chrome_enforce_ct,
 	title = {Certificate Transparency Enforcement in Google Chrome},
 	url = {https://groups.google.com/a/chromium.org/g/ct-policy/c/wHILiYf31DE/m/iMFmpMEkAQAJ},
@@ -304,6 +317,13 @@ Websites and people who visit them will not be affected by this change, but some
 Let's Encrypt Growth Percentage of Web Pages Loaded by Firefox Using {HTTPS} (14-day moving average, source: Firefox Telemetry)
 Let's Encrypt Certificates Issued Per Day},
 	urldate = {2024-11-07},
+}
+
+@software{chromium_ct_log_list,
+	title = {log\_list.json - Chromium Code Search},
+	url = {https://source.chromium.org/chromium/chromium/src/+/ddf98abcbd6101328e98ffd05ab07d6e8741f518:components/certificate_transparency/data/log_list.json},
+	version = {ddf98ab},
+	urldate = {2024-11-14},
 }
 
 @online{merkle_town,

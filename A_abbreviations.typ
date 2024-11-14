@@ -52,6 +52,8 @@
       description: [@pq @kem algorithm, previously known as CRYSTALS-Kyber]),
     (key: "asn1", short: "ASN.1", long: "Abstract Syntax Notation One"),
     (key: "der", short: "DER", long: "Distinguished Encoding Rules"),
+    (key: "ee", short: "EE", long: "End-Entity"),
+    (key: "os", short: "OS", long: "Operating System")
 )
 
 #print-glossary(abbreviations, disable-back-references: true)
