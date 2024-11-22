@@ -18,7 +18,7 @@
   author: author,
   others: ((
     function: "Supervisor",
-    name: "dr. it. Bart Mennink",
+    name: "dr. ir. Bart Mennink",
   ),
   (
     function: "Second Reader",

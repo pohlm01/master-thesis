@@ -181,7 +181,7 @@ After the successful handshake, the application data are exchanged.
 This section provides a short overview of the @pq signatures available today.
 It helps with understanding size and performance considerations later on.
 
-@pq_signature_comp shows a comparison of Ed25519 and RSA-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
+@pq_signature_comp shows a comparison of @ecdsa and #gls("rsa")-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
 @mldsa was known as CRYSTALS-Dilithium and @nist standardized it as FIPS 204 in 2024, together with the @slhdsa as FIPS 205. @fips_204 @fips_205
 A @nist draft for the @fndsa is expected in late 2024.
 

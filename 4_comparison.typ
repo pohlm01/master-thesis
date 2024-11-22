@@ -9,18 +9,18 @@ This chapter presents the results of the analysis we conducted about the differe
 
 The most obvious change is the significant reduction of the certificate lifetime.
 The authors of @mtc propose a lifetime of 14 days.
-As of October 2024, @tls certificates may be issued for at most 13 months, i.e., 398 days @chrome_cert_lifetime @apple_cert_lifetime and are often issued for 90 days, which is still more than six times as long as the lifetime of @mtc.
+As of October 2024, @tls leaf certificates for the Web@pki may be issued for at most 13 months, i.e., 398 days @chrome_cert_lifetime @apple_cert_lifetime and are often issued for 90 days, which is still more than six times as long as the lifetime of @mtc.
 At the same time, it is likely that the validity periods of classical certificates will decrease further.
-In October 2024, Apple published a proposal to the CA/Browser Forum suggesting a gradual reduction of the maximum certificate lifetime to 45 days by September 2027 @apple_45_days_cert.
+In October 2024, Apple published a proposal to the CA/Browser Forum suggesting a gradual reduction of the maximum certificate lifetime to 45 days by September 2027~@apple_45_days_cert.
 It is unclear if this proposal will be accepted, but it is clear that the maximum certificate lifetime will only decrease in the future, reducing the gap to @mtc.
 
 Another notable difference is that the @mtc draft explicitly ignores certificate revocation.
 This is a direct result of the short certificate lifetimes; if certificates live as long as it takes for a revocation to effectively propagate, certificate revocation is not necessary anymore.
 This is a clear improvement over the current Web@pki, as it continuously suffers from ineffective revocation mechanisms @lets_encrypt_new_crl @crl_sets_effectiveness @reddit_ocsp_firefox.
 Chrome does not check @ocsp or @crl:pl, but instead relies on a custom summary called #emph("CRLSets") containing a (small) subset of all revoked certificates curated by Google @chrome_crlsets.
-Firefox does still check OCSP responses, but the CA/Browser forum changed its recommendation to support @ocsp in their @ca baseline requirements to an optional @ocsp support in version 2.0.1, effective as of March 2024 @cab_ocsp_optional_crl_mandatory.
+Firefox does still check @ocsp responses, but the CA/Browser forum changed its recommendation to support @ocsp in their @ca baseline requirements to an optional @ocsp support in version 2.0.1, effective as of March 2024 @cab_ocsp_optional_crl_mandatory.
 As @ocsp entails high operational costs for @ca:pl, it is likely that @ocsp will further lose relevance.
-Let's encrypt already announced to end their @ocsp support "as soon as possible" @lets_encrypt_end_ocsp.
+Let's Encrypt already announced to end their @ocsp support "as soon as possible" @lets_encrypt_end_ocsp.
 Instead, the CA/Browser forum tightens the requirements for @crl:pl and Mozilla is working on accumulating all revoked certificates into a small list called #emph("CRLite") since 2017, but did not enable this mechanism by default in Firefox as of version 132 from October 2024 @crlite_paper @mozilla_crlite.
 
 Furthermore, certificate transparency is built into @mtc, as opposed to the X.509 certificate infrastructure, where it was added later on.
@@ -79,12 +79,12 @@ The analysis focuses on the authentication related cryptographic material exchan
 This means, we do not include the bytes that encode the domain name, key usage constraints, validity timestamps, and similar.
 We do also ignore the bytes required to establish a shared key used for the record layer, which is used for the encryption and authentication of the payload messages.
 Therefore, an X.509 handshake contains the following components.
-One signature for active authentication of the handshake, two signatures for @sct:pl, one signature for an @ocsp staple, one signature of the intermediate @ca on the @ee certificate, and one signature of the root @ca on the intermediate @ca.
+One signature for active authentication of the handshake, two signatures for @sct:pl, optionally one signature for an @ocsp staple, one signature of the intermediate @ca on the @ee certificate, and one signature of the root @ca on the intermediate @ca.
 In addition, the @ee and intermediate certificate contain one public key each.
 The root certificate is typically not sent to the @rp, as it is expected to know it already.
 Summing this up, we count six signatures and two public keys.
 The last case in @tab:x509_size, marked in yellow, is a special case.
-It uses @kemtls and therefore sends a key encapsulation instead of a signature.
+It uses @kemtls and therefore sends a key encapsulation instead of a signature and stores the public key of the @kem in the certificate instead of a public key for signature generation.
 For our analysis, we ignore this fact, as it serves the same objective, namely actively authenticating the handshake.
 
 @tab:x509_size contains one optimistic and one conservative but realistic estimate for each, a @pq and non @pq secure setup.

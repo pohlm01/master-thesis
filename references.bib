@@ -30,6 +30,43 @@
 	langid = {english},
 }
 
+@online{add_mtc_tai,
+	title = {Adopt `{TrustAnchorIdentifiers}` from v03 of {MTC} draft by pohlm01 · Pull Request \#5 · bwesterb/mtc},
+	url = {https://github.com/bwesterb/mtc/pull/5},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+}
+
+@online{fix_mtc_length_prefix_2,
+	title = {Adopt tests for fixed length prefix in \#2 by pohlm01 · Pull Request \#4 · bwesterb/mtc},
+	url = {https://github.com/bwesterb/mtc/pull/4},
+	abstract = {Apparently, I forgot adopting the test cases with the last {PR}. Here it is.},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
+}
+
+@online{fix_mtc_tai,
+	title = {Adopt to davidben/merkle-tree-certs\#91 by pohlm01 · Pull Request \#8 · bwesterb/mtc},
+	url = {https://github.com/bwesterb/mtc/pull/8},
+	abstract = {As part of davidben/merkle-tree-certs\#91, we adopted the hash structs to make proper use of the batch-specific Trust Anchor Identifiers.  This {PR} adopts the code accordingly.},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
+}
+
+@online{supersede_certificate_type,
+	title = {Adoptions to supersede `server/client\_certificate\_type` extensions · Issue \#76 · davidben/tls-trust-expressions},
+	url = {https://github.com/davidben/tls-trust-expressions/issues/76},
+	abstract = {Merkle Tree Certificates require the trust\_anchors extension defined in this repository, as well as the server\_certificate\_type and client\_certificate\_type extensions defined in {RFC} 7250 (raw publi...},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
+}
+
 @online{apple_enforce_ct,
 	title = {Apple's Certificate Transparency policy – Apple Support ({UK})},
 	url = {https://support.apple.com/en-gb/103214},
@@ -107,6 +144,26 @@
 	note = {Version: 17},
 }
 
+@online{fix_consitently_use_tai,
+	title = {Consistently use {TAI} instead of issuer\_id by pohlm01 · Pull Request \#91 · davidben/merkle-tree-certs},
+	url = {https://github.com/davidben/merkle-tree-certs/pull/91},
+	abstract = {I suggest replacing current opaque issuer\_id\&lt;1..32\&gt;; fields with the new {TrustAnchorIdentifier} trust\_anchor;. Alternatively, we would need to adopt the maximal number of bytes to  opaque issu...},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
+}
+
+@online{fix_mtc_length_prefix_3,
+	title = {Corrects test vectors based on a wrong length encoding of the {DNS} name by pohlm01 · Pull Request \#90 · davidben/merkle-tree-certs},
+	url = {https://github.com/davidben/merkle-tree-certs/pull/90},
+	abstract = {See bwesterb/mtc\#2 and bwesterb/mtc\#4},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
+}
+
 @inproceedings{crlite_paper,
 	title = {{CRLite}: A Scalable System for Pushing All {TLS} Revocations to All Browsers},
 	url = {https://ieeexplore.ieee.org/document/7958597},
@@ -133,6 +190,16 @@
 	title = {Debian -- Details of package ca-certificates in bookworm},
 	url = {https://packages.debian.org/bookworm/ca-certificates},
 	urldate = {2024-11-13},
+}
+
+@online{file_structure,
+	title = {Default file structure for {RP} and {AP} · Issue \#97 · davidben/merkle-tree-certs},
+	url = {https://github.com/davidben/merkle-tree-certs/issues/97},
+	abstract = {Operating systems often ship a list of trusted certificates in a well-known location. The go source code is a nice place for an overview of where Linux stores its trusted roots. It might be nice to...},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
 }
 
 @online{apple_drop_tls,
@@ -208,6 +275,16 @@
 	author = {{Michael Mimoso}},
 	urldate = {2024-09-22},
 	date = {2015-09-15},
+}
+
+@online{fix_mtc_length_prefix_1,
+	title = {Fix prefix length for {DNSName} by pohlm01 · Pull Request \#2 · bwesterb/mtc},
+	url = {https://github.com/bwesterb/mtc/pull/2},
+	abstract = {If I'm not mistaken, your implementation diverges from the most recent {RFC} draft in the encoding of the length for {DNSName}. Please have a look at Section 4.1 as a reference.},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
 }
 
 @online{crl_sets_effectiveness,
@@ -332,16 +409,6 @@ Let's Encrypt Certificates Issued Per Day},
 	urldate = {2024-09-21},
 }
 
-@software{westerbaan_merkle_2024,
-	title = {Merkle Tree Certificates for {TLS}},
-	rights = {{BSD}-3-Clause},
-	url = {https://github.com/bwesterb/mtc},
-	abstract = {Go implementation of Merkle Tree Certificates},
-	author = {Westerbaan, Bas},
-	date = {2024-02-12},
-	note = {commit: 21eea5c},
-}
-
 @report{rfc_mtc,
 	title = {Merkle Tree Certificates for {TLS}},
 	url = {https://datatracker.ietf.org/doc/draft-davidben-tls-merkle-tree-certs-03},
@@ -352,6 +419,16 @@ Let's Encrypt Certificates Issued Per Day},
 	author = {Benjamin, David and O'Brien, Devon and Westerbaan, Bas},
 	urldate = {2024-09-19},
 	date = {2024-09-05},
+}
+
+@software{go_mtc_ca,
+	title = {Merkle Tree Certificates for {TLS}},
+	rights = {{BSD}-3-Clause},
+	url = {https://github.com/bwesterb/mtc},
+	abstract = {Go implementation of Merkle Tree Certificates},
+	version = {1f7a83d},
+	author = {Westerbaan, Bas and {Maximilian Pohl}},
+	date = {2024-11-15},
 }
 
 @online{microsoft_drop_tls,
@@ -384,6 +461,18 @@ Let's Encrypt Certificates Issued Per Day},
 	author = {{National Institute of Standards and Technology}},
 	date = {2024-08-13},
 	doi = {10.6028/NIST.FIPS.204},
+}
+
+@online{lets_encrypt_rustls,
+	title = {More Memory Safety for Let’s Encrypt: Deploying ntpd-rs},
+	url = {https://letsencrypt.org/2024/06/24/ntpd-rs-deployment/},
+	shorttitle = {More Memory Safety for Let’s Encrypt},
+	abstract = {When we look at the general security posture of Let\&rsquo;s Encrypt, one of the things that worries us most is how much of the operating system and network infrastructure is written in unsafe languages like C and C++. The {CA} software itself is written in memory safe Golang, but from our server operating systems to our network equipment, lack of memory safety routinely leads to vulnerabilities that need patching.
+Partially for the sake of Let\&rsquo;s Encrypt, and partially for the sake of the wider Internet, we started a new project called Prossimo in 2020.},
+	titleaddon = {Let's Encrypt},
+	author = {{Josh Aas}},
+	urldate = {2024-11-15},
+	date = {2024-06-24},
 }
 
 @online{firefox_root_store,
@@ -427,6 +516,17 @@ Let's Encrypt Certificates Issued Per Day},
 	keywords = {Ciphers, Computer architecture, Digital Certificate, {NIST}, {PKI}, Post-Quantum Cryptography, Public key, Quantum computing, Quantum-Resistant Cryptography, Servers, Standardization},
 }
 
+@software{github_mtc_verifier,
+	title = {pohlm01/mtc-verifier},
+	url = {https://github.com/pohlm01/mtc-verifier},
+	abstract = {Parsing and verifying Merkle Tree Certificates as described in {RFC} draft "Merkle Tree Certificates for {TLS}"},
+	version = {3b72ecc},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-15},
+	date = {2024-11-15},
+	keywords = {post-quantum, tls, tls13},
+}
+
 @misc{czajkowski_post-quantum_2017,
 	title = {Post-quantum security of the sponge construction},
 	url = {https://eprint.iacr.org/2017/771},
@@ -463,6 +563,16 @@ Let's Encrypt Certificates Issued Per Day},
 	date = {2018-10-15},
 }
 
+@online{mtc_use_mldsa,
+	title = {Replace Dilithium with {ML}-{DSA} by pohlm01 · Pull Request \#9 · bwesterb/mtc},
+	url = {https://github.com/bwesterb/mtc/pull/9},
+	abstract = {I had difficulties finding a compatible Rust implementation of the round 3 Dilithium implementation and propose switching to the now standardized successor {ML}-{DSA} for better compatibility.
+As it is...},
+	titleaddon = {{GitHub}},
+	urldate = {2024-11-19},
+	langid = {english},
+}
+
 @software{go_root_store,
 	title = {root\_linux.go {\textbar} golang/go},
 	url = {https://github.com/golang/go/blob/c759ea7471de5a62c88325981e8c86beab78bed8/src/crypto/x509/root_linux.go},
@@ -484,6 +594,37 @@ Let's Encrypt Certificates Issued Per Day},
 	abstract = {A language empowering everyone to build reliable and efficient software.},
 	urldate = {2024-03-13},
 	langid = {american},
+}
+
+@online{rustls_openssl_nginx,
+	title = {Rustls Gains {OpenSSL} and Nginx Compatibility},
+	url = {https://www.memorysafety.org/blog/rustls-nginx-compatibility-layer/},
+	abstract = {The Rustls {TLS} library can now be used with Nginx via an {OpenSSL} compatibility layer. This means that Nginx users can switch from {OpenSSL} to Rustls with minimal effort - users can simply swap in a new {TLS} library without needing to modify or recompile Nginx.
+We have targeted Nginx versions greater than 1.18 on Ubuntu 22.04 or newer for initial support. Here's how easy it is to get going on x86\_64 Ubuntu Linux 22.},
+	titleaddon = {Prossimo},
+	author = {{Josh Aas}},
+	urldate = {2024-11-15},
+	date = {2024-05-08},
+}
+
+@software{github_rustls,
+	title = {rustls/rustls: A modern {TLS} library in Rust},
+	url = {https://github.com/rustls/rustls},
+	version = {b553880},
+	author = {{Joe Birr-Pixton} and {Dirkjan Ochtman} and {Daniel McCarney} and {Brian Smith} and {Jacob Hoffman-Andrews} and {Jorge Aparicio} and {Benjamin Saunders} and {Christian Poveda Ruiz} and {Adolfo Ochagavía} and {Mend Renovate}},
+	urldate = {2024-11-15},
+	date = {2024-10-17},
+}
+
+@software{github_rustls_webpki,
+	title = {rustls/webpki: {WebPKI} X.509 Certificate Validation in Rust},
+	url = {https://github.com/rustls/webpki},
+	abstract = {{WebPKI} X.509 Certificate Validation in Rust},
+	version = {fc04aaf},
+	publisher = {rustls},
+	author = {{Brian Smith} and {Daniel McCarney} and {Dirkjan Ochtman} and {Joe Birr-Pixton} and {Jasper Patterson} and {Alex Gaynor} and {Rafael Fernández López} and {Stepan Koltsov} and {Sietse Ringers}},
+	urldate = {2024-11-15},
+	date = {2024-11-02},
 }
 
 @jurisdiction{apple_45_days_cert,
@@ -569,16 +710,16 @@ Let's Encrypt Certificates Issued Per Day},
 	date = {2023-09-28},
 }
 
-@report{id-tai,
+@report{rfc_tai,
 	title = {{TLS} Trust Anchor Identifiers},
-	url = {https://datatracker.ietf.org/doc/draft-beck-tls-trust-anchor-ids-01},
-	abstract = {This document defines the {TLS} Trust Anchors extension, a mechanism for relying parties and subscribers to convey trusted certification authorities. It describes individual certification authorities more succinctly than the {TLS} Certificate Authorities extension. Additionally, to support {TLS} clients with many trusted certification authorities, it supports a mode where servers describe their available certification paths and the client selects from them. Servers may describe this during connection setup, or in {DNS} for lower latency.},
-	number = {draft-beck-tls-trust-anchor-ids-01},
+	url = {https://datatracker.ietf.org/doc/draft-beck-tls-trust-anchor-ids-02},
+	abstract = {This document defines the {TLS} Trust Anchors extension, a mechanism for relying parties to convey trusted certification authorities. It describes individual certification authorities more succinctly than the {TLS} Certificate Authorities extension. Additionally, to support {TLS} clients with many trusted certification authorities, it supports a mode where servers describe their available certification paths and the client selects from them. Servers may describe this during connection setup, or in {DNS} for lower latency.},
+	number = {draft-beck-tls-trust-anchor-ids-02},
 	institution = {Internet Engineering Task Force},
 	type = {Internet Draft},
-	author = {Beck, Bob and Benjamin, David and O'Brien, Devon},
-	urldate = {2024-09-19},
-	date = {2024-09-05},
+	author = {Beck, Bob and {Bob Beck} and Benjamin, David and O'Brien, Devon},
+	urldate = {2024-11-15},
+	date = {2024-10-10},
 }
 
 @report{rfc_ocsp_stapling,
@@ -602,7 +743,17 @@ Let's Encrypt Certificates Issued Per Day},
 	date = {2024-11-13},
 }
 
-@report{wouters_using_2014,
+@online{add_array_embedding,
+	title = {Use `{\textless}1..2{\textasciicircum}24-1{\textgreater}` encoding for all certificate types by pohlm01 · Pull Request \#95 · davidben/merkle-tree-certs},
+	url = {https://github.com/davidben/merkle-tree-certs/pull/95},
+	abstract = {In favor of an easier implementation, I propose to change the {CertificateEntry} {TLS} message such that the Bikeshed certificate is embedded in a length prefixed array. It makes parsing the packets se...},
+	titleaddon = {{GitHub}},
+	author = {{Maximilian Pohl}},
+	urldate = {2024-11-19},
+	langid = {english},
+}
+
+@report{rfc_raw_public_keys,
 	title = {Using Raw Public Keys in Transport Layer Security ({TLS}) and Datagram Transport Layer Security ({DTLS})},
 	url = {https://datatracker.ietf.org/doc/rfc7250},
 	abstract = {This document specifies a new certificate type and two {TLS} extensions for exchanging raw public keys in Transport Layer Security ({TLS}) and Datagram Transport Layer Security ({DTLS}). The new certificate type allows raw public keys to be used for authentication.},
@@ -613,7 +764,6 @@ Let's Encrypt Certificates Issued Per Day},
 	urldate = {2024-03-28},
 	date = {2014-06},
 	doi = {10.17487/RFC7250},
-	note = {Num Pages: 18},
 }
 
 @online{okta_pki,
@@ -626,12 +776,14 @@ Let's Encrypt Certificates Issued Per Day},
 }
 
 @online{lets_encrypt_cert_lifetime,
-	title = {Why ninety-day lifetimes for certificates? - Let's Encrypt},
+	title = {Why ninety-day lifetimes for certificates?},
 	url = {https://letsencrypt.org/2015/11/09/why-90-days.html},
 	shorttitle = {Why ninety-day lifetimes for certificates?},
 	abstract = {We’re sometimes asked why we only offer certificates with ninety-day lifetimes. People who ask this are usually concerned that ninety days is too short and wish we would offer certificates lasting a year or more, like some other {CAs} do. Ninety days is nothing new on the Web. According to Firefox Telemetry, 29\% of {TLS} transactions use ninety-day certificates. That’s more than any other lifetime. From our perspective, there are two primary advantages to such short certificate lifetimes:},
+	titleaddon = {Let's Encrypt},
+	author = {{Josh Aas}},
 	urldate = {2024-09-22},
-	langid = {american},
+	date = {2015-11-09},
 }
 
 @online{cloudflare_radar,

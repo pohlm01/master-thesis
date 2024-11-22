@@ -5,14 +5,14 @@
 #let abbreviations = (
     (key: "tls", short: "TLS", long: "Transport Layer Security"),
     (key: "ocsp", short: "OCSP", long: "Online Certificate Status Protocol"),
-    (key: "ca", short: "CA", long: "Certificate Authority"),
+    (key: "ca", short: "CA", long: "Certificate Authority", longplural: "Certificate Authorities"),
     (key: "pki", short: "PKI", long: "Public Key Infrastructure"),
     (key: "crl", short: "CRL", long: "Certificate Revocation List"),
     (key: "oid", short: "OID", long: "Object Identifier"),
     (key: "pen", short: "PEN", long: "Private Enterprise Number"),
     (key: "iana", short: "IANA", long: "Internet Assigned Numbers Authority"),
     (key: "vpn", short: "VPN", long: "Virtual Private Network"),
-    (key: "ra", short: "RA", long: "Registration Authority"),
+    (key: "ra", short: "RA", long: "Registration Authority", longplural: "Registration Authorities"),
     (key: "rpki", short: "RPKI", long: "Resource Public Key Infrastructure"),
     (key: "bgp", short: "BGP", long: "Border Gateway Protocol"),
     (key: "acme", short: "ACME", long: "Automatic Certificate Management Environment"),
@@ -28,11 +28,11 @@
       description: [@pq signature algorithm, previously known as CRYSTALS-Dilithium]),
     (key: "slhdsa", short: "SLH-DSA", long: "Stateless Hash-Based Digital Signature Algorithm", 
       description: [@pq signature algorithm, previously known as Sphincs+]),
-    (key: "fndsa", short: "FN-DSA", long: "FFT (fast-Fourier transform) over NTRU-Lattice-Based Digital Signature Algorithm",
+    (key: "fndsa", short: "FN-DSA", long: "FFT (Fast-Fourier transform) over NTRU-Lattice-Based Digital Signature Algorithm",
       description: [@pq signature algorithm, previously known as FALCON]),
     (key: "sha", short: "SHA", long: "Secure Hash Algorithm"),
     (key: "mtc", short: "MTC", long: "Merkle Tree Certificate"),
-    (key: "rp", short: "RP", long: "Relying Party"),
+    (key: "rp", short: "RP", long: "Relying Party", longplural: "Relying Parties"),
     (key: "dns", short: "DNS", long: "Domain Name System"),
     (key: "ip", short: "IP", long: "Internet Protocol"),
     (key: "imap", short: "IMAP", long: "Internet Message Access Protocol"),
@@ -42,7 +42,7 @@
     (key: "kemtls", short: "KEMTLS",
       description: [An alternative to the @tls 1.3 handshake that uses #glspl("kem") instead of signatures for server authentication]),
     (key: "mac", short: "MAC", long: "Message Authentication Code"),
-    (key: "ap", short: "AP", long: "Authenticating Party"),
+    (key: "ap", short: "AP", long: "Authenticating Party", longplural: "Authenticating Parties"),
     (key: "tai", short: "TAI", long: "Trust Anchor Identifier"),
     (key: "ecdsa", short: "ECDSA", long: "Elliptic Curve Digital Signature Algorithm"),
     (key: "api", short: "API", long: "Application Programming Interface"),
@@ -52,8 +52,9 @@
       description: [@pq @kem algorithm, previously known as CRYSTALS-Kyber]),
     (key: "asn1", short: "ASN.1", long: "Abstract Syntax Notation One"),
     (key: "der", short: "DER", long: "Distinguished Encoding Rules"),
-    (key: "ee", short: "EE", long: "End-Entity"),
-    (key: "os", short: "OS", long: "Operating System")
+    (key: "ee", short: "EE", long: "End-Entity", longplural: "End-Entities"),
+    (key: "os", short: "OS", long: "Operating System"),
+    (key: "sni", short: "SNI", long: "Server Name Indication")
 )
 
 #print-glossary(abbreviations, disable-back-references: true)

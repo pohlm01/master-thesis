@@ -20,6 +20,9 @@
   show list: set block(spacing: 2em)
   show enum: set block(spacing: 2em)
 
+  set quote(block: true)
+  show quote: set block(above: 1em, below: 1em)
+  show quote.where(block: true): set text(style: "normal", font: "DejaVu Sans Mono", size: 0.75em)
 
 
   set heading(numbering: "1.1")
