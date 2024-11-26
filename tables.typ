@@ -68,13 +68,13 @@
     [RSA-2048], [ECDSA],  [RSA-2048], [RSA-4096], [RSA-2048], [RSA-2048], [],       [],
     [256],      [192],    [256],      [512],      [256],      [256],      [1,728],  [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [ML-DSA], [],               [],
+    [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [],               [],
     [2,420],  [7,260],  [2,420],  [2,420],  [1,312],  [1,312],  [17,144],         [#emoji.checkmark.box],
     
-    [ML-DSA], [ML-DSA], [ML-DSA], [SLH-DSA-128s], [ML-DSA], [ML-DSA], [],         [],
+    [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [SLH-DSA-128s], [ML-DSA-44], [ML-DSA-44], [],         [],
     [2,420],  [7,260],  [2,420],  [7,856],        [1,312],  [1,312],  [22,580],   [#emoji.checkmark.box],
 
-    y[ML-KEM], [ML-DSA], [ML-DSA], [ML-DSA],  y[ML-KEM],  [ML-DSA], [],           [],
+    y[ML-KEM-768], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44],  y[ML-KEM-768],  [ML-DSA-44], [],           [],
      [1,088],  [7,260],  [2,420],  [2,420],   [1,184],    [1,312],  [15,684],     [#emoji.checkmark.box],
   )
 }
@@ -111,19 +111,19 @@
     [ECDSA],  [ECDSA],  [280M active @ap:pl],  [], [],
     [64],     [32],     [672],            [768], [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [280M active @ap:pl],  [], [],
+    [ML-DSA-44], [ML-DSA-44], [280M active @ap:pl],  [], [],
     [2,420],  [1,312],  [672],            [4,404], [#emoji.checkmark.box],
 
-    y[ML-KEM], y[ML-KEM], [280M active @ap:pl],  [], [],
+    y[ML-KEM-768], y[ML-KEM-768], [280M active @ap:pl],  [], [],
     [1,088],    [1,184],  [672],            [2,944], [#emoji.checkmark.box],
     
     [ECDSA],  [ECDSA],  [1B active @ap:pl],  [], [],
     [64],     [32],     [832],            [928], [#emoji.crossmark],
     
-    [ML-DSA], [ML-DSA], [1B active @ap:pl],  [], [],
+    [ML-DSA-44], [ML-DSA-44], [1B active @ap:pl],  [], [],
     [2,420],  [1,312],  [832],            [4,564], [#emoji.checkmark.box],
 
-    y[ML-KEM], y[ML-KEM], [1B active @ap:pl],  [], [],
+    y[ML-KEM-768], y[ML-KEM-768], [1B active @ap:pl],  [], [],
     [1,088],    [1,184],  [832],            [3,104], [#emoji.checkmark.box],
     
   )

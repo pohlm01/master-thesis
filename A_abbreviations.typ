@@ -5,7 +5,7 @@
 #let abbreviations = (
     (key: "tls", short: "TLS", long: "Transport Layer Security"),
     (key: "ocsp", short: "OCSP", long: "Online Certificate Status Protocol"),
-    (key: "ca", short: "CA", long: "Certificate Authority", longplural: "Certificate Authorities"),
+    (key: "ca", short: "CA", long: "Certification Authority", longplural: "Certification Authorities"),
     (key: "pki", short: "PKI", long: "Public Key Infrastructure"),
     (key: "crl", short: "CRL", long: "Certificate Revocation List"),
     (key: "oid", short: "OID", long: "Object Identifier"),

@@ -30,6 +30,18 @@
 	langid = {english},
 }
 
+@report{dennis_cert_size,
+	title = {Abridged Compression for {WebPKI} Certificates},
+	url = {https://datatracker.ietf.org/doc/draft-ietf-tls-cert-abridge-02},
+	abstract = {This draft defines a new {TLS} Certificate Compression scheme which uses a shared dictionary of root and intermediate {WebPKI} certificates. The scheme smooths the transition to post-quantum certificates by eliminating the root and intermediate certificates from the {TLS} certificate chain without impacting trust negotiation. It also delivers better compression than alternative proposals whilst ensuring fair treatment for both {CAs} and website operators. It may also be useful in other applications which store certificate chains, e.g. Certificate Transparency logs.},
+	number = {draft-ietf-tls-cert-abridge-02},
+	institution = {Internet Engineering Task Force},
+	type = {Internet Draft},
+	author = {Jackson, Dennis},
+	urldate = {2024-11-25},
+	date = {2024-09-16},
+}
+
 @online{add_mtc_tai,
 	title = {Adopt `{TrustAnchorIdentifiers}` from v03 of {MTC} draft by pohlm01 · Pull Request \#5 · bwesterb/mtc},
 	url = {https://github.com/bwesterb/mtc/pull/5},
@@ -236,6 +248,17 @@
 	date = {2024-11-06},
 }
 
+@online{cloudflare_ech,
+	title = {Encrypted Client Hello - the last puzzle piece to privacy},
+	url = {https://blog.cloudflare.com/announcing-encrypted-client-hello},
+	abstract = {We're excited to announce a contribution to improving privacy for everyone on the Internet. Encrypted Client Hello, a new standard that prevents networks from snooping on which websites a user is visiting, is now available on all Cloudflare plans.},
+	titleaddon = {The Cloudflare Blog},
+	author = {{Achiel van der Mandele} and {Alessandro Ghedini} and {Christopher Wood} and {Rushil Mehra}},
+	urldate = {2024-11-26},
+	date = {2023-09-29},
+	langid = {english},
+}
+
 @inproceedings{falcon_down,
 	title = {{FALCON} Down: Breaking {FALCON} Post-Quantum Signature Scheme through Side-Channel Attacks},
 	doi = {10.1109/DAC18074.2021.9586131},
@@ -256,6 +279,15 @@
 	author = {{MorrocMaster}},
 	urldate = {2024-10-31},
 	date = {2024-03-10},
+}
+
+@online{firefox_ech,
+	title = {Firefox 119.0, See All New Features, Updates and Fixes},
+	url = {https://www.mozilla.org/en-US/firefox/119.0/releasenotes/},
+	titleaddon = {Mozilla},
+	urldate = {2024-11-26},
+	date = {2023-10-24},
+	langid = {english},
 }
 
 @online{firefox_125_nightly,
@@ -710,6 +742,34 @@ We have targeted Nginx versions greater than 1.18 on Ubuntu 22.04 or newer for i
 	date = {2023-09-28},
 }
 
+@report{rfc_ech,
+	title = {{TLS} Encrypted Client Hello},
+	url = {https://datatracker.ietf.org/doc/draft-ietf-tls-esni},
+	abstract = {This document describes a mechanism in Transport Layer Security ({TLS}) for encrypting a {ClientHello} message under a server public key. Discussion Venues This note is to be removed before publishing as an {RFC}. Source for this draft and an issue tracker can be found at https://github.com/tlswg/draft-ietf-tls-esni (https://github.com/tlswg/draft-ietf-tls-esni).},
+	number = {draft-ietf-tls-esni-22},
+	institution = {Internet Engineering Task Force},
+	type = {Internet Draft},
+	author = {Rescorla, Eric and Oku, Kazuho and Sullivan, Nick and Wood, Christopher A.},
+	urldate = {2024-11-26},
+	date = {2024-09-15},
+}
+
+@online{apple_ech,
+	title = {{TLS} Encrypted Client Hello · Issue \#46 · {WebKit}/standards-positions},
+	url = {https://github.com/WebKit/standards-positions/issues/46},
+	abstract = {Request for position on an emerging web specification {WebKittens} who can provide input: networking and {TLS} folks Information about the spec Spec Title: {TLS} Encrypted Client Hello Spec {URL}: https://...},
+	titleaddon = {{GitHub}},
+	urldate = {2024-11-26},
+	langid = {english},
+}
+
+@online{chrome_ech,
+	title = {{TLS} Encrypted Client Hello ({ECH}) - Chrome Platform Status},
+	url = {https://chromestatus.com/feature/6196703843581952},
+	urldate = {2024-11-26},
+	date = {2023-12-12},
+}
+
 @report{rfc_tai,
 	title = {{TLS} Trust Anchor Identifiers},
 	url = {https://datatracker.ietf.org/doc/draft-beck-tls-trust-anchor-ids-02},
@@ -720,6 +780,19 @@ We have targeted Nginx versions greater than 1.18 on Ubuntu 22.04 or newer for i
 	author = {Beck, Bob and {Bob Beck} and Benjamin, David and O'Brien, Devon},
 	urldate = {2024-11-15},
 	date = {2024-10-10},
+}
+
+@inproceedings{tranco,
+	location = {San Diego, {CA}},
+	title = {Tranco: A Research-Oriented Top Sites Ranking Hardened Against Manipulation},
+	doi = {10.14722/ndss.2019.23386},
+	shorttitle = {Tranco},
+	eventtitle = {Network and Distributed System Security Symposium},
+	booktitle = {Proceedings 2019 Network and Distributed System Security Symposium},
+	publisher = {Internet Society},
+	author = {Le Pochat, Victor and Van Goethem, Tom and Tajalizadehkhoob, Samaneh and Korczynski, Maciej and Joosen, Wouter},
+	date = {2019},
+	langid = {english},
 }
 
 @report{rfc_ocsp_stapling,

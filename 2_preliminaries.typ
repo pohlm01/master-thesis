@@ -85,9 +85,8 @@ The following section explains why this is not self-evident and how to ensure it
 Browser vendors ship a list of #glspl("ca") which are trusted to issue genuine certificates only.
 As of November 6, 2024, there are 176 trusted root #glspl("ca") built into Firefox and 134 in Chrome @firefox_root_store @chrome_root_store.
 If only a single @ca misbehaves, this can tremendously impact the security of the whole system.
-One infamous example is the security breach of DigiNotar in 2011, which allowed the attacker to listen into the connection of about 300,000 Iranian citizens with Google. @diginotar
+One infamous example is the security breach of DigiNotar in 2011, which allowed the attacker to listen into the connection of about 300,000 Iranian citizens with Google~@diginotar.
 This was possible, because the domain owner, i.e., Google, could not know that a certificate was issued in their name.
-
 As a direct consequence, Google initiated a program to ensure that all issued certificates must be logged publically such that a domain owner can recognize maliciously issued certificates and take action retroactively.
 This is referred to as @ct.
 
@@ -173,6 +172,11 @@ After the successful handshake, the application data are exchanged.
 ) <tls_handshake_overview>
 
 === KEMTLS
+@kemtls aims to improve the communication cost of @tls handshakes using the fact that currently the best @pq @kem:pl are smaller than @pq signatures.
+Instead of explicitly authenticating the server in the `CertificateVerify` using a signature, @kemtls uses @kem:pl to authenticate the key exchange.
+The exact differences with the standard @tls handshake are not relevant for this work, so we don't explain them.
+What is relevant is, is that a @kemtls handshake requires a @kem public key in the @ee certificate instead of a signature key.
+Hence, the utilization of @kemtls has an impact on the size of the certificate, as shown in @sec:certificate_size.
 
 == Post Quantum Signatures
 // - Two PQ signatures are standardized by @nist in @fips_204 (ML-DSA, formally known as CRYSTALS-Dilithium) and @fips_205 (SLH-DSA formally known as Sphincs+)
@@ -181,20 +185,20 @@ After the successful handshake, the application data are exchanged.
 This section provides a short overview of the @pq signatures available today.
 It helps with understanding size and performance considerations later on.
 
-@pq_signature_comp shows a comparison of @ecdsa and #gls("rsa")-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
+@pq_signature_comp shows a comparison of @ecdsa and #gls("rsa", long: false)-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
 @mldsa was known as CRYSTALS-Dilithium and @nist standardized it as FIPS 204 in 2024, together with the @slhdsa as FIPS 205. @fips_204 @fips_205
 A @nist draft for the @fndsa is expected in late 2024.
 
 The @nist decided to specify three signature algorithms, as each of them has their benefits and drawbacks.
 @mldsa is the recommended algorithm for most applications, as it has reasonable values in all categories.
 @slhdsa is currently the most trusted algorithm, as it relies on the security of the well-established #gls("sha", long: false)--2 or #gls("sha")--3 hashing algorithms, that would need to be dramatically broken to harm the security of @slhdsa.
-This makes @slhdsa a good candidate for long-term keys or situations where an upgrade is hard.
-@fndsa might seem to have the best statistics, but it has the big drawback of relying on fast floating point operations for signature generation.
+This makes @slhdsa a suitable candidate for long-term keys or situations where an upgrade is hard.
+@fndsa might seem to have the best statistics, but it has the big drawback of relying on fast floating-point operations for signature generation.
 Without that, signing is about 20 times slower.
-The challenge with floating point arithmetic is to implement it in constant time, and resistant against power analysis, as shown by side-channel attacks against existing @fndsa implementations @falcon_down @falcon_power_analysis.
+The challenge with floating-point arithmetic is to implement it in constant time, and resistant against power analysis, as shown by side-channel attacks against existing @fndsa implementations @falcon_down @falcon_power_analysis.
 This is mainly a concern for signatures produced on-the-fly.
 If the signature is computed ahead-of-time, there is no timing leak to be observed.
-Also, verifying does not rely on floating point arithmetic, and even if it did, there would not be a private key that could be leaked.
+Moreover, verifying does not rely on floating-point arithmetic, and even if it did, there would not be a private key that could be leaked.
 @bas_westerbaan_state_2024
 
 
@@ -202,5 +206,5 @@ Also, verifying does not rely on floating point arithmetic, and even if it did, 
   pq_signatures,
   caption: [
     Comparison of selected classical signature schemes with algorithms (to be) standardized by @nist. 
-    The #emoji.warning symbols fast, but dangerous floating point arithmetic. @bas_westerbaan_state_2024]
+    The #emoji.warning symbols fast, but dangerous floating-point arithmetic. @bas_westerbaan_state_2024]
 ) <pq_signature_comp>

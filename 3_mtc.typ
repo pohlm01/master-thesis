@@ -59,7 +59,7 @@ With this terminology, the following explains the certificate issuance flow depi
 
 The following sections elaborate on the responsibilities and objectives of the components involved. 
 
-== Certificate Authority
+== Certification Authority
 A @ca is defined by the following parameters that are publically known and cannot change. In particular, the Transparency Service trusts certain @ca:pl and uses these parameters to validate the signed validity windows it receives from the @ca:pl.
 - `hash`: The hash function used to build the Merkle Tree. Currently, only #gls("sha")-256 is supported.
 - `issuer_id`: A @tai as defined in @rfc_tai. That is a relative @oid under the prefix `1.3.6.1.4.1`. Organizations append their @pen registered at the @iana.
@@ -131,7 +131,40 @@ At the same time, if the Transparency Service is run by the browser vendor, it i
 //   - What does this imply? Does the TS become a single point of failure, i.e., can it serve malicious root nodes to the RP? Probably yes...
 //   - But they are a single point of failure anyways. Would probably some binary/update transparency here.
 
-== The Role of the Monitor
-The job of the monitors is watching the Transparency Services for any suspicious or malicious behavior.
-This can include, but is not limited to, notifying domain owners about certificates issued on their domain, and to detect split views provided by Transparency Services.
+// == The Role of the Monitor
+// The job of the monitors is watching the Transparency Services for any suspicious or malicious behavior.
+// This can include, but is not limited to, notifying domain owners about certificates issued on their domain, and to detect split views provided by Transparency Services.
 
+// We call something a split view if a Transparency Service provides different data to different users.
+// One could imagine a targeted attack to a single user or @ip address, or tailored for a specific region, for example.
+// This requires a Transparency Service to act maliciously, which could be the result of an attack.
+// If a Transparency Service pulls a new batch from the @ca, it may decide to add or remove some assertions to the Merkle Tree and publish the modified batch tree head to some consumers.
+// Note that the @ca signature of this batch tree head would not verify anymore, but some devices may decide to omit checking the @ca signature and instead rely on the Transparency Service.
+// If an attacker wanted to convince a signature checking user, it must control the @ca and Transparency Service to forge the signature.
+// Towards the monitors, the Transparency Service may continue to present the unmodified batch, while the @rp:pl receive a root that includes malicious assertions.
+// Therefore, the monitors would not be able to notify the legitimate domain owners about a suspicious certificate.
+
+// A monitor alone has a hard time detecting such a split view if the attacker manages to properly separate the requests it wants to serve a modified version from the monitors.
+
+== Negotiation in TLS
+To use the @mtc architecture, the @rp and @ap have to negotiate using it.
+For that, the Internet-Draft refers to the `server_certificate_type` and `client_certificate_type` of RFC~7250~@rfc_raw_public_keys. 
+On a high level, the @rp sends them as an extension of the `ClientHello` with all supported certificate types, and the @ap communicates the chosen certificate type to the @rp as an encrypted extension.
+
+Additionally, the @rp has to communicate to the @ap which trust anchor it supports.
+For that, the @mtc Internet-Draft refers to an Internet-Draft called #emph[TLS Trust Anchor Identifiers]~@rfc_tai.
+It allows the @rp to send the newest batch tree heads it supports to the @ap, such that the @ap can choose to send a certificate that the @rp trusts.
+In particular, this allows the @ap to know which @mtc certificate to send during a certificate rotation.
+
+In practice, it is not possible to send the whole list of known trust anchors to an @ap for two main reasons: Size and privacy.
+The list of all supported trust anchors is potentially large, keeping in mind that the trust anchor mechanism is not exclusively designed for @mtc, but explicitly also for other mechanisms, such as X.509.
+Assuming that just 50 @ca:pl would participate in this mechanism with an average identifier length of four bytes, each `ClientHello` would need to carry 250 additional bytes, 200 for the identifiers and 50 for the encoding with length prefixes.
+The second concern is that a server can use the detailed information about the client for fingerprinting.
+Especially with the quickly changing @mtc system, users might have recognizable trust stores, depending on when they pulled the latest tree heads from the Transparency Service.
+
+To circumvent these downsides, the @rp has two options.
+The @ap can create a SVCB @dns record listing all the trust anchors it supports, which is a short and not privacy-sensitive list.
+Based on this information, the @rp can decide with trust anchor to offer to the @ap during the handshake.
+Requiring information from the @dns complicates the deployment, but the #emph[Encrypted Client Hello] relies on a SVCB @dns record as well~@rfc_ech and is deployed in practice already~@firefox_ech@apple_ech@cloudflare_ech@chrome_ech.
+The second option a @rp has is to guess trust anchors a @ap may support and do a retry if the guess was not correct.
+The main downside is that a retry causes an additional round trip, and therefore higher latency.

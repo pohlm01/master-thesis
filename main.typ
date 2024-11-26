@@ -7,8 +7,12 @@
 #import "style/todo.typ": outline-todos
 #import "A_abbreviations.typ": abbreviations
 
+// Possible titles:
+// Implementation and Analysis of Merkle Tree Certificates for Post-Quantum Secure TLS
+// ...
+
 #let title = "Master Thesis"
-#let subtitle = "Something with PQ TLS"
+#let subtitle = "Implementation and Analysis of Merkle Tree Certificates for Post-Quantum Secure authentication in TLS"
 #let author = "Maximilian Pohl"
 
 
