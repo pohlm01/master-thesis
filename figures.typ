@@ -66,8 +66,8 @@
   edge(<domain_owner>, <ca>, "-|>", shift: 6pt, [1. Issuance request]),
   edge(<ca>, <logs>, "-|>", label-side: left, shift: 6pt, [2. Pre-certificate]),
   edge(<logs>, <ca>, "-|>", shift: 6pt, [3. SCT]),
-  edge(<ca>, <domain_owner>, "-|>", shift: 6pt, label-side: left, [4. Certificate with SCT]),
-  edge(<domain_owner>, <rp>, "-|>", [5. Certificate \ with SCT]),
+  edge(<ca>, <domain_owner>, "-|>", shift: 6pt, label-side: left, [4. Certificate with SCTs]),
+  edge(<domain_owner>, <rp>, "-|>", [5. Certificate \ with SCTs]),
   edge(<monitors>, <logs>, "-|>", label-side: right, [6. Monitor for \ suspicious activity]),
   edge(<monitors>, <domain_owner>, "-|>", label-side: left, label-angle: auto, [7. Notify about new certificates issued]),
 )}
@@ -141,6 +141,48 @@
 )
 
 #let merkle_tree = fletcher.diagram(
+  ..global_diagram_params,
+  spacing: (1em, 1em),
+  node-inset: .7em,
+  node-stroke: .07em,
+
+  {
+    // node((-4, 0), [level 2:], stroke: none, inset: 0em)
+    // node((-4, 1), [level 1:], stroke: none, inset: 0em)
+    // node((-4, 2), [level 0:], stroke: none, inset: 0em)
+
+    
+    node((0, 0), $"root" = H(n_4, n_5)$, name: <root>)
+    
+    node((rel: (-1.4, 1), to: <root>), $n_4 = H(n_0, n_1)$, name: <t10>)
+    node((rel: (1.4, 1), to: <root>), $n_5 = H(n_2, n_3)$, name: <t11>, fill: yellow)
+    
+    node((rel: (-0.8, 1), to: <t10>), $n_0 = H(i_0)$, name: <t00>, width: 25mm, fill: yellow)
+    node((rel: (0.8, 1), to: <t10>), $n_1 = H(i_1)$, name: <t01>, width: 25mm)
+    node((rel: (-0.8, 1), to: <t11>), $n_2 = H(i_2)$, name: <t02>, width: 25mm)
+    node((rel: (0.8, 1), to: <t11>), $n_3 = H(i_4)$, name: <t03>, width: 25mm)
+
+    node((rel: (0, 1), to: <t00>), $i_0$, name: <a0>)
+    node((rel: (0, 1), to: <t01>), $i_1$, name: <a1>, fill: yellow)
+    node((rel: (0, 1), to: <t02>), $i_2$, name: <a2>)
+    node((rel: (0, 1), to: <t03>), $i_3$, name: <a3>)
+
+    edge(<root>, <t10>, stroke: red + 1mm)
+    edge(<root>, <t11>)
+    
+    edge(<t10>, <t00>)
+    edge(<t10>, <t01>, stroke: red + 1mm)
+    edge(<t11>, <t02>)
+    edge(<t11>, <t03>)
+    
+    edge(<t00>, "d")
+    edge(<t01>, "d", stroke: red + 1mm)
+    edge(<t02>, "d")
+    edge(<t03>, "d")
+  }
+)
+
+#let merkle_tree_abridged_assertion = fletcher.diagram(
   ..global_diagram_params,
   spacing: (1em, 1em),
   node-inset: .7em,

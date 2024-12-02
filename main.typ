@@ -26,7 +26,7 @@
   ),
   (
     function: "Second Reader",
-    name: "dr. Simona Samardjiska",
+    name: "prof. dr. Peter Schwabe",
   ),
   (
     function: "Daily Supervisor",

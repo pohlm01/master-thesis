@@ -248,6 +248,18 @@
 	date = {2024-11-06},
 }
 
+@online{e-rezept,
+	title = {E-Rezept: Regelmäßige {TI}-Störungen, Betroffene genervt von Informationspolitik},
+	url = {https://www.heise.de/news/eHealth-TI-regelmaessig-gestoert-Betroffene-von-Informationspolitik-genervt-9651330.html},
+	shorttitle = {E-Rezept},
+	abstract = {Fast täglich kommt es zu Störungen in Diensten der Telematikinfrastruktur, so wie heute. Die Betroffenen sehen sich nicht umfassend informiert.},
+	titleaddon = {heise online},
+	author = {{Marie-Claire Koch}},
+	urldate = {2024-11-27},
+	date = {2024-03-12},
+	langid = {german},
+}
+
 @online{cloudflare_ech,
 	title = {Encrypted Client Hello - the last puzzle piece to privacy},
 	url = {https://blog.cloudflare.com/announcing-encrypted-client-hello},
@@ -317,6 +329,41 @@
 	author = {{Maximilian Pohl}},
 	urldate = {2024-11-19},
 	langid = {english},
+}
+
+@video{verification_transparency_dev,
+	title = {From Witnessing to Transparent Ecosystems},
+	url = {https://www.youtube.com/watch?v=v9cgvZXRRZU},
+	abstract = {In this focused session, “From Witnessing to Transparent Ecosystems,” we will explore the journey from the foundational concept of “witnessing” to the realization of fully transparent, end-to-end ecosystems. Our four talks are structured to interlock seamlessly, providing a holistic view of Witnessing and its broader impact.
+
+Witnessing \& {ArmoredWitness} overview - Martin Hutchinson
+Using {TamaGo} to build the {ArmoredWitness} - Andrea Barisani
+Firmware Transparency for the {ArmoredWitness} - Al Cutter
+End-to-end transparency from logging to monitoring - Fillipo Valsorda
+Speakers
+
+Filippo Valsorda
+
+Filippo is a cryptography engineer and an open source maintainer. He’s been maintaining the Go cryptography standard library since 2018, first as the head of the Go Security team at Google, and then as the founder of the independent maintainers organization Geomys. He co-designed the Go Checksum Database and worked on the Sigsum log design, contributing to the specification of the interoperable checkpoint format, witness {API}, and related C2SP specs. He’s been involved in the Certificate Transparency ecosystem since its early days, operating an experimental log in 2017, and more recently authoring the Sunlight {CT} log implementation and the Static {CT} {API} specification.
+
+Andrea Barisani
+
+Andrea Barisani is an internationally recognized security researcher. Since owning his first Commodore-64 he has never stopped studying new technologies, developing unconventional attack vectors and exploring what makes things tick…and break.
+
+His experience builds on large-scale infrastructure defense, penetration testing and code auditing with particular focus on safety critical environments, with more than 15 years of professional experience in security consulting.
+
+His main focus lies on the converge between secure hardware and software, an interest consolidated in the authorship of the {USB} armory hardware project and the {TamaGo} bare metal framework.
+
+Martin Hutchinson
+
+Martin is a software engineer at Google, primarily working in open source. He’s been developing and maintaining the {TrustFabric} open source portfolio since 2019, working on everything from {CT}, Trillian, witnessing, development of specs, and the Claimant Model. Prior to this chapter in open source, he was an {SRE} and this still drives a passion to make software secure, scaleable, reliable, and maintainable.
+
+Al Cutter
+
+Al is the Tech Lead for the {TrustFabric} team at Google, where he’s been designing and implementing open source transparency-related systems, specs, and tooling since 2012. He was awarded the 2024 Levchin Prize for creating and deploying Certificate Transparency at scale, and is currently working to enable the easy adoption of transparency principles and infrastructure by other ecosystems too.},
+	author = {{Martin Hutchinson} and {Andrea Barisani} and {Al Cutter} and {Fillipo Valsorda}},
+	urldate = {2024-12-02},
+	date = {2024-10-09},
 }
 
 @online{crl_sets_effectiveness,
@@ -417,6 +464,21 @@ Websites and people who visit them will not be affected by this change, but some
 	author = {Ford, Warwick S. and Chokhani, Santosh and Wu, Stephen S. and Sabett, Randy V. and Merrill, Charles (Chas) R.},
 	date = {2003-11},
 	doi = {10.17487/RFC3647},
+}
+
+@inproceedings{finished_message_tls13,
+	title = {Key Confirmation in Key Exchange: A Formal Treatment and Implications for {TLS} 1.3},
+	url = {https://ieeexplore.ieee.org/document/7546517/?arnumber=7546517},
+	doi = {10.1109/SP.2016.34},
+	shorttitle = {Key Confirmation in Key Exchange},
+	abstract = {Key exchange protocols allow two parties at remote locations to compute a shared secret key. The common security notions for such protocols are secrecy and authenticity, but many widely deployed protocols and standards name another property, called key confirmation, as a major design goal. This property should guarantee that a party in the key exchange protocol is assured that another party also holds the shared key. Remarkably, while secrecy and authenticity definitions have been studied extensively, key confirmation has been treated rather informally so far. In this work, we provide the first rigorous formalization of key confirmation, leveraging the game-based security framework well-established for secrecy and authentication notions for key exchange. We define two flavors of key confirmation, full and almost-full key confirmation, taking into account the inevitable asymmetry of the roles of the parties with respect to the transmission of the final protocol message. These notions capture the strongest level of key confirmation reasonably expectable for the two communication partners of the key exchange. We demonstrate the benefits of having precise security definitions for key-confirmation by applying them to the next version of the Transport Layer Security ({TLS}) protocol, version 1.3, currently developed by the Internet Engineering Task Force ({IETF}). Our analysis shows that the full handshake as specified in the {TLS} 1.3 draft draft-ietf-tls-tls13-10 achieves desirable notions of key confirmation for both clients and servers. While key confirmation is generally understood and in the {TLS} 1.3 draft described as being obtained from the Finished messages exchanged, interestingly we can show that the full {TLS} 1.3 handshake provides key confirmation even without those messages, shedding a formal light on the security properties different handshake messages entail. We further demonstrate the usefulness of rigorous definition by revisiting a folklore approach to establish key confirmation (as discussed for example in {SP} 800-56A of {NIST}). We provide a formalization as a generic protocol transformation and show that the resulting protocols enjoy strong key confirmation guarantees, thus confirming its beneficial use in both theoretical and practical protocol designs.},
+	eventtitle = {2016 {IEEE} Symposium on Security and Privacy ({SP})},
+	pages = {452--469},
+	booktitle = {2016 {IEEE} Symposium on Security and Privacy ({SP})},
+	author = {Fischlin, Marc and Günther, Felix and Schmidt, Benedikt and Warinschi, Bogdan},
+	urldate = {2024-12-02},
+	date = {2016-05},
+	keywords = {Authentication, Cryptography, {NIST}, Proposals, Protocols, Servers},
 }
 
 @online{lets_encrypt_stats,
@@ -680,6 +742,36 @@ We have targeted Nginx versions greater than 1.18 on Ubuntu 22.04 or newer for i
 	date = {2024},
 }
 
+@incollection{sigma_protocol,
+	location = {Berlin, Heidelberg},
+	title = {{SIGMA}: The ‘{SIGn}-and-{MAc}’ Approach to Authenticated Diffie-Hellman and Its Use in the {IKE} Protocols},
+	volume = {2729},
+	isbn = {978-3-540-40674-7},
+	url = {http://link.springer.com/10.1007/978-3-540-45146-4_24},
+	shorttitle = {{SIGMA}},
+	abstract = {We present the {SIGMA} family of key-exchange protocols and the “{SIGn}-and-{MAc}” approach to authenticated Diﬃe-Hellman underlying its design. The {SIGMA} protocols provide perfect forward secrecy via a Diﬃe-Hellman exchange authenticated with digital signatures, and are speciﬁcally designed to ensure sound cryptographic key exchange while providing a variety of features and trade-oﬀs required in practical scenarios (such as optional identity protection and reduced number of protocol rounds). As a consequence, the {SIGMA} protocols are very well suited for use in actual applications and for standardized key exchange. In particular, {SIGMA} serves as the cryptographic basis for the signaturebased modes of the standardized Internet Key Exchange ({IKE}) protocol (versions 1 and 2).},
+	pages = {400--425},
+	booktitle = {Advances in Cryptology - {CRYPTO} 2003},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Krawczyk, Hugo},
+	editor = {Boneh, Dan},
+	editorb = {Goos, Gerhard and Hartmanis, Juris and Van Leeuwen, Jan},
+	editorbtype = {redactor},
+	urldate = {2024-11-27},
+	date = {2003},
+	langid = {english},
+	doi = {10.1007/978-3-540-45146-4_24},
+	note = {Series Title: Lecture Notes in Computer Science},
+}
+
+@report{sphincs_proposal,
+	title = {{SPHINCS}+ {\textbar} Submission to the {NIST} post-quantum project, v.3.1},
+	url = {https://sphincs.org/data/sphincs+-r3.1-specification.pdf},
+	author = {{Jean-Philippe Aumasson} and {Daniel J. Bernstein} and {Ward Beullens} and {Christoph Dobraunig} and {Maria Eichlseder} and {Scott Fluhrer} and {Stefan-Lukas Gazdag} and {Andreas Hülsing} and {Panos Kampanakis} and {Stefan Kölbl} and {Tanja Lange} and {Martin M. Lauridsen} and {Florian Mendel} and {Ruben Niederhagen} and {Christian Rechberger} and {Joost Rijneveld} and {Peter Schwabe} and {Bas Westerbaan}},
+	urldate = {2024-11-27},
+	date = {2022-06-10},
+}
+
 @book{ssl_tls_book,
 	edition = {Third edition},
 	title = {{SSL} and {TLS}: Theory and Practice},
@@ -799,6 +891,17 @@ We have targeted Nginx versions greater than 1.18 on Ubuntu 22.04 or newer for i
 	author = {Le Pochat, Victor and Van Goethem, Tom and Tajalizadehkhoob, Samaneh and Korczynski, Maciej and Joosen, Wouter},
 	date = {2019},
 	langid = {english},
+}
+
+@software{armored_witness,
+	title = {transparency-dev/armored-witness},
+	rights = {Apache-2.0},
+	url = {https://github.com/transparency-dev/armored-witness/tree/3cd18d29f76933a4bc7e0093b04e4d93a299ce8e},
+	version = {3cd18d2},
+	publisher = {transparency-dev},
+	author = {{Al Cutter} and {Jay Hou} and {Martin Hutchinson} and {Roger Ng} and {Philippe Boneff} and {Jussi Kukkonen}},
+	urldate = {2024-12-02},
+	date = {2024-11-25},
 }
 
 @report{rfc_ocsp_stapling,

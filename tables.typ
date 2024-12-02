@@ -11,20 +11,48 @@
     }
   }
 
-  table(
-    columns: 6,
-    align: (left, center, left, left, left, left),
-    stroke: 0.3pt,
-    table.header(
-      [], [], table.cell(colspan: 2)[Sizes (bytes)], table.cell(colspan: 2)[CPU time (lower is better)],
-      [Name], [PQ], [Public Key], [Signature], [Signing], [Verification]),
-    
-      [Ed25519],      [#emoji.crossmark],     [32],     [64],     [1 (baseline)],   [1 (baseline)],
-      [RSA-2048],     [#emoji.crossmark],     [256],    [256],    y[70],            [0.3],
-      [ML-DSA-44],    [#emoji.checkmark.box], o[1,312],  o[2,420],  [4.8],          [0.5],
-      [SLH-DSA-128s], [#emoji.checkmark.box], [32],     r[7,856],  r[8,000],        [2.8],
-      [SLH-DSA-128f], [#emoji.checkmark.box], [32],     r[17,088], r[550],          [7],
-      [FN-DSA-512],   [#emoji.checkmark.box], y[897],    y[666],   y[8 #emoji.warning],            [0.5],
+  let g = (x, body) => {
+    let text_color = if x > 0.5 {
+      white
+    } else {
+      black
+    }
+    table.cell(fill: gradient.linear(..color.map.viridis).sample(100% - x * 100%),  text(fill: text_color, body))
+  }
+
+  grid(
+    columns: (auto, auto),
+    gutter: 2em,
+    table(
+      columns: 6,
+      align: (left, center, left, left, left, left),
+      stroke: 0.3pt,
+      table.header(
+        [], [], table.cell(colspan: 2)[Sizes (bytes)], table.cell(colspan: 2)[CPU time (lower is better)],
+        [Name], [PQ], [Public Key], [Signature], [Signing], [Verification]),
+      
+        [Ed25519],      [#emoji.crossmark],     g(32/1312)[32],     g(64/17088)[64],     g(1/8000)[1 (baseline)],      g(1/7)[1 (baseline)],
+        [RSA-2048],     [#emoji.crossmark],     g(256/1312)[256],    g(256/17088)[256],    g(70/8000)[70],             g(0.3/7)[0.3],
+        [ML-DSA-44],    [#emoji.checkmark.box], g(1312/1312)[1,312],  g(2420/17088)[2,420],  g(4.8/8000)[4.8],         g(0.5/7)[0.5],
+        [SLH-DSA-128s], [#emoji.checkmark.box], g(32/1312)[32],     g(7856/17088)[7,856],  g(8000/8000)[8,000],        g(2.8/7)[2.8],
+        [SLH-DSA-128f], [#emoji.checkmark.box], g(32/1312)[32],     g(17088/17088)[17,088], g(550/8000)[550],          g(7/7)[7],
+        [FN-DSA-512],   [#emoji.checkmark.box], g(897/1312)[897],    g(666/17088)[666],   g(8/8000)[8 #emoji.warning], g(0.5/7)[0.5],
+    ),
+    align(horizon,
+    grid(
+      gutter: .5em,
+      text(size: .8em)[bad\ performance],
+      rect(
+        width: 10pt,
+        height: 8em,
+        fill: gradient.linear(
+          dir: ttb,
+          ..color.map.viridis,
+      )),
+      text(size: .8em)[good\ performance]
+),
+)
+
   )
 }
 

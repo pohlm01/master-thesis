@@ -40,7 +40,7 @@
 
   v(2fr)
   date.display(
-    "[month repr:long] [day], [year]"
+    "[month repr:long] [day padding:none], [year]"
   )
   v(1fr)
 
