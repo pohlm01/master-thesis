@@ -36,7 +36,7 @@
         [ML-DSA-44],    [#emoji.checkmark.box], g(1312/1312)[1,312],  g(2420/17088)[2,420],  g(4.8/8000)[4.8],         g(0.5/7)[0.5],
         [SLH-DSA-128s], [#emoji.checkmark.box], g(32/1312)[32],     g(7856/17088)[7,856],  g(8000/8000)[8,000],        g(2.8/7)[2.8],
         [SLH-DSA-128f], [#emoji.checkmark.box], g(32/1312)[32],     g(17088/17088)[17,088], g(550/8000)[550],          g(7/7)[7],
-        [FN-DSA-512],   [#emoji.checkmark.box], g(897/1312)[897],    g(666/17088)[666],   g(8/8000)[8 #emoji.warning], g(0.5/7)[0.5],
+        [FN-DSA-512],   [#emoji.checkmark.box], g(897/1312)[897],    g(666/17088)[666],   g(8/8000)[8 #h(.3em) #box(height: 0.7em, inset: -1pt,  image("images/red-alert-icon.svg"))], g(0.5/7)[0.5],
     ),
     align(horizon,
     grid(

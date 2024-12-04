@@ -3,29 +3,47 @@
 #import "tables.typ": pq_signatures
 
 = Preliminaries <sec:preliminaries>
-This section provides information relevant to understanding the architecture of @mtc and its implications, which is the topic of this thesis.
+This section provides information relevant to understanding the architecture of #gls("mtc", long: true) and its implications.
 It starts with a reminder of Merkle Trees and continues with an explanation of the present @pki, including its building blocks @acme, @ocsp, and @ct.
 Afterward, this section provides a summary of the @tls protocol and the optimization @kemtls, and ends with a list of relevant post-quantum secure signature algorithms.
 
 == Merkle Trees
-Merkle Trees, also known as Hash Trees, are binary trees with the property that each inner node is the hash of the two child nodes.
-That way, one can easily prove that information stored in a specific leaf node is included in the tree.
+Merkle Trees, also known as Hash Trees, are binary trees with the property that each inner node is the result of a cryptographic hash function on its child nodes.
+This data structure is tamper-evident and enables efficient verification whether an element is included in the tree.
+The term "tamper-evident" refers to the inability to add, delete, or modify information contained within the Merkle Tree without changing the root node.
+An efficient verification means that, given the information and the proof, one can easily verify that the information is contained in the root hash.
+
+As a reminder: A hash function takes an arbitrary length input and produces a fix-length output.
+In the following, we will use $h = H(x)$ to denote that $h$ is the result of applying the hash function $H$ in the input $x$.
+In addition, a cryptographic hash function typically has three properties: Collision resistance, first preimage resistance, and second preimage resistance.
+Collision resistance means that it is hard to find any two inputs $x eq.not x'$ that result in the same hash output $H(x) = H(x')$.
+First preimage resistance means that it is hard to find the original input $x$ data that produced a given hash output $h$. 
+In other words, given a hash $h$, it is hard to find $x$ such that $h = H(x)$.
+Second preimage resistance means that it is hard to find a second input $x'$ that produces the same hash as a given input $x$.
+In other words, given an input $x$, it is hard to find $x'$ such that $H(x) = H(x')$.
+Hard in this context means that something is computationally infeasible, i.e., cannot be calculated in polynomial time~@handbook_applied_crypto[Section~9.2.1].
 
 #figure(
   merkle_tree,
-caption:  [Visualization of a Merkle Tree with an inclusion proof for information $i_1$.
-          The inclusion proof consists of the yellow marked $n_0$ and $n_5$ node, which allows a verifier to recalculate the red, thick path up to the rood node.
+caption:  [Visualization of a Merkle Tree with an inclusion proof for information $x_1$.
+          The inclusion proof consists of the yellow marked $h_0$ and $h_5$ node, which allows a verifier to recalculate the red, thick path up to the rood node.
 ]) <fig:merkle_tree>
 
-@fig:merkle_tree shows an example tree with the information leafs $n_0$, $n_1$, $n_2$ and $n_4$.
-Each of the inner nodes is the result of the hash function $H(x_1, x_2)$ with the content of the two child nodes.
-The lowest nodes hash the information.
+@fig:merkle_tree shows an example tree with the information leafs $h_0$, $h_1$, $h_2$ and $h_4$.
+Each of the inner nodes is the result of the hash function $H_2(h_i, h_(i+1))$ with the content of the two child nodes.
+The leaf nodes contain the hash of the information to include as $H_1(x_i)$.
 That way, one can build an inclusion proof to the root node without reveling any other information.
-The inclusion proof contains the mission hash for each node, so $n_0$ and $n_5$ in the example in @fig:merkle_tree.
+The inclusion proof contains the mission hash for each node, so $h_0$ and $h_5$ in the example in @fig:merkle_tree.
 
-As long as the used hash function is collision resistant, it is not possible to alter, add, or delete any information included in the Merkle Tree without changing the hash of the root node.
+Please note that the leaf and internal node use two different hash functions, $H_1$ and $H_2$.
+This is to ensure that an internal node can never be interpreted as leaf node~@merkle_tree_second_preimage.
+In practice, it is enough to only slightly alter the hash function, such as by prepending a single domain separator byte which is different for the leaf and internal nodes~@rfc_ct.
+The internal hash function $H_2$ takes two arguments, even though hash functions generally only take a single input.
+However, there are multiple ways to circumvent this restriction, for example, by concatenating the two inputs into one.
+
+As long as the used hash function is collision resistant, it is not possible to alter, add, or delete any information included in the Merkle Tree without changing the hash of the root node~@handbook_applied_crypto[Section~13.4.1].
 Instead, it is possible to add information to the tree and create a consistency proof showing that only specific data was added, but nothing else has changed in the tree.
-This property can be used to build logs that are verifiably append-only.
+This property can be used to build logs that are verifiably append-only~@rfc_ct.
 
 == Public Key Infrastructure <sec:pki>
 // - binds a public key of a set of information 
@@ -43,7 +61,7 @@ This property can be used to build logs that are verifiably append-only.
 //   - Restricted access to #glspl("vpn")
 
 A #gls("pki", long: true) is a crucial part of ensuring security in various digital systems.
-Its core functionality is to bind a cryptographic public key to a set of verified information @rfc_pki.
+Its core functionality is to bind a cryptographic public key to a set of verified information~@rfc_pki.
 Typically, this information represents an identity such as a domain name, company name, or the name of a natural person.
 However, in some cases, the verified information instead contains permissions, or ownership, without an identity.
 An example for that is the @rpki, which is used to secure @bgp announcements and therefore harden the security of routing on the internet @rfc_rpki.
@@ -254,5 +272,5 @@ Moreover, verifying does not rely on floating-point arithmetic, and even if it d
   pq_signatures,
   caption: [
     Comparison of selected classical signature schemes with algorithms (to be) standardized by @nist. 
-    The #emoji.warning symbols fast, but dangerous floating-point arithmetic. @bas_westerbaan_state_2024]
+    The #box(baseline: 0.2em, height: 1em, image("images/red-alert-icon.svg")) symbols fast, but dangerous floating-point arithmetic. @bas_westerbaan_state_2024]
 ) <pq_signature_comp>

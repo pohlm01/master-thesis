@@ -152,20 +152,20 @@
     // node((-4, 2), [level 0:], stroke: none, inset: 0em)
 
     
-    node((0, 0), $"root" = H(n_4, n_5)$, name: <root>)
+    node((0, 0), $"root" = H_2(h_4, h_5)$, name: <root>)
     
-    node((rel: (-1.4, 1), to: <root>), $n_4 = H(n_0, n_1)$, name: <t10>)
-    node((rel: (1.4, 1), to: <root>), $n_5 = H(n_2, n_3)$, name: <t11>, fill: yellow)
+    node((rel: (-1.4, 1), to: <root>), $h_4 = H_2(h_0, h_1)$, name: <t10>)
+    node((rel: (1.4, 1), to: <root>), $h_5 = H_2(h_2, h_3)$, name: <t11>, fill: yellow)
     
-    node((rel: (-0.8, 1), to: <t10>), $n_0 = H(i_0)$, name: <t00>, width: 25mm, fill: yellow)
-    node((rel: (0.8, 1), to: <t10>), $n_1 = H(i_1)$, name: <t01>, width: 25mm)
-    node((rel: (-0.8, 1), to: <t11>), $n_2 = H(i_2)$, name: <t02>, width: 25mm)
-    node((rel: (0.8, 1), to: <t11>), $n_3 = H(i_4)$, name: <t03>, width: 25mm)
+    node((rel: (-0.8, 1), to: <t10>), $h_0 = H_1(x_0)$, name: <t00>, width: 27mm, fill: yellow)
+    node((rel: (0.8, 1), to: <t10>), $h_1 = H_1(x_1)$, name: <t01>, width: 27mm)
+    node((rel: (-0.8, 1), to: <t11>), $h_2 = H_1(x_2)$, name: <t02>, width: 27mm)
+    node((rel: (0.8, 1), to: <t11>), $h_3 = H_1(x_4)$, name: <t03>, width: 27mm)
 
-    node((rel: (0, 1), to: <t00>), $i_0$, name: <a0>)
-    node((rel: (0, 1), to: <t01>), $i_1$, name: <a1>, fill: yellow)
-    node((rel: (0, 1), to: <t02>), $i_2$, name: <a2>)
-    node((rel: (0, 1), to: <t03>), $i_3$, name: <a3>)
+    node((rel: (0, 1), to: <t00>), $x_0$, name: <a0>)
+    node((rel: (0, 1), to: <t01>), $x_1$, name: <a1>, fill: yellow)
+    node((rel: (0, 1), to: <t02>), $x_2$, name: <a2>)
+    node((rel: (0, 1), to: <t03>), $x_3$, name: <a3>)
 
     edge(<root>, <t10>, stroke: red + 1mm)
     edge(<root>, <t11>)
