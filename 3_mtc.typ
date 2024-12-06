@@ -20,9 +20,9 @@
 //   - validity window: A range of consecutive batch tree heads that a relying party accepts
 
 This section summarizes the @ietf Internet-Draft that describes #glspl("mtc") for @tls~@rfc_mtc.
-The motivation to create a new certificate architecture is mainly driven by the large sizes of @pq signatures.
-Unfortunately, todays Web@pki relies on signatures in various places not just limited to the @ca signature in the certificate, but also for the embedded @sct for @ct and possibly @ocsp staples for certificate revocation.
-Therefore, replacing all these signatures naively results in a big increase of bytes transferred during a @tls handshake, as discussed in @sec:certificate_size.
+The motivation to create a new certificate architecture is mainly driven by the large size of @pq signatures.
+Unfortunately, today's Web@pki relies on signatures in various places not just limited to the @ca signature in the certificate, but also for the embedded @sct for @ct and possibly @ocsp staples for certificate revocation.
+Therefore, replacing all these signatures naively results in a big increase in bytes transferred during a @tls handshake, as @sec:certificate_size will show in detail.
 To prevent this, the Internet-Draft proposes an architecture that reduces the number of signatures where possible and instead greatly relies on hash functions.
 Hash functions have the advantage of being computationally lightweight, small, and @pq secure.
 
@@ -45,7 +45,7 @@ Compared to today's Web@pki it has a reduced scope and assumes more prerequisite
 - A #emph(gls("ca", long: true)) collects Assertions from @ap:pl, validates them, and issues certificates.
 - A #emph([Transparency Service]) mirrors the @ca:pl, validates the batches, and forwards them to the @rp:pl.
 - A #emph([Monitor]) monitors the transparency services for suspicious or unauthorized certificates.
-- An #emph([Assertion]) is information that an @ap gets certified by a @ca, i.e., a public key and one or multiple domain name(s) and/or #gls("ip", long: false) address(es). An #emph([Abridged Assertion]) hashes the public key stored in an assertion to reduce the size, especially for potentially large @pq keys.
+- An #emph([Assertion]) is information that an @ap gets certified by a @ca, i.e., a public key and one or multiple domain name(s) or #gls("ip", long: false) address(es). An #emph([Abridged Assertion]) hashes the public key stored in an assertion to reduce the size, especially for potentially large @pq keys.
 - A #emph([Batch]) is a collection of assertions that are certified simultaneously. The recommended #emph([Batch Duration]) is one hour, meaning that all assertions collected within this hour are certified at the same time.
 - A #emph([Batch Tree Head]) is the Merkle Tree root node over all assertions of one batch.
 - An #emph([Inclusion Proof]) is a proof that a certain assertion is included in a batch. The proof consists of the hashes required to rebuild the path up to the Batch Tree Head.
@@ -53,7 +53,7 @@ Compared to today's Web@pki it has a reduced scope and assumes more prerequisite
 - A #emph([Certificate]) combines an assertion with an inclusion proof.
 
 #figure(
-  fletcher.diagram(node([TODO])),
+  mtc_terms(),
   caption: [This figure shows an illustration of the Batch, Batch Tree Head, Validity Window (and maybe inclusion proof)]
 ) <fig:mtc_terms_overview>
 
@@ -97,8 +97,9 @@ This will typically be a small time frame in which the @ca builds the Merkle Tre
 Subsequently, the batch transfers to the issued state, i.e., the @ca published the signed validity window and abridged assertions.
 As an invariant, all batches before the latest issued one must be issued as well, i.e., no gaps are allowed.
 
-Every time a batch becomes ready, the @ca converts all assertions it found to be valid into abridged assertions by hashing the (possibly large) signature key in that assertion to transform them into abridged assertions and afterward builds a Merkle Tree as depicted in @merkle_tree_abridged_assertion.
-Next, the @ca signs a `LabeledValidityWindow` that contains the domain separator `Merkle Tree Crts ValidityWindow\0` to prevent cross protocol attacks, the `issuer_id`, the `batch_number`, and all Merkle Tree root hashes that are currently valid.
+Every time a batch becomes ready, the @ca converts all assertions it found to be valid into abridged assertions by hashing the (possibly large) signature key in that assertion.
+Afterward, it builds a Merkle Tree as depicted in @merkle_tree_abridged_assertion.
+Lastly, the @ca signs a `LabeledValidityWindow` that contains the domain separator `Merkle Tree Crts ValidityWindow\0` to prevent cross protocol attacks, the `issuer_id`, the `batch_number`, and all Merkle Tree root hashes that are currently valid.
 
 
 // - As mentioned earlier: Merkle Trees

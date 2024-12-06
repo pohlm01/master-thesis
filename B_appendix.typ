@@ -2,16 +2,7 @@
 
 = Appendix
 
-#rotate(
-    -90deg,
-    reflow: true,
-    [#figure(
-      x509_certificates_top_10,
-      caption: [Signature types in certificate chains delivered at 06.11.2024 for user agent `Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:132.0) Gecko/20100101 Firefox/132.0` at a Dutch internet connection]
-    ) <tab:top_10_signatures>]
-)
-
-== Byte level analysis of handshake messages <sec:byte_analysis_handshake>
+== Byte-Level Analysis of Handshake Messages <sec:byte_analysis_handshake>
 The implementation of the @tls negotiation mechanisms necessary for @mtc cannot be tested against a independently developed peer, as there exist no other implementation as of now.
 Instead, we opted to manually analyze the messages exchanged between the client and server using Wireshark.
 The setup contains a simple @tls server and client, both build upon the modified Rustls version supporting @mtc.
@@ -93,3 +84,15 @@ box(align(start)[#text(font: "DejaVu Sans Mono", size: 0.8em)[
 ]]),
 caption: [Payload of `Certificate` message]
 ) <fig:bytes_certificate_message>
+
+== Tables
+#box(
+  height: 48em,
+  rotate(
+    -90deg,
+    reflow: true,
+    [#figure(
+      x509_certificates_top_10,
+      caption: [Signature types in certificate chains delivered at 06.11.2024 for user agent `Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:132.0) Gecko/20100101 Firefox/132.0` at a Dutch internet connection]
+    ) <tab:top_10_signatures>]
+))

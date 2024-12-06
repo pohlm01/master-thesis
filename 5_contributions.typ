@@ -5,20 +5,20 @@
 As part of this work, we implemented parts of the @mtc system and contributed to the standardization process.
 The objective was to establish a @tls connection between an @ap and @rp, and to contribute enhancements or address errors or ambiguities in the Internet-Draft along the way.
 
-Our starting point was an experimental software written in Go that can function as an @mtc @ca @go_mtc_ca.
-Furthermore, we used the @tls library #emph[Rustls] @github_rustls as a basis.
-Rustls is written in the programming language Rust @rust, but already gains adoption beyond the Rust ecosystem @lets_encrypt_rustls @rustls_openssl_nginx.
-Rustls uses a separate library for checking certificates, called #emph[WebPKI] @github_rustls_webpki.
+Our starting point was an experimental software written in Go that functions as an @mtc @ca~@go_mtc_ca.
+Furthermore, we used the @tls library #emph[Rustls]~@github_rustls as a basis.
+Rustls is written in the programming language Rust~@rust and gains adoption beyond the Rust ecosystem~@lets_encrypt_rustls @rustls_openssl_nginx.
+Rustls uses a separate library for checking certificates, called #emph[WebPKI]~@github_rustls_webpki.
 In the Rust ecosystem, libraries are referred to as #emph[crates].
 
 The integration of @mtc into Rustls necessitated numerous modifications.
-First, we added the negotiation mechanism for the certificate type, based on RFC~7250 @rfc_raw_public_keys.
+First, we added the negotiation mechanism for the certificate type, based on RFC~7250~@rfc_raw_public_keys.
 The negotiation mechanism relies on extensions exchanged during the `ClientHello` and `ServerHello` messages.
 This adoption entailed several changes to the Rustls code base, as it needs to keep state about which certificate type was negotiated.
 Previously, it assumed X.509 certificates and related structures like stapled @ocsp responses at various places.
 In addition to the negotiation of the certificate type, we implemented the negotiation mechanism for the #glspl("tai", long: true) as described in another Internet-Draft @rfc_tai.
-Therefore, we had to extend the certificate selection logic to first match on the requested @tai:pl and fall back to the previously used @sni based certificate selection.
-We simplified the @tai negotiation in that the client does not preselect the @tai:pl it requests in the `ClientHello` based a @dns query, to simplify the implementation and testing.
+Therefore, we had to extend the certificate selection logic to first match on the requested @tai:pl and fall back to the previously used certificate selection based on the @sni.
+We simplified the @tai negotiation in that the client does not preselect the @tai:pl it requests in the `ClientHello` based on a @dns query, to simplify the implementation and testing.
 // Instead, the client sends all the @tai:pl it supports, which is only a very limited set in our test setup.
 // In a real deployment, this is not practical due to the possibly large set of supported @tai:pl and fingerprinting possibilities.
 

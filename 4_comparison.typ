@@ -4,36 +4,38 @@
 
 = Comparison of MTC with the Current WebPKI <sec:mtc_pki_comparison>
 
-From the introduction to @pki in @sec:pki and the explanation of @mtc in @sec:mtc, it becomes obvious that there are big differences between these architectures.
+Based on the introduction to @pki in @sec:pki and the explanation of @mtc in @sec:mtc, it becomes obvious that there are significant differences between these architectures.
 This chapter presents the results of the analysis we conducted about the differences and the advantages and disadvantages the architectures result in.
 
 The most obvious change is the significant reduction of the certificate lifetime.
 The authors of @mtc propose a lifetime of 14 days.
-As of October 2024, @tls leaf certificates for the Web@pki may be issued for at most 13 months, i.e., 398 days @chrome_cert_lifetime @apple_cert_lifetime and are often issued for 90 days, which is still more than six times as long as the lifetime of @mtc.
+In contrast, as of October 2024, @tls leaf certificates for the Web@pki may be issued for at most 13 months, i.e., 398 days~@chrome_cert_lifetime @apple_cert_lifetime.
+Often they are issued only for 90 days, which is still more than six times as long as the proposed lifetime of @mtc.
 At the same time, it is likely that the validity periods of classical certificates will decrease further.
 In October 2024, Apple published a proposal to the CA/Browser Forum suggesting a gradual reduction of the maximum certificate lifetime to 45 days by September 2027~@apple_45_days_cert.
-It is unclear if this proposal will be accepted, but it is clear that the maximum certificate lifetime will only decrease in the future, reducing the gap to @mtc.
+It is unclear if this proposal will be accepted, but it is clear that the maximum certificate lifetime will only decrease in the future, possibly approaching the certificate lifetime of @mtc.
 
 Another notable difference is that the @mtc draft explicitly ignores certificate revocation.
 This is a direct result of the short certificate lifetimes; if certificates live as long as it takes for a revocation to effectively propagate, certificate revocation is not necessary anymore.
-This is a clear improvement over the current Web@pki, as it continuously suffers from ineffective revocation mechanisms @lets_encrypt_new_crl @crl_sets_effectiveness @reddit_ocsp_firefox.
-Chrome does not check @ocsp or @crl:pl, but instead relies on a custom summary called #emph("CRLSets") containing a (small) subset of all revoked certificates curated by Google @chrome_crlsets.
-Firefox does still check @ocsp responses, but the CA/Browser forum changed its recommendation to support @ocsp in their @ca baseline requirements to an optional @ocsp support in version 2.0.1, effective as of March 2024 @cab_ocsp_optional_crl_mandatory.
+Eliminating the need for a revocation mechanism is a clear improvement over the current Web@pki, as it continuously suffers from ineffective revocation mechanisms~@lets_encrypt_new_crl @crl_sets_effectiveness @reddit_ocsp_firefox.
+Chrome does not check @ocsp or @crl:pl, but relies on a custom summary called #emph("CRLSets") containing a (small) subset of all revoked certificates curated by Google @chrome_crlsets.
+In contrast to that, Firefox does still check @ocsp responses, but the CA/Browser forum changed its recommendation to support @ocsp in their @ca baseline requirements to an optional @ocsp support in version 2.0.1, effective as of March 2024~@cab_ocsp_optional_crl_mandatory.
 As @ocsp entails high operational costs for @ca:pl, it is likely that @ocsp will further lose relevance.
-Let's Encrypt already announced to end their @ocsp support "as soon as possible" @lets_encrypt_end_ocsp.
-Instead, the CA/Browser forum tightens the requirements for @crl:pl and Mozilla is working on accumulating all revoked certificates into a small list called #emph("CRLite") since 2017, but did not enable this mechanism by default in Firefox as of version 132 from October 2024 @crlite_paper @mozilla_crlite.
+Let's Encrypt already announced to end their @ocsp support "as soon as possible"~@lets_encrypt_end_ocsp.
+Instead, the CA/Browser forum tightens the requirements for @crl:pl and Mozilla is working on accumulating all revoked certificates into a small list called #emph("CRLite") since 2017, but did not enable this mechanism by default in Firefox as of version 132 from October 2024~@crlite_paper @mozilla_crlite.
 
 Furthermore, certificate transparency is built into @mtc, as opposed to the X.509 certificate infrastructure, where it was added later on.
 
-A significant downside of @mtc compared to the classical certificate infrastructure are the longer issuance times.
+A significant downside of @mtc compared to the classical certificate infrastructure is the longer issuance times.
 There are two aspects to this: First, the issuance of the certificate itself takes up to `batch_duration` seconds, i.e., one hour assuming the default values, and second, the time the new tree heads propagate to a relevant number of @rp:pl.
 The first one will not make up for the major part of the difference in practice.
-For either certificate type -- X509 or @mtc -- the effective control over the domain needs to be validated upfront, which, depending on the challenge type, requires @dns entries to propagate or @http pages to propagate across multiple servers and data centers for big deployments @lets_encrypt_challange_types @tls_issuance_delay.
-Therefore, classical certificate issuance often takes up to an hour as well, though in specific configurations it may work a lot faster.
-The second part, the propagation delay of new tree heads to the @rp:pl, will be more relevant.
+For both X509 and @mtc certificates, the @ca must validate the @ap has effective control over the domain beforehand.
+This validation process often involves @dns record propagation or @http page propagation across multiple servers and data centers, especially for large-scale deployments~@lets_encrypt_challange_types @tls_issuance_delay.
+Therefore, classical certificate issuance can take up to an hour as well, though in optimized configurations it can work a lot faster.
+The second part, the propagation delay of new tree heads to the @rp:pl, is more relevant.
 X.509 certificates are trusted by @rp:pl immediately after they are issued.
 In contrast to that, to verify @mtc:pl, the @rp must be up-to-date with the batch tree head for successful verification.
-In practice, we do not expect updates from the Transparency Service to the @rp happening substantially more frequently than every six hours.
+In practice, we do not expect updates from the Transparency Service to the @rp to happen substantially more frequently than every six hours.
 Therefore, the delay until a new @mtc is broadly usable may be up to a few days in the worst case.
 
 To determine how big the impact of the long issuance delay is, it is helpful to understand which circumstances require fast certificate issuance.
@@ -41,12 +43,12 @@ In such a situation, the Internet-Draft assumes the existence of a fallback mech
 This could be an X.509 certificate or another, future mechanism that allows for fast issuance.
 The drawback of large certificate chains is only temporary, until @rp:pl updated their trust stores to incorporate the new tree heads, enabling them to utilize the size-efficient @mtc mechanism again.
 There are two main reasons why a fast issuance is required; for a new domain and for an unplanned move of the domain.
-A scenario in which an expired certificate must be renewed quickly because of a forgotten, manual renewal is very unlikely, as @mtc require a high level of automation anyway.
+A scenario in which an expired certificate must be renewed quickly because of a forgotten, manual renewal is very unlikely, as @mtc requires a high level of automation anyway.
 
-In @mtc_fallback_estimate, Lena Heimberger estimates the likelihood of those fallbacks.
+In @mtc_fallback_estimate, Heimberger estimates the likelihood of those fallbacks.
 For that, she uses the fact that all certificates must be logged to a transparency log to be accepted by the major browser, which makes the analysis of all current and expired certificates possible.
 Heimberger divided domains into two categories: Top domains and random domains.
-This is interesting, because the most visited websites are more likely to be well maintained than websites that are visited less often.
+This is interesting because the most visited websites are more likely to be well maintained than websites that are visited less often.
 The analysis she performed potentially has a high rate of large positives, but it is useful to have an idea of the order of magnitude anyway.
 Assuming a propagation delay of three days, the top domains have a chance of 0.0004~% of hitting a fallback, while the random domains have a chance of 0.009~%.
 This shows that the chance of hitting a fallback is very unlikely, and thus the longer issuance delays will barely affect the daily operations.
@@ -75,16 +77,16 @@ This shows that the chance of hitting a fallback is very unlikely, and thus the 
 On a large scale, every byte saved during a @tls handshake is a relevant reduction, as the handshakes take place before almost every connection.
 Cloudflare published some notable statistics regarding the number of bytes transferred from server to client.
 Their statistic only considers QUIC connections, as they likely originate from browsers.
-This fits well, as the @mtc architecture is mainly designed for browser-like applications as well.
+This fits nicely, as the @mtc architecture is mainly designed for browser-like applications as well.
 For non-resumed QUIC connections, the median number of transferred bytes is 7.8~kB and the average is 395~kB.
-The big difference between the median and average shows that a few data-heavy connections heavily influence the average, while there is a high volume of small connections.
+The big difference between the median and average indicates that a few data-heavy connections heavily influence the average, while there is a high volume of small connections.
 This allows the rough estimate that about 40~% of the bytes transferred from the server to the client are for the certificate chain in at least half of the non-resumed QUIC connections.
 
 Therefore, we investigate the main improvement of @mtc over classical X.509 certificates in this section, namely the size reduction of the @tls handshake.
-In the beginning, we focus on the authentication related cryptographic material exchanged during the handshake.
+Initially, we focus on the authentication related cryptographic material exchanged during the handshake.
 This means, we do not include the bytes that encode the domain name, key usage constraints, validity timestamps, and similar.
 We do also ignore the bytes required to establish a shared key used for the record layer, which is used for the encryption and authentication of the payload messages.
-Therefore, an X.509 handshake contains the following components.
+Hence, an X.509 handshake contains the following components:
 One signature for active authentication of the handshake, two signatures for @sct:pl, optionally one signature for an @ocsp staple, one signature of the intermediate @ca on the @ee certificate, and one signature of the root @ca on the intermediate @ca.
 In addition, the @ee and intermediate certificate contain one public key each.
 The root certificate is typically not sent to the @rp, as it is expected to know it already.
@@ -129,7 +131,7 @@ To accommodate this number of assertions, the Merkle Tree requires $ceil(log_2 1
 The current draft only allows #gls("sha")-256 as hashing algorithm and also future iterations are unlikely to extend the length of the digest, even if changing the algorithm.
 Therefore, the proof length for this scenario is $21 dot 32 "bytes" = 672 "bytes"$.
 
-The second scenario indicates a worst case scenario, assuming a big increase in @ap:pl or centralization to few certificate authorities.
+The second scenario indicates a worst-case scenario, assuming a big increase in @ap:pl or centralization to few certificate authorities.
 We map the one billion currently active certificates to one billion @ap:pl, which is very conservative as it ignores the transition periods, which we considered in the first scenario.
 Assuming again that each @ap renews their certificate every ten days and a batch size of one hour, the above calculation results in a proof length of $832 "bytes"$.
 It is interesting to realize that for every doubling of @ap:pl, the proof size grows by 32 bytes, as the tree depth grows logarithmically.
@@ -162,11 +164,11 @@ It is interesting to realize that for every doubling of @ap:pl, the proof size g
   caption: [Bytes of authentication-related cryptographic material exchanged during the @tls handshake using @mtc.]
 ) <tab:bikeshed_size>
 
-Comparing @tab:x509_size and @tab:bikeshed_size shows that @mtc has big size advantages, especially when using @pq algorithms.
+Comparing @tab:x509_size and @tab:bikeshed_size reveals that @mtc has big size advantages, especially when using @pq algorithms.
 Focusing on the classical case first:
 In the best X.509 case, when using only 256-bit @ecdsa for all signatures, @mtc performs slightly worse in terms of the number of authentication bytes.
 While the X.509 case requires 448 authentication-related bytes, @mtc requires 768~bytes, which is an absolute difference of 320~bytes, i.e., the X.509 certificate is 41.67~% smaller than the @mtc.
-Comparing @mtc to a mostly #gls("rsa", long: false)-based certificate, @mtc shows it advantages, as the X.509 certificate grows to 1,728~bytes.
+Comparing @mtc to a mostly #gls("rsa", long: false)-based certificate, @mtc demonstrates it advantages, as the X.509 certificate grows to 1,728~bytes.
 Therefore, the @mtc is 960 or 800~bytes smaller, depending on the number of active @ap:pl in the @mtc system.
 This corresponds to a reduction of 55.56~% or 46.30~%, respectively.
 Moving on to the @pq algorithms, the drastic improvement of @mtc shows up.
@@ -189,16 +191,16 @@ X.509 is based on @asn1 and certificates are transferred in @der encoding.
 The @mtc Internet-Draft defines a new certificate format called Bikeshed certificate.
 The name is meant as a placeholder, and the authors aim to replace it before it potentially becomes a standard.
 @der uses a  type-length-value encoding, meaning that each value in the certificate explicitly has a type and length encoded.
-The encoding of @mtc on the contrary is more efficient because types and lengths of fields are implicit, i.e., fixed, where possible.
-Besides the encoding, the Bikeshed certificate type saves bytes by leaving out information that is superfluous in the new setting.
+The encoding of @mtc, on the contrary, is more efficient because types and lengths of fields are implicit, i.e., fixed, where possible.
+Besides the encoding, the Bikeshed certificate type saves bytes by omitting information that is superfluous in the new setting.
 The following fields are not stored in a Bikeshed certificate, that are not already covered by the size considerations above:
 - Not before timestamp
 - Not after timestamp
 - @crl endpoint
 - @ocsp endpoint
 - @sct timestamps and log IDs
-- key usage restrictions
-- subject and authority key identifier
+- Key usage restrictions
+- Subject and authority key identifier
 
 To give an example:
 The certificate chain for `www.google.com`#footnote([SHA-256 fingerprint \ `37:9A:80:C9:25:2C:66:A1:BB:89:D6:C0:C8:83:33:39:55:1D:E6:0F:D3:75:58:5C:F9:A3:18:37:03:57:A0:D6`]) has 2,486 bytes in @der format.
@@ -208,14 +210,14 @@ Note that this does not contain the @ocsp staple or handshake signature included
 In comparison, a comparable Bikeshed certificate with a 256-bit ECDSA key would contain 704 authentication related bytes, assuming 280 million active @ap:pl.
 The full certificate would be 785 bytes in size.
 Thus, the X.509 certificate chain has an overhead of 1,238 bytes or 99~% while the Bikeshed certificate has an overhead of 81 bytes or 12~%.
-Even though we only analyzed a single example that closely, this shows that the X.509/@asn1 format produces a significant overhead, that can be reduced by introducing a new certificate format.
+Even though we only analyzed a single example that closely, this indicates that the X.509/@asn1 format produces a significant overhead, that can be reduced by introducing a new certificate format.
 An analysis of the certificate chains of the top websites provides shows that certificates are often even bigger than our example.
 #cite(<dennis_cert_size>, form: "author") investigated the size of certificate chains send by roughly 75,000 of the Tranco the top sides~@tranco.
 It shows that the 5#super[th] percentile of certificate chains is 2308~bytes big and the median certificate chain has even 4032~bytes.
 Applying existing certificate compression algorithms, this reduces to 1619~bytes and 3243~bytes, respectively~@dennis_cert_size.
 This shows that @mtc is almost always smaller in practice, even when using classical authentication algorithms instead of @pq.
 
-== Update mechanism considerations <sec:update_size>
+== Update Mechanism Considerations <sec:update_size>
 As with many optimizations, one does not get the results from @sec:certificate_size without a trade.
 The @mtc architecture requires the @rp to regularly update the tree heads it trusts, as shown in Step 5 of @fig:mtc_overview.
 To pull the updates, the @rp regularly requires a connection to the Transparency Service.
@@ -244,7 +246,7 @@ For the use cases that allow a regular update, an important metric for the updat
 We base this estimation on a web surfing use case with the following assumptions:
 We assume 150 trusted root @ca:pl, which is somewhere between the number of @ca:pl currently in the root store of Firefox and Chrome @firefox_root_store @chrome_root_store.
 Furthermore, we assume each @ca uses a batch duration of one hour and lifetime of 14 days, as recommended in the Internet-Draft @rfc_mtc[Section 5.1].
-According to a recent post by Devon O’Brien, working in the Chrome Security team at Google, Chrome strives for an update frequency of six hours or less @mtc_fallback_estimate.
+According to a recent post by O’Brien, working in the Chrome Security team at Google, Chrome strives for an update frequency of six hours or less @mtc_fallback_estimate.
 Therefore, we assume six hours as the default browser update frequency for @mtc tree heads.
 Lastly, we assume each @ca to use #gls("slhdsa")-128s to sign their validity window as the security guarantees for this algorithm are better compared to @mldsa, which is relevant for a long-lasting key.
 
@@ -289,7 +291,7 @@ Potentially, the update mechanism requires large X.509 certificates with @pq cry
 //       - Each signed validity window is about $7,856 "bytes" + 336 dot 32 "bytes" = 18,608 "bytes"$
 //       - Times the number of CAs: $150 dot 18,608 = 2,791,200 => 2.7 "MB"$
 //     - Daily update without the signatures:
-== Common file structure
+== Common File Structure
 Besides small update sizes, it is desirable to store @mtc related data on a common place on an @os.
 Having a common place for certificates on a single machine has the multiple advantages.
 Firstly, it reduces the number of updates required in the @mtc architecture.
@@ -313,11 +315,11 @@ In the proposed structure, the validity window contains the same data as specifi
 The @ca parameters contain the following information:
 - The issuer ID, i.e., the @oid of the @ca
 - The signature scheme used to sign the validity windows
-- The public key of the @ca. It must match the signature scheme.
-- The proof type used for inclusion proof in the certificates. As of now, the only option is a #gls("sha")-256 based Merkle Tree inclusion proof.
-- The start time of the @ca, i.e., the time the @ca was set up. This is required to calculate the validity of a certificate based on its batch number.
-- The batch duration. This is required to calculate the validity of a certificate based on its batch number as well.
-- The validity window size. Again, This is required to calculate the validity of a certificate based on its batch number.
+- The public key of the @ca. It must match the signature scheme
+- The proof type used for inclusion proof in the certificates. As of now, the only option is a #gls("sha")-256 based Merkle Tree inclusion proof
+- The start time of the @ca, i.e., the time the @ca was set up. This is required to calculate the validity of a certificate based on its batch number
+- The batch duration. This is required to calculate the validity of a certificate based on its batch number as well
+- The validity window size. Again, This is required to calculate the validity of a certificate based on its batch number
 
 
 #figure(

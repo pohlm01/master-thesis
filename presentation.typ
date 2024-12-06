@@ -1,6 +1,8 @@
 #import "style/radboud-slides.typ": *
+#import "figures.typ": *
 // #import university: *
 
+#set text(font: "New Computer Modern Sans")
 #show: radboud-theme.with(aspect-ratio: "16-9",
   config-info(
     title: [Master Thesis],
@@ -14,18 +16,53 @@
 
 #title-slide()
 
-= Section
+= Motivation
 
-== Motivating example
+== Motivation
+#slide(composer: (1fr, auto))[
+  - Many cryptographic algorithms could be broken by quantum computers
+  - TLS is used a lot
+  - Confidentiality #emoji.checkmark.box
+  - Server identity #emoji.crossmark
+][#image("images/hero.jpg")]
 
+== What is the Problem?
+- Post-Quantum signatures are big
 
-Hello, Touying!
+= Preliminaries
 
-Hello, Typst!
+== Public Key Infrastructure (PKI)
 
-#speaker-note[
-  + This is a speaker note.
-  + You won't see it unless you use `config-common(show-notes-on-second-screen: right)`
+== Certificate Transparency
+#slide[
+  #set text(size: 0.7em)
+  #set align(horizon)
+  #figure(ct_overview, caption: [Certificate Transparency architecture])
 ]
 
-== Another section
+== Merkle Trees
+#slide[
+  #set text(size: 0.7em)
+  #set align(horizon)
+  #figure(merkle_tree, caption: [Example Merkle Tree])
+]
+
+== Post-Quantum Signatures
+
+= Merkle Tree Certificates
+#slide[
+  #set text(size: 0.7em)
+  #set align(horizon)
+  #figure(mtc_terms(dist: 4em), caption: [Example Merkle Tree])
+]
+
+== Merkle Tree Certificates
+#slide[
+  #set text(size: 0.7em)
+  #set align(horizon)
+  #figure(mtc_overview, caption: [Issuance flow for Merkle Tree Certificates])
+]
+
+
+== Test
+

@@ -51,10 +51,9 @@
   //     },
   //   )
   // }
-  set text(font: "New Computer Modern Sans")
   let header(self) = {
     set align(horizon)
-    set text(size: 1.1em, weight: 600, fill: self.colors.ruLightTeal)
+    set text(size: 1.1em, weight: 600, fill: self.colors.neutral-lightest)
     grid(
       fill: self.colors.primary,
       inset: 0em,
@@ -342,9 +341,9 @@
   show: touying-slides.with(
     config-page(
       paper: "presentation-" + aspect-ratio,
-      header-ascent: 0.5em,
+      header-ascent: 1em,
       footer-descent: 0em,
-      margin: (top: 2em, bottom: 1.25em, x: 2em),
+      margin: (top: 2.5em, bottom: 1.25em, x: 1.5em),
     ),
     config-common(
       slide-fn: slide,

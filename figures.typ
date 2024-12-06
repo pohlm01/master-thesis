@@ -1,4 +1,4 @@
-#import "@preview/fletcher:0.5.2" as fletcher: node, edge
+#import "@preview/fletcher:0.5.2" as fletcher: node, edge, shapes
 #import "@preview/treet:0.1.1": *
 
 #let global_diagram_params = (
@@ -39,7 +39,7 @@
   edge(<ap>,  <ca>,       "<|-", shift: -6pt, label-side: right,  [3. Inclusion proof]),
   edge(<ts>,          <monitor>,  "-|>",              label-side: left,   [4. Mirror tree]),
   edge(<rp>,          <ts>,       "<|-",              label-side: right,  [5. Batch tree heads]),
-  edge(<ap>,  <rp>,       "<|-", shift: -6pt,                     [6. Known trust anchors]),
+  edge(<ap>,  <rp>,       "<|-", shift: -6pt, label-side: right,   [6. Known trust anchors]),
   edge(<ap>,  <rp>,       "-|>", shift:  6pt, label-side: left,   [7. Certificate]),
 )
 }
@@ -65,7 +65,7 @@
 
   edge(<domain_owner>, <ca>, "-|>", shift: 6pt, [1. Issuance request]),
   edge(<ca>, <logs>, "-|>", label-side: left, shift: 6pt, [2. Pre-certificate]),
-  edge(<logs>, <ca>, "-|>", shift: 6pt, [3. SCT]),
+  edge(<logs>, <ca>, "-|>", shift: 6pt, label-side: left, [3. SCT]),
   edge(<ca>, <domain_owner>, "-|>", shift: 6pt, label-side: left, [4. Certificate with SCTs]),
   edge(<domain_owner>, <rp>, "-|>", [5. Certificate \ with SCTs]),
   edge(<monitors>, <logs>, "-|>", label-side: right, [6. Monitor for \ suspicious activity]),
@@ -157,10 +157,10 @@
     node((rel: (-1.4, 1), to: <root>), $h_4 = H_2(h_0, h_1)$, name: <t10>)
     node((rel: (1.4, 1), to: <root>), $h_5 = H_2(h_2, h_3)$, name: <t11>, fill: yellow)
     
-    node((rel: (-0.8, 1), to: <t10>), $h_0 = H_1(x_0)$, name: <t00>, width: 27mm, fill: yellow)
-    node((rel: (0.8, 1), to: <t10>), $h_1 = H_1(x_1)$, name: <t01>, width: 27mm)
-    node((rel: (-0.8, 1), to: <t11>), $h_2 = H_1(x_2)$, name: <t02>, width: 27mm)
-    node((rel: (0.8, 1), to: <t11>), $h_3 = H_1(x_4)$, name: <t03>, width: 27mm)
+    node((rel: (-0.8, 1), to: <t10>), $h_0 = H_1(x_0)$, name: <t00>, fill: yellow)
+    node((rel: (0.8, 1), to: <t10>), $h_1 = H_1(x_1)$, name: <t01>)
+    node((rel: (-0.8, 1), to: <t11>), $h_2 = H_1(x_2)$, name: <t02>)
+    node((rel: (0.8, 1), to: <t11>), $h_3 = H_1(x_4)$, name: <t03>)
 
     node((rel: (0, 1), to: <t00>), $x_0$, name: <a0>)
     node((rel: (0, 1), to: <t01>), $x_1$, name: <a1>, fill: yellow)
@@ -180,6 +180,65 @@
     edge(<t02>, "d")
     edge(<t03>, "d")
   }
+)
+
+#let mtc_terms(dist: 2em) = fletcher.diagram(
+  ..global_diagram_params,
+  spacing: (1em, 1em),
+  node-shape: auto,
+  node-inset: 0.4em,
+  node-stroke: 0em,
+  node-defocus: -1,
+  edge-stroke: (paint: blue, thickness: .1em, dash: "dashed"),
+  let w(c) = text(fill: white.transparentize(100%), c),
+  let c(x, y, z) = (rel: (1.2 * z * dist, 0.5 * z * dist), to: (x , y)),
+
+  let nl(pos, name: <none>, layer: 0, ..content) = {
+    node(
+      pos,
+      name: name,
+      layer: layer,
+      stroke: .07em + black.lighten(-layer * 40%),
+      inset: .7em,
+      fill: white.transparentize(40%),
+      // width: 2.8em,
+      // height: 2.2em,
+      ..content.pos().map(c => text(fill: black.lighten(-layer * 40%), c)),
+    )
+  },
+
+  let e(layer: 0, ..arguments) = {
+    edge(..arguments, layer: layer, stroke: (paint: black.lighten(layer * -40%), thickness: 0.07em, dash: none))
+  },
+  
+  for layer in (0, -1, -2) {
+    nl(c(0, 0, -layer), $"root"_#str(-layer)$, name: label("root" + str(-layer)), layer: layer)
+    
+    nl((rel: (-2 * dist, -dist), to: label("root" + str(-layer))), name: label("t10" + str(-layer)), layer: layer)
+    nl((rel: (2 * dist, -dist), to: label("root" + str(-layer))), name: label("t11" + str(-layer)), layer: layer)
+    
+    nl((rel: (-dist, -dist), to: label("t10" + str(-layer))), w($"aa"_1$), name: label("a0" + str(-layer)), layer: layer)
+    nl((rel: (dist, -dist), to: label("t10" + str(-layer))), w($"aa"_1$), name: label("a1" + str(-layer)), layer: layer)
+    nl((rel: (-dist, -dist), to: label("t11" + str(-layer))), w($"aa"_2$), name: label("a2" + str(-layer)), layer: layer)
+    nl((rel: (dist, -dist), to: label("t11" + str(-layer))), w($"aa"_3$), name: label("a3" + str(-layer)), layer: layer)
+
+    e(label("root" + str(-layer)), label("t10" + str(-layer)), layer: layer)
+    e(label("root" + str(-layer)), label("t11" + str(-layer)), layer: layer)
+    
+    e(label("t10" + str(-layer)), label("a0" + str(-layer)), layer: layer)
+    e(label("t10" + str(-layer)), label("a1" + str(-layer)), layer: layer)
+    e(label("t11" + str(-layer)), label("a2" + str(-layer)), layer: layer)
+    e(label("t11" + str(-layer)), label("a3" + str(-layer)), layer: layer)
+  },
+
+  node((rel: (1, -5), to: <root0>), [Batch Tree Heads], name: <tree_heads>, defocus: 4),
+  edge(<tree_heads>, <root0>),
+  edge(<tree_heads>, <root1>),
+  edge(<tree_heads>, <root2>),
+
+  node((rel: (-3, -3), to: <a00>), [Assertions], name: <assertions>, defocus: 4),
+  edge(<assertions>, <a00>),
+
 )
 
 #let merkle_tree_abridged_assertion = fletcher.diagram(
