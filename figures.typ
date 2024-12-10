@@ -1,5 +1,9 @@
 #import "@preview/fletcher:0.5.2" as fletcher: node, edge, shapes
 #import "@preview/treet:0.1.1": *
+#import "@preview/touying:0.5.3": touying-reducer, pause
+
+#let fletcher-diagram = touying-reducer.with(reduce: fletcher.diagram, cover: fletcher.hide)
+#let ruRed = rgb("#B82B22");
 
 #let global_diagram_params = (
   // debug: 3,
@@ -15,7 +19,7 @@
   node-stroke: .1em,
 )
 
-#let mtc_overview = {
+#let mtc_overview(highlight_update: false) = {
   set enum(indent: 0em)
   
   fletcher.diagram(
@@ -38,11 +42,46 @@
   edge(<ca>,          <ts>,       "-|>",              label-side: left,   [2. Sign and publish tree]),
   edge(<ap>,  <ca>,       "<|-", shift: -6pt, label-side: right,  [3. Inclusion proof]),
   edge(<ts>,          <monitor>,  "-|>",              label-side: left,   [4. Mirror tree]),
-  edge(<rp>,          <ts>,       "<|-",              label-side: right,  [5. Batch tree heads]),
+  edge(<rp>,          <ts>,       "<|-",              label-side: right, 
+    ..if highlight_update{(
+      stroke: ruRed + .15em,
+      label: strong[5. Batch tree heads])
+    } else{(
+      label: [5. Batch tree heads])
+    }
+  ),
   edge(<ap>,  <rp>,       "<|-", shift: -6pt, label-side: right,   [6. Known trust anchors]),
   edge(<ap>,  <rp>,       "-|>", shift:  6pt, label-side: left,   [7. Certificate]),
 )
 }
+
+#let pki_overview = {
+  set enum(indent: 0em)
+  
+  fletcher.diagram(
+  ..global_diagram_params,
+  ..overview_params,
+
+  node((0, 0), [Authenticating Party], name: <domain_owner>),
+  
+  node((1, 0), [Certification Authority], name: <ca>),
+  
+  // node((1, 1), [Logs], name: <logs>),
+  // node((rel: (1.5mm, 1.5mm)), [Logs], layer: -1),
+
+  // node((1, 2), [Monitors], name: <monitors>),
+  // node((rel: (1.5mm, 1.5mm)), [Monitors], layer: -1),
+
+  node((0, 2), [Relying Party], name: <rp>),
+
+  edge(<domain_owner>, <ca>, "-|>", shift: 6pt, [1. Issuance request]),
+  // edge(<ca>, <logs>, "-|>", label-side: left, shift: 6pt, [2. Pre-certificate]),
+  // edge(<logs>, <ca>, "-|>", shift: 6pt, label-side: left, [3. SCT]),
+  edge(<ca>, <domain_owner>, "-|>", shift: 6pt, label-side: left, [2. Certificate]),
+  edge(<domain_owner>, <rp>, "-|>", [3. Certificate]),
+  // edge(<monitors>, <logs>, "-|>", label-side: right, [6. Monitor for \ suspicious activity]),
+  // edge(<monitors>, <domain_owner>, "-|>", label-side: left, label-angle: auto, [7. Notify about new certificates issued]),
+)}
 
 #let ct_overview = {
   set enum(indent: 0em)
@@ -51,7 +90,7 @@
   ..global_diagram_params,
   ..overview_params,
 
-  node((0, 0), [Domain Owner], name: <domain_owner>),
+  node((0, 0), [Authenticating Party], name: <domain_owner>),
   
   node((1, 0), [Certification Authority], name: <ca>),
   
@@ -73,20 +112,27 @@
 )}
 
 
-#let default_width = 45mm
+// #let default_width = 45mm
 #let al(it) = align(start, it)
 #let ar(it) = align(end, it)
-#let protocol_diargram_params = (
-  node-inset: 0mm,
-  spacing: (3mm, 1mm),
-  cell-size: (default_width + 5mm, 5mm),
-  node-outset: 0mm,
+#let paper_protocol_diargram_params = (
+  node-inset: 1mm,
+  spacing: (12em, 1mm),
+  cell-size: (11em, 1em + 2mm),
+  node-outset: 1mm
+)
+
+#let presentation_protocol_diargram_params = (
+  // node-inset: 2mm,
+  spacing: (8em, .3em),
+  cell-size: (11mm, 1em + 2mm),
+  node-outset: 1mm,
 )
 
 
-#let acme_overview = fletcher.diagram(
+#let acme_overview(default_width: 45mm, params: paper_protocol_diargram_params) = fletcher.diagram(
   ..global_diagram_params,
-  ..protocol_diargram_params,
+  ..params,
 
   
   node((0, 0), al[Client], width: default_width + 4mm, stroke: gray, inset: 2mm),
@@ -109,34 +155,31 @@
   // node((0, 5), width: default_width, enclose: (<ci>, <ta>, <ad>), fill: silver),
 )
 
-#let tls_handshake_overview = fletcher.diagram(
+#let tls_handshake_overview(default_width: 45mm, heading_color: black, params: paper_protocol_diargram_params) = fletcher.diagram(
   ..global_diagram_params,
-  ..protocol_diargram_params,
+  ..params,
   
-  node((0, 1), al[Client], width: default_width + 4mm, stroke: gray, inset: 2mm),
-  node((2, 1), ar[Server], width: default_width + 4mm, stroke: gray, inset: 2mm),
+  node((0, 0), al(text(fill: heading_color, weight: "semibold",  "Client")), width: default_width + 4mm, stroke: gray, inset: 2mm, name: <client>),
+  node((rel: (1, 0)), ar(text(fill: heading_color, weight: "semibold", "Server")), width: default_width + 4mm, stroke: gray, inset: 2mm, name: <server>),
   
 
-  node((0,3), align(left + top)[Client Hello], width: default_width, enclose: ((0,3),(0,5)), stroke: (dash: "dotted"), inset: 1mm),
-  node((0,4), al[\+ key share], width: default_width),
-  node((0,5), al[\+ signature algorithms], width: default_width),
-
-  edge((0,5), (2,5), "--|>"),
-
-  node((2,5), align(right + top)[Server Hello], width: default_width, enclose: ((2,5), (2,6)), stroke: (dash: "dotted"), inset: 1mm),
-  node((2,6), ar[\+ key share], width: default_width),
-  node((2,7), ar[#emoji.lock Certificate], width: default_width + 2mm, stroke: (dash: "dotted"), inset: 1mm),
-  node((2,8), ar[#emoji.lock Certificate Verify], width: default_width + 2mm, stroke: (dash: "dotted"), inset: 1mm),
-  node((2,9), ar[#emoji.lock Finished], width: default_width + 2mm, stroke: (dash: "dotted"), inset: 1mm),
+  node((rel: (0, 1.8), to:<client>), al[Client Hello \ + key share \ + signature algorithms], width: default_width, stroke: (dash: "dotted"), name: <client_hello>),
+  node((rel: (1, 0.5), to: <client_hello>), ar[Server Hello \ + key share], width: default_width + 2mm, stroke: (dash: "dotted"), name: <server_hello>),
+  edge((rel: (0, 0.5), to: <client_hello>), <server_hello>, "--|>"),
+  
+  node((rel: (0, 1), to: <server_hello>), ar[#emoji.lock Certificate], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certificate>),
+  node((rel: (0, 1), to: <certificate>), ar[#emoji.lock Certificate Verify], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certifcate_verify>),
+  node((rel: (0, 1), to: <certifcate_verify>), ar[#emoji.lock Finished], width: default_width + 2mm, stroke: (dash: "dotted"), name: <server_finished>),
 
   edge("--|>", shift: -1mm),
   
-  node((0,9), al[Finished  #emoji.lock], width: default_width + 2mm, stroke: (dash: "dotted"), inset: 1mm),
-  edge((2,9), (0, 9), "<|--", shift: 1mm),
+  node((rel: (-1, 0), to: <server_finished>), al[Finished  #emoji.lock], width: default_width + 2mm, stroke: (dash: "dotted"), name: <client_finished>),
+  
+  edge(<server_finished>, <client_finished>, "<|--", shift: .3em),
 
-  node((0,10.5), al[Application Data #emoji.lock], width: default_width + 2mm, stroke: .2mm, inset: 1mm),
+  node((rel: (0, 1.5), to: <client_finished>), al[Application Data #emoji.lock], width: default_width + 2mm, stroke: .2mm, name: <client_data>),
   edge("<|--|>"),
-  node((2,10.5), ar[#emoji.lock Application Data], width: default_width + 2mm, stroke: .2mm, inset: 1mm),
+  node((rel: (0, 1.5), to: <server_finished>), ar[#emoji.lock Application Data], width: default_width + 2mm, stroke: .2mm, name: <server_data>),
   
 )
 
@@ -145,13 +188,7 @@
   spacing: (1em, 1em),
   node-inset: .7em,
   node-stroke: .07em,
-
   {
-    // node((-4, 0), [level 2:], stroke: none, inset: 0em)
-    // node((-4, 1), [level 1:], stroke: none, inset: 0em)
-    // node((-4, 2), [level 0:], stroke: none, inset: 0em)
-
-    
     node((0, 0), $"root" = H_2(h_4, h_5)$, name: <root>)
     
     node((rel: (-1.4, 1), to: <root>), $h_4 = H_2(h_0, h_1)$, name: <t10>)
@@ -182,14 +219,29 @@
   }
 )
 
-#let mtc_terms(dist: 2em) = fletcher.diagram(
+#let adapter(env: "paper", ..args) = {
+  if env == "presentation" {
+    fletcher-diagram(
+      ..args
+    )
+  } else {
+    fletcher.diagram(
+      ..args.named(),
+      ..args.pos().filter(x => x != pause)
+    )
+  }
+
+}
+
+#let mtc_terms(dist: 2em, env: "paper") = adapter(
   ..global_diagram_params,
   spacing: (1em, 1em),
   node-shape: auto,
   node-inset: 0.4em,
   node-stroke: 0em,
   node-defocus: -1,
-  edge-stroke: (paint: blue, thickness: .1em, dash: "dashed"),
+  env: env,
+  edge-stroke: (paint: ruRed, thickness: .1em, dash: "dashed"),
   let w(c) = text(fill: white.transparentize(100%), c),
   let c(x, y, z) = (rel: (1.2 * z * dist, 0.5 * z * dist), to: (x , y)),
 
@@ -231,41 +283,60 @@
     e(label("t11" + str(-layer)), label("a3" + str(-layer)), layer: layer)
   },
 
-  node((rel: (1, -5), to: <root0>), [Batch Tree Heads], name: <tree_heads>, defocus: 4),
+  pause,
+
+  node((rel: (1, -5), to: <root0>), text(fill: ruRed, weight: "semibold", "Batch Tree Heads"), name: <tree_heads>, defocus: 4),
   edge(<tree_heads>, <root0>),
   edge(<tree_heads>, <root1>),
   edge(<tree_heads>, <root2>),
-
-  node((rel: (-3, -3), to: <a00>), [Assertions], name: <assertions>, defocus: 4),
+  
+  pause,
+  
+  node((rel: (-3, -3), to: <a00>), text(fill: ruRed, weight: "semibold", "Assertions"), name: <assertions>, defocus: 4, inset: 0mm, outset: 0.4em),
   edge(<assertions>, <a00>),
+  
+  pause,
+  
+  edge((rel: (0 * dist, 0.5 * dist), to: <root0>), (rel: (0 * dist, 0.5 * dist), to: <root1>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, text(fill: ruRed, weight: "semibold", "Batch Duraton"), label-side: left, snap-to: none, label-pos: 0),
 
+  pause,
+  
+  edge((rel: (0.8 * dist, 0.5 * dist), to: <root0>), (rel: (0.8 * dist, 0.5 * dist), to: <root2>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, text(fill: ruRed, weight: "semibold", "Validity Window"), label-side: right, label-angle: auto, snap-to: none, label-sep: 0.5em, label-pos: 0.6)
 )
 
-#let merkle_tree_abridged_assertion = fletcher.diagram(
+
+#let merkle_tree_abridged_assertion(node-width: 4em) = fletcher.diagram(
   ..global_diagram_params,
-  spacing: (1em, 1em),
-  node-inset: .7em,
+  spacing: (0em, 1em),
+  node-inset: .5em,
   node-stroke: .07em,
 
+  let ar(c) = align(right, [#box(c) #h(1em)]),
+
   {
-    node((-4, 0), [level 2:], stroke: none, inset: 0em)
-    node((-4, 1), [level 1:], stroke: none, inset: 0em)
-    node((-4, 2), [level 0:], stroke: none, inset: 0em)
+    node((-4, 0), ar[level 2:], stroke: none, inset: 0em, name: <level2>, width: 1.2 * node-width)
+    node((rel: (0, 1), to: <level2>), ar[level 1:], stroke: none, inset: 0em,  name: <level1>, width: 1.2 * node-width)
+    node((rel: (0, 1), to: <level1>), ar[level 0:], stroke: none, inset: 0em,  name: <level0>, width: 1.2 * node-width)
+    node((rel: (0, 1), to: <level0>), ar[abridged\ assertion:], stroke: none, inset: 0em,  name: <aa>, width: 1.2 * node-width)
+    node((rel: (0, 1), to: <aa>), ar[assertion:], stroke: none, inset: 0em,  name: <assertion>, width: 1.2 * node-width)
+    
+    node((0, 0), [$"root"$], name: <root>, width: node-width)
+    
+    node((-2, 1), $t_10$, name: <t10>, width: node-width)
+    node((2, 1), $t_11$, name: <t11>, width: node-width)
+    
+    node((rel: (-1, 1), to: <t10>), $t_00$, name: <t00>, width: node-width)
+    node((rel: (1, 1), to: <t10>), $t_01$, name: <t01>, width: node-width)
+    node((rel: (-1, 1), to: <t11>), $t_02$, name: <t02>, width: node-width)
+    node((rel: (1, 1), to: <t11>), [empty], name: <t03>, width: node-width)
 
-    
-    node((0, 0), [root], name: <root>)
-    
-    node((-2, 1), $t_10$, name: <t10>)
-    node((2, 1), $t_11$, name: <t11>)
-    
-    node((-3, 2), $t_00$, name: <t00>)
-    node((-1, 2), $t_01$, name: <t01>)
-    node((1, 2), $t_02$, name: <t02>)
-    node((3, 2), [empty], name: <t03>)
+    node((rel: (0, 1), to: <t00>), text(size: 0.6em)[$H("sk"_0)$ + \ `example.com`], name: <aa0>, width: node-width)
+    node((rel: (0, 1), to: <t01>), text(size: 0.6em)[$H("sk"_1)$ + \ `13.42.50.6`], name: <aa1>, width: node-width)
+    node((rel: (0, 1), to: <t02>), text(size: 0.6em)[$H("sk"_2)$ + \ `foo.bar`], name: <aa2>, width: node-width)
 
-    node((-3, 3), $"aa"_0$, name: <a0>)
-    node((-1, 3), $"aa"_1$, name: <a1>)
-    node((1, 3), $"aa"_2$, name: <a2>)
+    node((rel: (0, 1), to: <aa0>), text(size: 0.6em)[$"sk"_0$ + \ `example.com`], name: <a0>, width: node-width)
+    node((rel: (0, 1), to: <aa1>), text(size: 0.6em)[$"sk"_1$ + \ `13.42.50.6`], name: <a1>, width: node-width)
+    node((rel: (0, 1), to: <aa2>), text(size: 0.6em)[$"sk"_2$ + \ `foo.bar`], name: <a2>, width: node-width)
 
     edge(<root>, "l,ld")
     edge(<root>, "r,rd")
@@ -275,9 +346,13 @@
     edge(<t11>, "ld")
     edge(<t11>, "rd")
     
-    edge(<t00>, "d")
-    edge(<t01>, "d")
-    edge(<t02>, "d")
+    edge(<t00>, <aa0>)
+    edge(<t01>, <aa1>)
+    edge(<t02>, <aa2>)
+
+    edge(<a0>, <aa0>)
+    edge(<a1>, <aa1>)
+    edge(<a2>, <aa2>)
   }
 )
 

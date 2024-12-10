@@ -19,7 +19,7 @@
 //   - Inclusion proof: Proof that something is included in the head
 //   - validity window: A range of consecutive batch tree heads that a relying party accepts
 
-This section summarizes the @ietf Internet-Draft that describes #glspl("mtc") for @tls~@rfc_mtc.
+// This section summarizes the @ietf Internet-Draft that describes #glspl("mtc") for @tls~@rfc_mtc.
 The motivation to create a new certificate architecture is mainly driven by the large size of @pq signatures.
 Unfortunately, today's Web@pki relies on signatures in various places not just limited to the @ca signature in the certificate, but also for the embedded @sct for @ct and possibly @ocsp staples for certificate revocation.
 Therefore, replacing all these signatures naively results in a big increase in bytes transferred during a @tls handshake, as @sec:certificate_size will show in detail.
@@ -35,11 +35,11 @@ Compared to today's Web@pki it has a reduced scope and assumes more prerequisite
 @sec:mtc_pki_comparison elaborates on these differences, the following focuses more on the technical details of @mtc.
 
 #figure(
-  mtc_overview,
+  mtc_overview(),
   caption: [Overview of certificate issuance for Merkle Tree Certificates @rfc_mtc]
 ) <fig:mtc_overview>
 
-@fig:mtc_overview provides a high level overview on the @mtc architecture. The following introduces the roles and terminology used in the figure and later sections:
+@fig:mtc_overview provides an overview of the @mtc architecture. The following introduces the roles and terminology used in the figure and later sections:
 - An #emph(gls("ap", long: true)) is an entity to be authenticated, such as a web server.
 - A #emph(gls("rp", long: true)) authenticates an @ap by verifying the certificate. This could be a browser, for example.
 - A #emph(gls("ca", long: true)) collects Assertions from @ap:pl, validates them, and issues certificates.
@@ -111,7 +111,7 @@ Lastly, the @ca signs a `LabeledValidityWindow` that contains the domain separat
 // - CA signs all tree heads that are currently valid
 
 #figure(
-  merkle_tree_abridged_assertion,
+  merkle_tree_abridged_assertion(),
 caption: [Example Merkle Tree for three abridged assertions ($"aa"_0", aa"_1", aa"_2$)]) <merkle_tree_abridged_assertion>
 
 
@@ -133,7 +133,7 @@ Also, the authors of the draft imagine that in practice, the browser vendors wou
 This link between the Transparency Service and @rp includes one significant design decision: Either, the Transparency Service forwards only the tree heads to the @rp, or it includes the @ca signature as well.
 @sec:update_size elaborates on how that influences the amount of data to be distributed.
 Omitting the @ca signature does not only significantly reduce update bandwidth but also means that the client does not need to perform @pq signature verification.
-Consequently, the @rp must trust the Transparency Service to properly check the @ca signature, and it requires the @rp to have a secure channel with the Transparency Service.
+Consequently, the @rp must trust the Transparency Service to adequately check the @ca signature, and it requires the @rp to have a secure channel with the Transparency Service.
 Depending on how this channel is designed, it may require interaction with @pq signatures on the client side nevertheless.
 Additionally, a malicious Transparency Service could provide a split view to a client without the need to collude with a @ca.
 At the same time, if the Transparency Service is run by the browser vendor, it is anyway in the position to decide about with connection to trust.

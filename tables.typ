@@ -56,7 +56,7 @@
   )
 }
 
-#let x509_certificate_sizes = {
+#let x509_certificate_sizes(kem: true, results_only: false) = {
   
   show table.cell: it => {
     if it.y == 0 or it.y == 1 or it.x == 6 {
@@ -102,12 +102,14 @@
     [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [SLH-DSA-128s], [ML-DSA-44], [ML-DSA-44], [],         [],
     [2,420],  [7,260],  [2,420],  [7,856],        [1,312],  [1,312],  [22,580],   [#emoji.checkmark.box],
 
+    ..if kem {(
     y[ML-KEM-768], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44],  y[ML-KEM-768],  [ML-DSA-44], [],           [],
      [1,088],  [7,260],  [2,420],  [2,420],   [1,184],    [1,312],  [15,684],     [#emoji.checkmark.box],
+    )},
   )
 }
 
-#let bikeshed_certificate_sizes = {
+#let bikeshed_certificate_sizes(kem: true) = {
   show table.cell: it => {
     if it.y == 0 or it.x == 3 {
       strong(it)
@@ -136,24 +138,95 @@
     
     table.header([Handshake], [Public Key], [Proof Length], [$sum$], [PQ]),
 
-    [ECDSA],  [ECDSA],  [280M active @ap:pl],  [], [],
+    [ECDSA],  [ECDSA],  [280M active APs],  [], [],
     [64],     [32],     [672],            [768], [#emoji.crossmark],
-    
-    [ML-DSA-44], [ML-DSA-44], [280M active @ap:pl],  [], [],
-    [2,420],  [1,312],  [672],            [4,404], [#emoji.checkmark.box],
-
-    y[ML-KEM-768], y[ML-KEM-768], [280M active @ap:pl],  [], [],
-    [1,088],    [1,184],  [672],            [2,944], [#emoji.checkmark.box],
-    
-    [ECDSA],  [ECDSA],  [1B active @ap:pl],  [], [],
+        
+    [ECDSA],  [ECDSA],  [1B active APs],  [], [],
     [64],     [32],     [832],            [928], [#emoji.crossmark],
     
-    [ML-DSA-44], [ML-DSA-44], [1B active @ap:pl],  [], [],
+    [ML-DSA-44], [ML-DSA-44], [280M active APs],  [], [],
+    [2,420],  [1,312],  [672],            [4,404], [#emoji.checkmark.box],
+    
+    [ML-DSA-44], [ML-DSA-44], [1B active APs],  [], [],
     [2,420],  [1,312],  [832],            [4,564], [#emoji.checkmark.box],
 
-    y[ML-KEM-768], y[ML-KEM-768], [1B active @ap:pl],  [], [],
+    ..if kem {(
+    y[ML-KEM-768], y[ML-KEM-768], [280M active APs],  [], [],
+    [1,088],    [1,184],  [672],            [2,944], [#emoji.checkmark.box],
+    )},
+
+    ..if kem {(
+    y[ML-KEM-768], y[ML-KEM-768], [1B active APs],  [], [],
     [1,088],    [1,184],  [832],            [3,104], [#emoji.checkmark.box],
+    )},
+  )
+}
+
+#let bikeshed_x509_size_comp = {
+  show table.cell: it => {
+    strong(it)
+  }
+
+  grid(
+    columns: 2,
+    gutter: 3em,
+    figure(
+      table(
+        columns: 2,
+        
+        fill: (x, y) => {
+          if calc.odd(y) {
+            gray.lighten(40%)
+          }
+        },
     
+        align: (x, y) => {
+          if x == 0 and y > 0 {
+            right
+          } else {
+            center
+          }
+        },
+    
+        table.header(
+          [$sum$], [PQ],
+        ),
+        [448],      [#emoji.crossmark],
+        [1,728],    [#emoji.crossmark],
+        [17,144],   [#emoji.checkmark.box],
+        [22,580],   [#emoji.checkmark.box],
+      ),
+    caption: [X.509]),
+  
+    figure(
+        table(
+        columns: 2,
+        
+        fill: (x, y) => {
+          if calc.odd(y) {
+            gray.lighten(40%)
+          }
+        },
+    
+        align: (x, y) => {
+          if x == 0 and y > 0{
+            right
+          } else {
+            center
+          }
+        },
+    
+        table.header(
+          [$sum$], [PQ],
+        ),
+    
+        [768],    [#emoji.crossmark],
+        [928],    [#emoji.crossmark],
+        [4,404],  [#emoji.checkmark.box],
+        [4,564],  [#emoji.checkmark.box],
+      ),
+      caption: [MTC]
+    )
   )
 }
 

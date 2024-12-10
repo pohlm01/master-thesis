@@ -155,12 +155,12 @@ It is interesting to realize that for every doubling of @ap:pl, the proof size g
 //   - logarithmic, thus each doubling in subscribers results in 32 bytes more
 
 #figure(
-  x509_certificate_sizes,
+  x509_certificate_sizes(),
   caption: [Bytes of authentication-related cryptographic material exchanged during the @tls handshake for various algorithms in the X.509 infrastructure.]
 ) <tab:x509_size>
 
 #figure(
-  bikeshed_certificate_sizes,
+  bikeshed_certificate_sizes(),
   caption: [Bytes of authentication-related cryptographic material exchanged during the @tls handshake using @mtc.]
 ) <tab:bikeshed_size>
 

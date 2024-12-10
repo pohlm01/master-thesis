@@ -219,7 +219,7 @@ This allows focus on the parts relevant to this thesis.
 
 
 #figure(
-  tls_handshake_overview,
+  tls_handshake_overview(),
   caption: [Overview of the simplified TLS~1.3 handshake~@rfc_tls13]
 ) <tls_handshake_overview>
 
