@@ -10,9 +10,13 @@ on:
 jobs:
   build-pdf:
     runs-on: ubuntu-latest
+    env:
+      TYPST_FONT_PATHS: style/fonts
     steps:
       - uses: actions/checkout@v4
       - uses: typst-community/setup-typst@v3
+        with:
+          typst-version: '0.12'
       - run: typst compile main.typ thesis.pdf
       - run: typst compile presentation.typ
       - name: Upload PDF file
