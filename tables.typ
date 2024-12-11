@@ -2,6 +2,63 @@
 #let r = (body) => table.cell(fill: red.lighten(50%), body);
 #let y = (body) => table.cell(fill: yellow.lighten(50%), body);
 
+#let format_num(num, decimal: ".", thousands: ",", precision: 2) = {
+  let parts = str(calc.round(num, digits: precision)).split(".")
+  let decimal_part = if parts.len() == 2 { parts.at(1) }
+  let decimal_part = if decimal_part != none {
+    let missing_zeros = precision - decimal_part.len()
+    decimal_part + missing_zeros * "0"
+  } else {
+    "00"
+  }
+  let integer_part = parts.at(0).rev().clusters().enumerate()
+    .map((item) => {
+      let (index, value) = item
+      return value + if calc.rem(index, 3) == 0 and index != 0 {
+        thousands
+      }
+    }).rev().join("")
+  return integer_part + decimal + decimal_part
+}
+
+#let update_mechanism_size = {
+  show table.cell: it => {
+    if it.x == 0 {
+      strong(it)
+    } else if it.y == 1 {
+      align(center, strong(it))
+    } else if it.y == 0 {
+      align(center, it)
+    } else {
+      align(right, it)
+    }
+  }
+
+  let g = (x) => {
+    // let g = float(x)/11200
+    // let fill = gradient.linear(..color.map.viridis).sample(100% - g * 100%)
+    // let text_color = if g > 0.5 {
+    //   white
+    // } else {
+    //   black
+    // }
+    // table.cell(fill: fill, text(fill: text_color, format_num(x)))
+    table.cell([#format_num(x)~kB])
+  }
+  let cell_width = 6.4em
+  
+  table(
+  columns: (1fr, cell_width, cell_width, cell_width, cell_width),
+  table.header(
+    [], table.cell(colspan: 2)[Per update], table.cell(colspan: 2)[Per day],
+    [], [150 CAs], [15 CAs], [150 CAs], [15 CAs],
+  ),
+  [A full update for every fetch],          g(2800),   g(28),    g(11200),  g(1120),
+  [Only new Signed Tree Heads + Signature], g(1200),   g(120),   g(4800),   g(480),
+  [Only new Signed Tree Heads],             g(29.40),  g(2.94),  g(117.6),  g(11.76)
+)
+}
+
 #let pq_signatures = {
   show table.cell: it => {
     if it.y == 1 or it.y == 0 {
