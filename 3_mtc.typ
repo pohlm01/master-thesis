@@ -161,13 +161,13 @@ At the same time, if the Transparency Service is run by the browser vendor, it i
 
 // A monitor alone has a hard time detecting such a split view if the attacker manages to properly separate the requests it wants to serve a modified version from the monitors.
 
-== Negotiation in TLS
+== Negotiation in TLS <sec:negotiation_tls>
 To use the @mtc architecture, the @rp and @ap have to negotiate using it.
 For that, the Internet-Draft refers to the `server_certificate_type` and `client_certificate_type` of RFC~7250~@rfc_raw_public_keys. 
 On a high level, the @rp sends them as an extension of the `ClientHello` with all supported certificate types, and the @ap communicates the chosen certificate type to the @rp as an encrypted extension.
 
 Additionally, the @rp has to communicate to the @ap which trust anchor it supports.
-For that, the @mtc Internet-Draft refers to an Internet-Draft called #emph[TLS Trust Anchor Identifiers]~@rfc_tai.
+For that, the @mtc specification refers to an Internet-Draft called #emph[TLS Trust Anchor Identifiers]~@rfc_tai.
 It allows the @rp to send the newest batch tree heads it supports to the @ap, such that the @ap can choose to send a certificate that the @rp trusts.
 In particular, this allows the @ap to know which @mtc certificate to send during a certificate rotation.
 
@@ -178,8 +178,8 @@ The second concern is that a server can use the detailed information about the c
 Especially with the quickly changing @mtc system, users might have recognizable trust stores, depending on when they pulled the latest tree heads from the Transparency Service.
 
 To circumvent these downsides, the @rp has two options.
-The @ap can create a SVCB @dns record listing all the trust anchors it supports, which is a short and not privacy-sensitive list.
+The @ap can create a @svcb @dns record listing all the trust anchors it supports, which is a short and not privacy-sensitive list.
 Based on this information, the @rp can decide with trust anchor to offer to the @ap during the handshake.
-Requiring information from the @dns complicates the deployment, but the #emph[Encrypted Client Hello] relies on a SVCB @dns record as well~@rfc_ech and is deployed in practice already~@firefox_ech@apple_ech@cloudflare_ech@chrome_ech.
-The second option a @rp has is to guess trust anchors a @ap may support and do a retry if the guess was not correct.
+Requiring information from the @dns complicates the deployment, but the #emph[Encrypted Client Hello] relies on a @svcb @dns record as well~@rfc_ech and is deployed in practice already~@firefox_ech@apple_ech@cloudflare_ech@chrome_ech.
+The second option a @rp has is to guess trust anchors an @ap may support and do a retry if the guess was not correct.
 The main downside is that a retry causes an additional round trip, and therefore higher latency.

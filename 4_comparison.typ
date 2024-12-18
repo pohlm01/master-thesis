@@ -34,8 +34,8 @@ This validation process often involves @dns record propagation or @http page pro
 Therefore, classical certificate issuance can take up to an hour as well, though in optimized configurations it can work a lot faster.
 The second part, the propagation delay of new tree heads to the @rp:pl, is more relevant.
 X.509 certificates are trusted by @rp:pl immediately after they are issued.
-In contrast to that, to verify @mtc:pl, the @rp must be up-to-date with the batch tree head for successful verification.
-In practice, we do not expect updates from the Transparency Service to the @rp to happen substantially more frequently than every six hours.
+In contrast to that, verifying @mtc:pl requires the @rp to be up-to-date with the batch tree head.
+In practice, we do not expect updates from the Transparency Service to the @rp to happen substantially more frequently than every six hours~@mtc_fallback_estimate.
 Therefore, the delay until a new @mtc is broadly usable may be up to a few days in the worst case.
 
 To determine how big the impact of the long issuance delay is, it is helpful to understand which circumstances require fast certificate issuance.
@@ -51,7 +51,7 @@ Heimberger divided domains into two categories: Top domains and random domains.
 This is interesting because the most visited websites are more likely to be well maintained than websites that are visited less often.
 The analysis she performed potentially has a high rate of large positives, but it is useful to have an idea of the order of magnitude anyway.
 Assuming a propagation delay of three days, the top domains have a chance of 0.0004~% of hitting a fallback, while the random domains have a chance of 0.009~%.
-This shows that the chance of hitting a fallback is very unlikely, and thus the longer issuance delays will barely affect the daily operations.
+This indicates that the chance of hitting a fallback is very unlikely, and thus the longer issuance delays will barely affect the daily operations.
 
 // - Not a replacement, but an optimization
 // - Reduced Scope
@@ -74,7 +74,7 @@ This shows that the chance of hitting a fallback is very unlikely, and thus the 
 // That are 6 signatures in total and 3 public keys (+1 signature in the `CertificateVerify` if not KEMTLS)
 
 // Correction: Root certs are typically not sent. There may be multiple certificates with the same CN #emoji.face.explode.
-On a large scale, every byte saved during a @tls handshake is a relevant reduction, as the handshakes take place before almost every connection.
+On a large scale, every byte saved during a @tls handshake is a relevant reduction, as a handshake takes place before almost every connection.
 Cloudflare published some notable statistics regarding the number of bytes transferred from server to client.
 Their statistic only considers QUIC connections, as they likely originate from browsers.
 This fits nicely, as the @mtc architecture is mainly designed for browser-like applications as well.
@@ -105,7 +105,7 @@ For the root @ca:pl stored in the Firefox root program, the numbers are a bit di
 Without telemetry data from browsers, it is not possible to judge which are the most common combinations just from the percentage of certificates issued and the configuration of root @ca:pl, as there is a big imbalance on which @ca:pl and certificates are heavily used and which are not.
 We tried to get an impression by manually checking the certificate chains for the top 10 domains according to Cloudflare Radar @cloudflare_radar_domains.
 The results in @tab:top_10_signatures show that the landscape of used signatures is diverse.
-The significance is very limited, though, as five of the ten top domains do not serve a website and are purely used for @api calls (root-servers.net, googleapis.com, gstatic.com, tiktokcdn.com, amazonaws.com).
+The significance is very limited, though, as five of the ten top domains do not serve a website and are purely used for @api calls or to serve static assets like pictures and videos (root-servers.net, googleapis.com, gstatic.com, tiktokcdn.com, amazonaws.com).
 The remaining five domains serve a website, but it seems likely that the majority of calls still originates from @api calls, which may use different certificate chains.
 Moreover, the server may adopt the presented certificate based on a specific subdomain, the user agent, and other factors, which further complicates a holistic view.
 Nevertheless, we are convinced that the chosen combinations represent adequate examples.
@@ -121,7 +121,7 @@ The certificate contains a single key used to protect the integrity of the hands
 Together with the length of the inclusion proof, they determine the size of the authentication related cryptography.
 The size of the inclusion proof logarithmically depends on the number of certificates in a batch.
 To estimate the size for the inclusion proof, we checked the number of active certificates for the biggest @ca, Let's Encrypt.
-According to their own statistics, there exists about 420 million active certificates in October 2024, which matches with observations based on certificate transparency logs @merkle_town @lets_encrypt_stats.
+According to their statistics, there exists about 420 million active certificates in October 2024, which matches with observations based on certificate transparency logs @merkle_town @lets_encrypt_stats.
 The logs further show that there are around one billion active certificates in total.
 For the first estimate of the proof length, we take Let's Encrypt's recommendation to renew certificates every 60 days.
 Knowing that certificates issued by Let's Encrypt are always valid for 90 days, we can deduce that there exist around $420 dot 10^9 dot 60/90 = 280 dot 10^9$ authenticating parties using the services of Let's Encrypt.
@@ -164,15 +164,15 @@ It is interesting to realize that for every doubling of @ap:pl, the proof size g
   caption: [Bytes of authentication-related cryptographic material exchanged during the @tls handshake using @mtc.]
 ) <tab:bikeshed_size>
 
-Comparing @tab:x509_size and @tab:bikeshed_size reveals that @mtc has big size advantages, especially when using @pq algorithms.
+Comparing @tab:x509_size and @tab:bikeshed_size reveals the size advantages of @mtc, especially when using @pq algorithms.
 Focusing on the classical case first:
 In the best X.509 case, when using only 256-bit @ecdsa for all signatures, @mtc performs slightly worse in terms of the number of authentication bytes.
-While the X.509 case requires 448 authentication-related bytes, @mtc requires 768~bytes, which is an absolute difference of 320~bytes, i.e., the X.509 certificate is 41.67~% smaller than the @mtc.
+While the X.509 case requires 448 authentication-related bytes, @mtc requires 768~bytes, which is an absolute difference of 320~bytes, i.e., the X.509 certificate requires 41.67~% fewer bytes than the @mtc.
 Comparing @mtc to a mostly #gls("rsa", long: false)-based certificate, @mtc demonstrates it advantages, as the X.509 certificate grows to 1,728~bytes.
-Therefore, the @mtc is 960 or 800~bytes smaller, depending on the number of active @ap:pl in the @mtc system.
-This corresponds to a reduction of 55.56~% or 46.30~%, respectively.
+An @mtc certificate with the same #gls("rsa", long: false)-2048-bit algorithm and the conservative estimate of one billion active @ap:pl requires 384~bytes, or 22~% less.
+
 Moving on to the @pq algorithms, the drastic improvement of @mtc shows up.
-Compared to the best X.509 case using only @mldsa signatures, @mtc saves 12,740 or 12,580 bytes, resulting in a reduction by 74.31~% or 73.38~% depending on the number of active @ap:pl.
+Compared to the best X.509 case using only @mldsa signatures, @mtc saves 12,740~bytes or 12,580~bytes, resulting in a reduction by 74.31~% or 73.38~% depending on the number of active @ap:pl.
 Moreover, it seems realistic that a @ca would use @slhdsa instead of @mldsa due to its higher security guarantees.
 This further increases the advantage of @mtc to 80.05~% or 79.79~%, saving 18,176 or 18,016 bytes, respectively.
 When replacing the @mldsa key and signature with @mlkem, the handshake is 1,460 bytes smaller, independent of @mtc or X.509.
@@ -212,10 +212,10 @@ The full certificate would be 785 bytes in size.
 Thus, the X.509 certificate chain has an overhead of 1,238 bytes or 99~% while the Bikeshed certificate has an overhead of 81 bytes or 12~%.
 Even though we only analyzed a single example that closely, this indicates that the X.509/@asn1 format produces a significant overhead, that can be reduced by introducing a new certificate format.
 An analysis of the certificate chains of the top websites provides shows that certificates are often even bigger than our example.
-#cite(<dennis_cert_size>, form: "author") investigated the size of certificate chains send by roughly 75,000 of the Tranco the top sides~@tranco.
-It shows that the 5#super[th] percentile of certificate chains is 2308~bytes big and the median certificate chain has even 4032~bytes.
+#cite(<dennis_cert_size>, form: "author") investigated the size of certificate chains sent by roughly 75,000 of the Tranco top sites, "A Research-Oriented Top Sites Ranking Hardened Against Manipulation"~@tranco.
+It reveals that the 5#super[th] percentile of certificate chains is 2308~bytes big, and the median certificate chain has even 4032~bytes.
 Applying existing certificate compression algorithms, this reduces to 1619~bytes and 3243~bytes, respectively~@dennis_cert_size.
-This shows that @mtc is almost always smaller in practice, even when using classical authentication algorithms instead of @pq.
+Consequently, even though X.509 certificates require less authentication-related bytes if they completely rely on the size efficient @ecdsa algorithm, the inclusion of additional attributes and inefficient encoding result in that @mtc is smaller in practice; for @pq algorithms, but also for classical algorithms.
 
 == Update Mechanism Considerations <sec:update_size>
 As with many optimizations, one does not get the results from @sec:certificate_size without a trade.
@@ -246,7 +246,7 @@ For the use cases that allow a regular update, an important metric for the updat
 We base this estimation on a web surfing use case with the following assumptions:
 We assume 150 trusted root @ca:pl, which is somewhere between the number of @ca:pl currently in the root store of Firefox and Chrome @firefox_root_store @chrome_root_store.
 Furthermore, we assume each @ca uses a batch duration of one hour and lifetime of 14 days, as recommended in the Internet-Draft @rfc_mtc[Section 5.1].
-According to a recent post by O’Brien, working in the Chrome Security team at Google, Chrome strives for an update frequency of six hours or less @mtc_fallback_estimate.
+According to a recent post by O’Brien, working in the Chrome Security team at Google, Chrome strives for an update frequency of six hours or less~@mtc_fallback_estimate.
 Therefore, we assume six hours as the default browser update frequency for @mtc tree heads.
 Lastly, we assume each @ca to use #gls("slhdsa")-128s to sign their validity window as the security guarantees for this algorithm are better compared to @mldsa, which is relevant for a long-lasting key.
 
@@ -266,10 +266,6 @@ For a six-hour update interval, each update contains $150 dot (4 + 192) = 29.4$ 
 Compared to transferring the signatures, this saves 97.6~% in update bandwidth.
 The shorter the update interval, the more advantageous it is to omit the signature, as it needs to be transferred once per update.
 
-All the updates sizes scale linearly with the number of active @ca:pl.
-This means, if we assume only 15 @ca:pl that support the @mtc architecture, we can reduce the estimates on the update size for all scenarios by 90~% to 280~kilobyte for a full update, 120~kilobytes for an update every six hours including @ca signatures, and only three kilobytes for an update every six hours without the @ca signatures.
-This might be a reasonable assumption as well, especially at the beginning, as only the biggest @ca:pl are likely willing to invest the necessary resources in such a fundamental change.
-
 As mentioned, omitting the @ca signatures requires trust in the Transparency Service and update mechanism.
 It is important to note that the Transparency Service that the browser uses to retrieve its updates is likely operated by the browser vendor.
 In practice, users must trust their browser vendor in the first place to not build in any backdoors or install untrusted @ca:pl.
@@ -278,6 +274,58 @@ A similar setup -- namely firmware transparency -- is described as part of the T
 However, the precise realization is not straightforward as the present transparency log implementations rely on classical signatures such as @rsa or @ecdsa.
 Additionally, the mechanism to bootstrap the updates requires some engineering, as it cannot be assumed that the browser knows recent @mtc roots that could be used to set up a #gls("tls")-based update connection.
 Potentially, the update mechanism requires large X.509 certificates with @pq cryptography, at least in some cases.
+
+
+All the updates sizes scale linearly with the number of active @ca:pl.
+This means, if we assume only 15 @ca:pl that support the @mtc architecture, we can reduce the estimates on the update size for all scenarios by 90~% to 280~kilobyte for a full update, 120~kilobytes for an update every six hours including @ca signatures, and only three kilobytes for an update every six hours without the @ca signatures.
+@tab:mtc_update_size provides an overview of the numbers mentioned in the above text.
+
+Assuming only 15~@ca:pl is likely a reasonable estimate, as only the biggest @ca:pl are presumably willing to invest the necessary resources in such a fundamental change.
+@mtc serves purely as an optimization of the existing X.509 ecosystem.
+Thus, small @ca:pl that do not participate can still issue working certificates.
+These @ca:pl often exist because of various industry and government policies, which are generally covered by X.509 certificates and will likely not update to include @mtc for the foreseeable feature.
+
+#figure(
+  update_mechanism_size,
+  caption: [Required update bandwidth from the Transparency Service to each @rp]
+) <tab:mtc_update_size>
+
+To evaluate the size estimates, it is helpful to set them in relation to the bandwidth required for browser updates nowadays.
+Therefore, we inspected the update size and frequency for Chrome and Firefox.
+@tab:chrome_release and @tab:firefox_release in the Appendix provide an overview about the recent release cadence for Chrome and Firefox, respectively.
+On average, Chrome releases a minor update every week, and a major release roughly every four weeks.
+Likewise, Firefox releases a major update every four weeks, but the minor updates are slightly less frequent with ten days in between on average.
+For Firefox, @tab:firefox_release contains also the update sizes for subsequent updates, which average to 13.2~MB.
+At the same time, Google claims that a minor update takes approximately 3~MB to 5~MB and a major update takes approximately 10~MB to 15~MB~@chrome_update_size.
+As a result, we assume that the update bandwidth per Firefox user is about 1.3~MB on a daily average.
+Similarly, the update bandwidth per Chrome user is about $3 dot 4 "MB" + 1 dot 13 "MB" = 25 "MB"$ per 28~days, i.e., approximately 900~kB per day.
+
+Comparing the bandwidth for current browser updates with the bandwidth for the tree heads reveals that the updates are of reasonable size, especially in the early days of an @mtc ecosystem.
+Starting with the first row of @tab:mtc_update_size, it becomes clear that the naive update mechanism to send the full validity window including the signature is impractical for 150 active @ca:pl.
+For a six-hour update cadence, the update mechanism needs to transfer 11~MB per user and day, which is a full order of magnitude larger than the present update mechanism transfers.
+For a smaller ecosystem with 15 @ca:pl even this naive approach could work out.
+The update capacity for the @mtc update mechanism would be similarly dimensioned as for the present browser update.
+In other words, the update bandwidth would need to be doubled.
+Nevertheless, the second row shows that the straightforward optimization to distribute only data unknown to the client reduces the required bandwidth significantly.
+While an @mtc ecosystem with 150 @ca:pl would still require about five times more bandwidth, an ecosystem with 15 @ca:pl adds only 50~% more update bandwidth to the already existing update mechanisms.
+Additionally, the daily update sizes in @tab:mtc_update_size assume that an update really happens every six hours.
+In practice, the schedule might aim for this update frequency, but updates will not happen that frequently, for example because a computer is turned off during the night, or because of a metered connection.
+This results in less data being transferred over the day.
+
+The third row, which moves the signature checks to the Transparency Service, shows that the update size can be marginal.
+Even for 150~@ca:pl, this scenario adds only 9~% to the regular Firefox update bandwidth.
+As discussed earlier, this requires trust in the Transparency Service and update mechanism.
+As the Transparency Service will likely be operated by the browser vendor, there already exists a trust relation, such that omitting the signature checks in the client device seems reasonable.
+
+One additional interesting observation, when reflecting on the update sizes, is to compare it with the data transferred for an ordinary page visit.
+Therefore, we visited four pages we assumed for a daily usage and measured the transferred data for an initial page load without user interaction while being logged in already.
+The results are not representative, but nevertheless serve as an indication.
+Loading the webpage of Gmail and Outlook transferred 6.6~MB and 10.6~MB, respectively.
+Loading The New York Times webpage (not logged in) and Google search transferred 2.7~MB and 0.8~MB, respectively.
+This demonstrates that even the worst-case scenario with a full update of 150~@ca:pl every six hours transfers just as many data as a single page visit at Outlook, and should therefore not cause serious problems from an end-user perspective.
+
+
+
 
 // - Size
 //   - Should not send whole signed validity window every day
@@ -291,15 +339,15 @@ Potentially, the update mechanism requires large X.509 certificates with @pq cry
 //       - Each signed validity window is about $7,856 "bytes" + 336 dot 32 "bytes" = 18,608 "bytes"$
 //       - Times the number of CAs: $150 dot 18,608 = 2,791,200 => 2.7 "MB"$
 //     - Daily update without the signatures:
-== Common File Structure
+== Common File Structure <sec:file_structure>
 Besides small update sizes, it is desirable to store @mtc related data on a common place on an @os.
-Having a common place for certificates on a single machine has the multiple advantages.
+Having a common place for certificates on a single machine has multiple advantages.
 Firstly, it reduces the number of updates required in the @mtc architecture.
-Instead of every application pulling their own updates, the @os can take care of it for various applications depending on up-to-date tree heads.
+Instead of every application pulling its updates, the @os can take care of it for various applications that depend on up-to-date tree heads.
 Furthermore, applications do not have to implement the update logic themselves.
 This does save development resources and reduces the attack surface as there exist fewer different implementations.
 
-Nowadays, Linux based operating systems such as Debian, RHEL, or Android store certificates on a well known location for other programs to access it @go_root_store.
+Nowadays, Linux based operating systems such as Debian, RHEL, or Android store certificates on a well-known location for other programs to access it @go_root_store.
 // Debian, as an example, provides the trusted root certificates as a normal system package, which can be updated with the built-in package manager @debian_ca_certificates.
 We use the X.509 file structure of Debian as an inspiration to propose a common file structure.
 @fig:mtc_client_file_tree shows the file structure we propose for a @rp.

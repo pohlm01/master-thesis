@@ -2,6 +2,78 @@
 #let r = (body) => table.cell(fill: red.lighten(50%), body);
 #let y = (body) => table.cell(fill: yellow.lighten(50%), body);
 
+#let chrome_releases = {
+table(
+  stroke: .1mm,
+  align: left,
+  columns: 4,
+  table.header(
+    strong[Major version], strong[Release Date], strong[Days since last release], strong[Days since last major release]
+  ),
+    table.hline(stroke: .3mm),
+    [131],  [December 10, 2024],    [7],    [],
+    [131],  [December 3, 2024],     [14],   [],
+    [131],  [November 19, 2024],    [7],    [],
+    [131],  [November 12, 2024],    [7],    [28],
+    table.hline(stroke: .3mm),
+    [130],  [November 5, 2024],     [7],    [],
+    [130],  [October 29, 2024],     [7],    [],
+    [130],  [October 22, 2024],     [7],    [],
+    [130],  [October 15, 2024],     [7],    [35],
+    table.hline(stroke: .3mm),
+    [129],  [October 8, 2024],      [7],    [],
+    [129],  [October 1, 2024],      [7],    [],
+    [129],  [September 24, 2024],   [7],    [],
+    [129],  [September 17, 2024],   [7],    [27],
+    table.hline(stroke: .3mm),
+    [128],  [September 10, 2024],   [8],    [],
+    [128],  [September 2, 2024],    [5],    [],
+    [128],  [August 28, 2024],      [7],    [],
+    [128],  [August 21, 2024],      [8],    [29],
+    table.hline(stroke: .3mm),
+    [127],  [August 13, 2024],      [7],    [],
+    [127],  [August 6, 2024],       [7],    [],
+    [127],  [July 30, 2024],        [7],    [],
+    [127],  [July 23, 2024],        [7],    [],
+    table.hline(stroke: .3mm),
+    [126],  [July 16, 2024],        [],     [],
+    table.hline(stroke: .4mm),
+    table.cell(colspan: 2)[#strong[Average:]],  [7.35],  [29.75],
+)}
+
+#let firefox_releases = {
+table(
+  stroke: .1mm,
+  align: (left, left, right, right, right),
+  columns: (6em, auto, auto, auto, auto),
+  table.header(
+    strong[Version], strong[Release Date], strong[Days since last release], strong[Days since last major release], strong[Update size]
+  ),
+  table.hline(stroke: .3mm),
+  [133.0],      [November 26, 2024],    [14],   [28],   [17~MB],
+  table.hline(stroke: .3mm),
+  [132.0.2],    [November 12, 2024],    [8],    [],     [9~MB],
+  [132.0.1],    [November 4, 2024],     [6],    [],     [10~MB],
+  [132.0],      [October 29, 2024],     [15],   [28],   [20~MB],
+  table.hline(stroke: .3mm),
+  [131.0.3],    [October 14, 2024],     [5],    [],     [9~MB],
+  [131.0.2],    [October 9, 2024],      [8],    [],     [10~MB],
+  [131.0],      [October 1, 2024],      [14],   [28],   [14~MB],
+  table.hline(stroke: .3mm),
+  [130.0.1],    [September 17, 2024],   [14],   [],     [9~MB],
+  [130.0],      [September 3, 2024],    [14],   [28],   [18~MB],
+  table.hline(stroke: .3mm),
+  [129.0.2],    [August 20, 2024],      [7],    [],     [9~MB],
+  [129.0.1],    [August 13, 2024],      [7],    [],     [8~MB],
+  [129.0],      [August 6, 2024],       [11],   [28],   [16~MB],
+  table.hline(stroke: .3mm),
+  [128.0.3],    [July 26, 2024],        [3],    [],     [8~MB],
+  [128.0.2],    [July 23, 2024],        [14],   [],     [8~MB],
+  [128.0],      [July 9, 2024],         [],     [],     [33~MB],
+  table.hline(stroke: .4mm),
+  table.cell(colspan: 2)[#strong[Average:]], [10],  [28], [13.2~MB],
+)}
+
 #let format_num(num, decimal: ".", thousands: ",", precision: 2) = {
   let parts = str(calc.round(num, digits: precision)).split(".")
   let decimal_part = if parts.len() == 2 { parts.at(1) }
@@ -24,7 +96,7 @@
 #let update_mechanism_size = {
   show table.cell: it => {
     if it.x == 0 {
-      strong(it)
+      align(left, strong(it))
     } else if it.y == 1 {
       align(center, strong(it))
     } else if it.y == 0 {
@@ -34,28 +106,17 @@
     }
   }
 
-  let g = (x) => {
-    // let g = float(x)/11200
-    // let fill = gradient.linear(..color.map.viridis).sample(100% - g * 100%)
-    // let text_color = if g > 0.5 {
-    //   white
-    // } else {
-    //   black
-    // }
-    // table.cell(fill: fill, text(fill: text_color, format_num(x)))
-    table.cell([#format_num(x)~kB])
-  }
-  let cell_width = 6.4em
+  let g = (x) => table.cell([#format_num(x)~kB])
   
   table(
-  columns: (1fr, cell_width, cell_width, cell_width, cell_width),
+  columns: (auto, 1fr, 1fr, 1fr, 1fr),
   table.header(
     [], table.cell(colspan: 2)[Per update], table.cell(colspan: 2)[Per day],
     [], [150 CAs], [15 CAs], [150 CAs], [15 CAs],
   ),
-  [A full update for every fetch],          g(2800),   g(28),    g(11200),  g(1120),
-  [Only new Signed Tree Heads + Signature], g(1200),   g(120),   g(4800),   g(480),
-  [Only new Signed Tree Heads],             g(29.40),  g(2.94),  g(117.6),  g(11.76)
+  [A full update for every fetch],          g(2800),   g(280),    g(11200),  g(1120),
+  [Only new Tree Heads + Signature], g(1200),   g(120),   g(4800),   g(480),
+  [Only new Tree Heads],             g(29.40),  g(2.94),  g(117.6),  g(11.76)
 )
 }
 
@@ -147,7 +208,7 @@
       [Handshake],[SCT + OCSP], [EE], [Intermediate], [EE], [Intermediate],                 [], []
     ),
     
-    [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [ECDSA],  [],               [],
+    [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [],               [],
     [64],     [192],    [64],     [64],     [32],     [32],     [448],            [#emoji.crossmark],
     
     [RSA-2048], [ECDSA],  [RSA-2048], [RSA-4096], [RSA-2048], [RSA-2048], [],       [],
@@ -198,8 +259,8 @@
     [ECDSA],  [ECDSA],  [280M active APs],  [], [],
     [64],     [32],     [672],            [768], [#emoji.crossmark],
         
-    [ECDSA],  [ECDSA],  [1B active APs],  [], [],
-    [64],     [32],     [832],            [928], [#emoji.crossmark],
+    [RSA-2048],  [RSA-2048],  [1B active APs],  [], [],
+    [256],     [256],     [832],            [1,344], [#emoji.crossmark],
     
     [ML-DSA-44], [ML-DSA-44], [280M active APs],  [], [],
     [2,420],  [1,312],  [672],            [4,404], [#emoji.checkmark.box],
@@ -248,10 +309,10 @@
         table.header(
           [$sum$], [PQ],
         ),
-        [448],      [#emoji.crossmark],
-        [1,728],    [#emoji.crossmark],
-        [17,144],   [#emoji.checkmark.box],
-        [22,580],   [#emoji.checkmark.box],
+        [448 bytes],      [#emoji.crossmark],
+        [1,728 bytes],    [#emoji.crossmark],
+        [17,144 bytes],   [#emoji.checkmark.box],
+        [22,580 bytes],   [#emoji.checkmark.box],
       ),
     caption: [X.509]),
   
@@ -277,10 +338,10 @@
           [$sum$], [PQ],
         ),
     
-        [768],    [#emoji.crossmark],
-        [928],    [#emoji.crossmark],
-        [4,404],  [#emoji.checkmark.box],
-        [4,564],  [#emoji.checkmark.box],
+        [768 bytes],    [#emoji.crossmark],
+        [1,344 bytes],    [#emoji.crossmark],
+        [4,404 bytes],  [#emoji.checkmark.box],
+        [4,564 bytes],  [#emoji.checkmark.box],
       ),
       caption: [MTC]
     )

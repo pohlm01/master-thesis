@@ -12,7 +12,7 @@
 #show: radboud-theme.with(aspect-ratio: "16-9",
   config-info(
     title: [Master Thesis],
-    subtitle: [Implementation and Analysis of Merkle Tree Certificates for Post-Quantum Secure authentication in TLS],
+    subtitle: [Implementation and Analysis of Merkle Tree Certificates for Post-Quantum Secure Authentication in TLS],
     author: [Maximilian Pohl],
     date: datetime.today(),
     logo: image("style/Radboud.svg"),
@@ -87,14 +87,12 @@
 )}]
 
 = Merkle Tree Certificates
-
-== Merkle Tree Certificates (MTC)
+== A Single Batch
 #slide[#{
-  set text(size: 0.7em)
+  set text(size: 0.9em)
   set align(horizon)
-  figure(mtc_overview(),
-  // caption: [Issuance flow for Merkle Tree Certificates]
-)}]
+  figure(merkle_tree_abridged_assertion())
+}]
 
 == MCT Terms
 #slide[#{
@@ -102,12 +100,13 @@
   figure(mtc_terms(dist: 5em, env: "presentation"),
 )}]
 
-== A Single Batch
+== Overall Architecture
 #slide[#{
-  set text(size: 0.9em)
+  set text(size: 0.7em)
   set align(horizon)
-  figure(merkle_tree_abridged_assertion())
-}]
+  figure(mtc_overview(),
+  // caption: [Issuance flow for Merkle Tree Certificates]
+)}]
 
 = MTC vs. X.509
 == Certificate Size
@@ -150,7 +149,6 @@
     - X.509 has more fields
       - Not before timestamp
       #text(size: 0.8em, list([Not after timestamp]))
-      #text(size: 0.7em, list[Not after timestamp])
       #text(size: 0.6em, list[CRL endpoint])
       #text(size: 0.5em, list[OCSP endpoint])
       #text(size: 0.3em, list[SCT timestamps and log IDs])
@@ -194,15 +192,15 @@
   update_mechanism_size
   [
     We approximated already existing update bandwidth \
-    #box(image("images/Google_Chrome_icon.svg", height: 1.5em), baseline: 0.35em) Chrome in the order of 1,000~kB per day and user \
-    #box(image("images/Firefox_logo.svg", height: 1.5em), baseline: 0.35em) Firefox in the order of 1,000 -- 1500~kB per day and user
+    #box(image("images/Google_Chrome_icon.svg", height: 1.5em), baseline: 0.35em) Chrome in the order of 900~kB per day and user \
+    #box(image("images/Firefox_logo.svg", height: 1.5em), baseline: 0.35em) Firefox in the order of 1,300~kB per day and user
 ]}]
 
 
 // - Chrome stable updates once a week
 //   - Patch updates are typically 3–5 MB (every week)
 //   - Subsequent updates from one version to the next are approximately 10-15 MB (every month)
-//   - Everything else approximately 50 MB
+//   - Everything else is approximately 50 MB
 //   - $3 dot 4 + 13 = 25$ MB per month #sym.arrow.double in the order of one MB per day
 // - Firefox major updates approx. once a month
 //   - patch updates are irregular, about every 1 - 2 weeks
@@ -244,7 +242,7 @@
   - Adopt #emph[Rustls]
     - Add negotiation mechanisms
     - Keep state about certificate type
-    - Example client / server
+    - Example client/server
   - Write crate for MTC verification
     - On startup
       - Read available certs from disk
@@ -278,7 +276,7 @@
   [
     - Merkle Tree Certificates work #emoji.face.party
     
-    - The implementation is backward compatible
+    - The implementation is backward-compatible
     
     - Classical and especially post-quantum certificates are a lot smaller
     

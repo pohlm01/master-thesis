@@ -19,6 +19,45 @@
   node-stroke: .1em,
 )
 
+#let implementation = {
+  set enum(indent: 0em)
+
+  let g(x) = {
+    x.stroke = gray
+    x.label = text(gray, x.label)
+  }
+
+  set align(center)
+  
+  fletcher.diagram(
+  ..global_diagram_params,
+  ..overview_params,
+  spacing: (13em, 4em),
+  node-inset: .5em,
+  
+
+  node((0,0), [Authenticating Party #align(horizon, box[#image("images/rustls-logo-web.png", width: 5em)])], name: <ap>),
+  
+  node((0,1), [Relying Party #align(horizon, box[#image("images/rustls-logo-web.png", width: 5em)])], name: <rp>),
+
+  node((1,0), [Certification Authority #align(horizon, box[#image("images/Go-Logo.svg", width: 5em)])], name: <ca>),
+
+  node((1,1), text(fill: gray)[Transparency Service], name: <ts>, stroke: gray, inset: 1em),
+  node((rel: (1.5mm, 1.5mm)), [Transparency Service], layer: -1, stroke: gray, inset: 1em),
+  
+  node((1,2), text(gray)[Monitor], name: <monitor>, stroke: gray, inset: 1em),
+  node((rel: (1.5mm, 1.5mm)), text(gray)[Monitor], layer: -1, stroke: gray, inset: 1em),
+
+  edge(<ap>,  <ca>,       "-|>", shift:  6pt,                     [1. Manual issuance request]),
+  edge(<ca>,          <ts>,       "-|>",              label-side: left,   text(gray)[Sign and publish tree], stroke: gray),
+  edge(<ap>,  <ca>,       "<|-", shift: -6pt, label-side: right,  [2. Certificate]),
+  edge(<ts>,          <monitor>,  "-|>",              label-side: left,   text(gray)[Mirror tree], stroke: gray),
+  edge(<rp>,          <ts>,       "<|-",              label-side: right, label: text(gray)[Batch tree heads], stroke: gray),
+  edge(<ap>,  <rp>,       "<|-", shift: -6pt, label-side: right,   [3. Known trust anchors]),
+  edge(<ap>,  <rp>,       "-|>", shift:  6pt, label-side: left,   [4. Certificate]),
+  edge(<ca>, <rp>, "-|>", align(center)[Manually copy validity window\ and signature], label-angle: auto, label-side: left)
+)}
+
 #let mtc_overview(highlight_update: false) = {
   set enum(indent: 0em)
   
@@ -52,8 +91,7 @@
   ),
   edge(<ap>,  <rp>,       "<|-", shift: -6pt, label-side: right,   [6. Known trust anchors]),
   edge(<ap>,  <rp>,       "-|>", shift:  6pt, label-side: left,   [7. Certificate]),
-)
-}
+)}
 
 #let pki_overview = {
   set enum(indent: 0em)
@@ -297,7 +335,7 @@
   
   pause,
   
-  edge((rel: (0 * dist, 0.5 * dist), to: <root0>), (rel: (0 * dist, 0.5 * dist), to: <root1>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, text(fill: ruRed, weight: "semibold", "Batch Duraton"), label-side: left, snap-to: none, label-pos: 0),
+  edge((rel: (0 * dist, 0.5 * dist), to: <root0>), (rel: (0 * dist, 0.5 * dist), to: <root1>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, text(fill: ruRed, weight: "semibold", "Batch Duration"), label-side: left, snap-to: none, label-pos: 0),
 
   pause,
   
@@ -330,13 +368,13 @@
     node((rel: (-1, 1), to: <t11>), $t_02$, name: <t02>, width: node-width)
     node((rel: (1, 1), to: <t11>), [empty], name: <t03>, width: node-width)
 
-    node((rel: (0, 1), to: <t00>), text(size: 0.6em)[$H("sk"_0)$ + \ `example.com`], name: <aa0>, width: node-width)
-    node((rel: (0, 1), to: <t01>), text(size: 0.6em)[$H("sk"_1)$ + \ `13.42.50.6`], name: <aa1>, width: node-width)
-    node((rel: (0, 1), to: <t02>), text(size: 0.6em)[$H("sk"_2)$ + \ `foo.bar`], name: <aa2>, width: node-width)
+    node((rel: (0, 1), to: <t00>), text(size: 0.6em)[$H("pk"_0)$ + \ `example.com`], name: <aa0>, width: node-width)
+    node((rel: (0, 1), to: <t01>), text(size: 0.6em)[$H("pk"_1)$ + \ `13.42.50.6`], name: <aa1>, width: node-width)
+    node((rel: (0, 1), to: <t02>), text(size: 0.6em)[$H("pk"_2)$ + \ `foo.bar`], name: <aa2>, width: node-width)
 
-    node((rel: (0, 1), to: <aa0>), text(size: 0.6em)[$"sk"_0$ + \ `example.com`], name: <a0>, width: node-width)
-    node((rel: (0, 1), to: <aa1>), text(size: 0.6em)[$"sk"_1$ + \ `13.42.50.6`], name: <a1>, width: node-width)
-    node((rel: (0, 1), to: <aa2>), text(size: 0.6em)[$"sk"_2$ + \ `foo.bar`], name: <a2>, width: node-width)
+    node((rel: (0, 1), to: <aa0>), text(size: 0.6em)[$"pk"_0$ + \ `example.com`], name: <a0>, width: node-width)
+    node((rel: (0, 1), to: <aa1>), text(size: 0.6em)[$"pk"_1$ + \ `13.42.50.6`], name: <a1>, width: node-width)
+    node((rel: (0, 1), to: <aa2>), text(size: 0.6em)[$"pk"_2$ + \ `foo.bar`], name: <a2>, width: node-width)
 
     edge(<root>, "l,ld")
     edge(<root>, "r,rd")

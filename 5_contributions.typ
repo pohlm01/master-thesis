@@ -1,49 +1,111 @@
 #import "imports.typ": *
+#import "figures.typ": *
 
 = Development Insights
 
-As part of this work, we implemented parts of the @mtc system and contributed to the standardization process.
-The objective was to establish a @tls connection between an @ap and @rp, and to contribute enhancements or address errors or ambiguities in the Internet-Draft along the way.
+#figure(
+  implementation,
+  caption: [Overview about implemented components]
+) <fig:implementation>
 
-Our starting point was an experimental software written in Go that functions as an @mtc @ca~@go_mtc_ca.
-Furthermore, we used the @tls library #emph[Rustls]~@github_rustls as a basis.
-Rustls is written in the programming language Rust~@rust and gains adoption beyond the Rust ecosystem~@lets_encrypt_rustls @rustls_openssl_nginx.
-Rustls uses a separate library for checking certificates, called #emph[WebPKI]~@github_rustls_webpki.
-In the Rust ecosystem, libraries are referred to as #emph[crates].
+// As part of this work, we implemented parts of the @mtc system and contributed to the standardization process.
+The objective of this work was to establish an #gls("mtc")-based @tls connection between an @ap and @rp for the first time, and to contribute enhancements or address errors or ambiguities in the @mtc Internet-Draft along the way.
+@fig:implementation provides an overview of the implemented components and their interactions.
+The Transparency Service and Monitor are grayed out as we bypass them for this proof-of-concept setup and instead copy over the validity window and signature directly from the @ca.
+As the icons indicate, we based the @ap and @rp on the #emph[Rustls] project~@github_rustls.
+For the @ca, we added to the development of an existing @ca implementation that is written along the @mtc specification~@go_mtc_ca.
+The @ca is implemented in the programming language Go.
+
+We chose to use Rustls for multiple reasons.
+Firstly, writing a whole @tls implementation ourselves seems overcomplicated for this work and fails to demonstrate that the new @mtc system can be integrated well with existing software.
+Therefore, we decided to adopt an existing implementation.
+Rustls is a comparably modern implementation of the @tls protocol and cleanly implemented.
+One reason is that it never supported @tls~1.1 or older, which helps with keeping the code base clean and organized.
+Nevertheless, Rustls is a serious project which gained adoption in big production deployments~@lets_encrypt_rustls @rustls_openssl_nginx.
+Furthermore, Rustls is written in the programming language Rust, which, in contrast to C used in other famous @tls implementations such as OpenSSL, BoringSSL, or wolfSSL, provides memory safety.
+Additionally, the strong type system of Rust allows catching possible mistakes in the implementation comparably easy already during compilation.
+Moreover, we avoided using the same programming language as for the @ca implementation.
+This requires rewriting some common parts, such as parsing the binary certificate format and checking of the signature.
+Additionally, it makes sure that neither of the implementations covertly behaves different from expected.
+
+
+// We started by adding the type definitions required for the certificate type and trust anchor negotiation mechanisms.
+
+// Rustls uses a separate library for checking certificates, called #emph[WebPKI]~@github_rustls_webpki.
+// In the Rust ecosystem, libraries are referred to as #emph[crates].
 
 The integration of @mtc into Rustls necessitated numerous modifications.
 First, we added the negotiation mechanism for the certificate type, based on RFC~7250~@rfc_raw_public_keys.
 The negotiation mechanism relies on extensions exchanged during the `ClientHello` and `ServerHello` messages.
 This adoption entailed several changes to the Rustls code base, as it needs to keep state about which certificate type was negotiated.
-Previously, it assumed X.509 certificates and related structures like stapled @ocsp responses at various places.
-In addition to the negotiation of the certificate type, we implemented the negotiation mechanism for the #glspl("tai", long: true) as described in another Internet-Draft @rfc_tai.
-Therefore, we had to extend the certificate selection logic to first match on the requested @tai:pl and fall back to the previously used certificate selection based on the @sni.
+Previously, Rustls assumed X.509 certificates and related structures like stapled @ocsp responses at various places.
+In addition to the negotiation of the certificate type, we implemented the negotiation mechanism for the #glspl("tai", long: true) as described in @sec:negotiation_tls.
+Therefore, we extended the certificate selection logic to first match on the requested @tai:pl and fall back to the previously used certificate selection based on the @sni.
 We simplified the @tai negotiation in that the client does not preselect the @tai:pl it requests in the `ClientHello` based on a @dns query, to simplify the implementation and testing.
 // Instead, the client sends all the @tai:pl it supports, which is only a very limited set in our test setup.
 // In a real deployment, this is not practical due to the possibly large set of supported @tai:pl and fingerprinting possibilities.
 
-For checking X.509 certificates, Rustls uses the WebPKI crate.
-Similarly, we developed an @mtc verifier crate @github_mtc_verifier.
-Specifically, it reads the supported Trust Anchors from `/etc/ssl/mtc` and verifies the @ca signature over the validity window as proposed in @sec:update_size.
+For checking X.509 certificates, Rustls uses the #emph[WebPKI]~@github_rustls_webpki library.
+Similarly, we developed an @mtc verifier library~@github_mtc_verifier.
+Specifically, it reads the supported Trust Anchors from `/etc/ssl/mtc` and verifies the @ca signature over the validity window as proposed in @sec:file_structure.
 On startup, the library automatically loads all validated root tree heads into memory and also allows triggering a reload during runtime.
-For each @tls handshake that negotiated to use @mtc as certificate type, the crate parses the server certificate, rebuilds the path though the Merkle Tree, checks if the recomputed tree head matches the stored, and calculates the validity window based on the stored @ca parameters and batch number in the certificate.
-If everything works successful, the server certificate validates.
+For each @tls handshake that negotiated to use @mtc as certificate type, our library
++ parses the certificate,
++ rebuilds the path through the Merkle Tree,
++ checks if the recomputed tree head matches the stored,
++ and checks that the certificate falls in the latest validity window based on the stored @ca parameters and batch number in the certificate.
+If there are no errors, the certificate validates.
 Note that there is no signature validation necessary during the certificate validation, as the @ca signature was checked when loading the tree heads into memory.
+This does not mean that there is no signature check happening during the entire handshake.
+If no optimization such as @kemtls is used, the `CertificateVerify` message still contains a signature over the messages exchanged up to this point.
 
-Along the way, the @ca implementation required a few adoptions.
-First, we found a mismatch between the test vectors provided in the Internet-Draft and the specification due to a 16 instead of 8-bit length encoding.
-We adopted the @ca implementation and standard accordingly @fix_mtc_length_prefix_1 @fix_mtc_length_prefix_2 @fix_mtc_length_prefix_3.
-Later, the Internet-Draft switched to using @tai:pl for identifying the batches instead of a issuer ID and batch number specific to @mtc.
-This change left some inconsistencies in the specification, which we fixed together with some improvements in the data structures @fix_consitently_use_tai.
-We also implemented the usage of @tai:pl in the @ca software @add_mtc_tai @fix_mtc_tai.
-While implementing the parser for @tls `Certificate` message, we noticed that a consistent way of embedding the certificate in the @tls message -- independent of the type -- keeps the parsing logic free of external state.
-Therefore, we slightly adopted this embedding in the Internet-Draft @add_array_embedding. 
-Moreover we replaced a pre-standard version of Dilithium with @mldsa in the @ca implementation, to be able to verify the signature in the @rp @mtc_use_mldsa.
+Along the way, we identified some issues in the specification and @ca implementation.
+// Along the way, the @ca implementation required a few adoptions.
+First, we found a mismatch between the test vectors provided in the draft specification due to a 16-bit instead of 8-bit length encoding for @dns names.
+The test vectors served as examples for assertions and abridged assertions for given inputs.
+We adopted the @ca implementation and standard accordingly~@fix_mtc_length_prefix_1 @fix_mtc_length_prefix_2 @fix_mtc_length_prefix_3.
+
+While we worked on this thesis, the Internet-Draft switched to using #glspl("tai", long: true) for identifying the batches.
+Before, @mtc contained an Issuer ID as an opaque byte string and a batch number.
+During this switch, the authors of the proposed standard forgot to update the definitions for the hash nodes of the Merkle Tree; we fixed this inconsistency.
+Additionally, we removed the batch number from the hash input, as it is included in the newly added #gls("tai")-based `batch_id`.
+Moreover, we introduced a more concise naming distinguishing `issuer_id` and `batch_id` to make clear where only the @oid part for the issuer is used and where the batch number is appended to the issuer ID~@fix_consitently_use_tai.
+Lastly, we also adopted the @ca implementation to the @tai:pl~@add_mtc_tai @fix_mtc_tai.
+
+When implementing the parser for @tls `Certificate` message, we noticed that a consistent way of embedding the certificate in the @tls message -- independent of the type -- keeps the parsing logic free of external state.
+Up to that point, the bytes of the @mtc were embedded into the `Certificate` message without a length prefix.
+Strictly seen, a length prefix is not necessary if the parser knows to interpret the certificate as @mtc as it contains all length information needed.
+However, in practice the parsing happens without knowledge of the negotiated certificate type even though the application as a whole is already aware of the certificate type.
+Interpreting the certificate bytes is postponed to a later stage and possibly passed on to an external library such as the Rustls WebPKI library or our @mtc verification library.
+Therefore, it is advisable to allow the parser to treat the certificate as opaque bytes with a given length prefix.
+The classical X.509 certificates as well as the `RawPublicKey` certificate type from RFC~7250~@rfc_raw_public_keys do already use a 24~bit length prefix.
+We streamlined @mtc draft specification to embed the @mtc in a 24-bit length prefixed byte array as well~@add_array_embedding.
+
+Moreover, we replaced a pre-standard version of Dilithium with @mldsa in the @ca implementation~@mtc_use_mldsa.
+This was required to verify the @ca signature in our @mtc verification library.
+The @ca implementation used an implementation of the third round of the @nist post quantum signature competition, which has slight incompatibilities with the final specification.
+As Rust did not have a library of Dilithium at the same round-three state available, the upgrade to the official @mldsa became necessary, for which libraries in Go and Rust exist.
+
 Further, we opened a discussion on simplifying the certificate type negotiation, but the proposal turned out not be practical @supersede_certificate_type.
-Lastly, we also proposed the file structure explained in @sec:update_size to be added to the Internet-Draft @file_structure.
+The idea was to combine the certificate type negotiation with the negotiation of the trust anchor.
+As the trust anchors negotiation mechanism works not only for @mtc but also for X.509 and possibly other certificate types, we proposed that the peer contains the selected trust anchor in the @tai extension of the `Certificate` message.
+So far, the negotiation mechanism purely indicates that one of the proposed trust anchors was selected, but not which.
+By changing this indication to include the selected @tai, the peer could deduce the certificate type and therefore a separate certificate type negotiation would be superfluous.
+However, Benjamin identified some issues that might arise from the fact that not all certificates participate in the @tai negotiation mechanism.
+Therefore, some niche cases are not properly covered.
+For example, if a server sends a fallback certificate that does not participate in the @tai negotiation, or of which the @tai is unknown to the client, the client does not know what certificate type to expect.
+As a result, the client cannot parse the certificate even if the client would accept it anyway, such as a widely accepted X.509 certificate.
+Consequently, we closed this discussion without additional modifications.
 
-As a result, we managed to successfully perform a @tls handshake between an example client and server based on our modified Rustls version.
-@sec:byte_analysis_handshake compares the exchanged handshake messages on a byte level with the Internet-Drafts and shows that we match the draft specifications.
+Lastly, we also suggested the file structure explained in @sec:file_structure to be added to the Internet-Draft @file_structure.
+As explained earlier, we hope to achieve a more uniform @mtc ecosystem from that.
+As of writing this, the discussion did not really start on that topic yet, so it is unclear if this proposal will get incorporated by the draft standard.
+
+The development efforts resulted in a successful connection @tls handshake between an example client and server based on our modified Rustls version.
+We can use the @ca implementation to create certificates, validity windows, and signatures which we copy manually to the directories as proposed in @sec:file_structure.
+The server loads the @mtc certificates next to the fallback X.509 and serves them to the client if negotiated.
+The client uses our @mtc verifier implementation to read the available batch tree heads from the disk, to validate the signatures, and to validate the @mtc certificates.
+@sec:byte_analysis_handshake compares the exchanged handshake messages on a byte level with the text in the Internet-Drafts and illustrates that our implementation adheres to the draft specifications.
 This was necessary as our implementation is the first and interoperability tests with other implementations are therefore not possible.
 At the same time, we showed interoperability between the existing @ca implementation in Go with our @mtc verifier written in Rust.
 

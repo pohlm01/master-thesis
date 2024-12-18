@@ -167,13 +167,13 @@ This is referred to as #gls("ct", long: true).
 ) <ct_overview>
 
 @ct_overview illustrates the certificate issuance flow with @ct.
-Whenever a domain owner requests a new certificate from a @ca and proves ownership of the domain, the @ca creates a pre-certificate that is mostly identical to the final certificate except that it contains a poison extension and has no @sct:pl embedded yet.
+Whenever a domain owner -- subsequently called #gls("ap", long: true) -- requests a new certificate from a @ca and proves ownership of the domain, the @ca creates a pre-certificate that is mostly identical to the final certificate except that it contains a poison extension and has no @sct:pl embedded yet.
 The poison extension ensures that this certificate is never accepted.
 The pre-certificate breaks the cyclic dependency, that a #gls("ct")-log needs the certificate to create the @sct, but the @ca needs the @sct to create the certificate.
 To issue the final certificate, the @ca must send this pre-certificate to at least two independent #gls("ct")-logs, which will ensure the certificate is logged publicly to an append-only log.
 In return, each log provides a @sct to the @ca for including it in the final certificate.
-Subsequently, the @ca returns the certificate with the embedded @sct:pl to the domain owner, which can use it whenever a @rp connects thereafter.
-At the same time, Monitors are constantly watching the logs and possibly notify a domain owner for every certificate issued on their name.
+Subsequently, the @ca returns the certificate with the embedded @sct:pl to the @ap, which can use it whenever a @rp connects thereafter.
+At the same time, Monitors are constantly watching the logs and possibly notify a @ap for every certificate issued on their name.
 In addition to Monitors, there are also Auditors -- not shown in the figure -- that check the consistency of the log.
 This includes the append-only property, that all certificates are actually logged as promised, and that the log provides the same answers to all clients, independent of the location or other properties~@certificate_transparency.
 If the answers provided differ, this is called a #emph[split-view] attack.
@@ -189,7 +189,7 @@ Nevertheless, @ct is a success and practically unavoidable in the current Web@pk
 This is primarily due to the requirements imposed by major web browsers:
 Chrome and Apple require their trusted root @ca:pl to include at least two independent @sct:pl since 2018 and 2021, respectively~@chrome_enforce_ct @apple_enforce_ct.
 That way, effectively every certificate must be logged publicly to be of any value.
-This solves the problem of certificates that are unknown to a domain owner and @ct allows Monitors to analyze certificates and @ca:pl for misbehavior.
+This solves the problem of certificates that are unknown to an @ap, and @ct allows Monitors to analyze certificates and @ca:pl for misbehavior.
 
 == TLS
 // - Standardized by the @ietf

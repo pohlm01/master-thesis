@@ -54,7 +54,8 @@
     (key: "der", short: "DER", long: "Distinguished Encoding Rules"),
     (key: "ee", short: "EE", long: "End-Entity", longplural: "End-Entities"),
     (key: "os", short: "OS", long: "Operating System"),
-    (key: "sni", short: "SNI", long: "Server Name Indication")
+    (key: "sni", short: "SNI", long: "Server Name Indication"),
+    (key: "svcb", short: "SVCB", long: "Service Binding"),
 )
 
 #print-glossary(abbreviations, disable-back-references: true)
