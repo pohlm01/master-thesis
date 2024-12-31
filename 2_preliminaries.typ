@@ -253,7 +253,7 @@ Hence, the utilization of @kemtls has an impact on the size of the certificate, 
 // This section provides a short overview of the @pq signatures available today.
 // It helps with understanding size and performance considerations later on.
 
-@pq_signature_comp shows a comparison of @ecdsa and #gls("rsa", long: false)-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
+@tab:pq_signature_comp shows a comparison of @ecdsa and #gls("rsa", long: false)-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
 @mldsa was known as #box[CRYSTALS]-Dilithium and @nist standardized it as FIPS 204 in 2024, together with the @slhdsa as FIPS 205 @fips_204 @fips_205.
 A @nist draft for the @fndsa is expected in late 2024.
 
@@ -273,6 +273,6 @@ Moreover, verifying does not rely on floating-point arithmetic, and even if it d
 #figure(
   pq_signatures,
   caption: [
-    Comparison of selected classical signature schemes with algorithms (to be) standardized by @nist. 
-    The #box(baseline: 0.2em, height: 1em, image("images/red-alert-icon.svg")) symbols fast, but dangerous floating-point arithmetic. @bas_westerbaan_state_2024]
-) <pq_signature_comp>
+    Comparison of selected classical signature schemes with algorithms (to be) standardized by the @nist. 
+    The #box(baseline: 0.2em, height: 1em, image("images/red-alert-icon.svg")) symbols fast, but dangerous floating-point arithmetic~@bas_westerbaan_state_2024. The CPU cycles taken from the SUPERCOP database, measured on a AMD Ryzen 7 7700; 8 x 3800MHz machine~@supercop-asym. The @pq algorithms were not listed in their final versions yet. Therefore, we used benchmarks of preliminary versions that are closest to the final standard.]
+) <tab:pq_signature_comp>

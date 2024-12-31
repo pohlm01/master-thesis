@@ -81,7 +81,7 @@ table(
     let missing_zeros = precision - decimal_part.len()
     decimal_part + missing_zeros * "0"
   } else {
-    "00"
+    precision * "0"
   }
   let integer_part = parts.at(0).rev().clusters().enumerate()
     .map((item) => {
@@ -90,7 +90,11 @@ table(
         thousands
       }
     }).rev().join("")
-  return integer_part + decimal + decimal_part
+  return if precision > 0 {
+    integer_part + decimal + decimal_part
+  } else {
+    integer_part
+  }
 }
 
 #let update_mechanism_size = {
@@ -122,46 +126,61 @@ table(
 
 #let pq_signatures = {
   show table.cell: it => {
-    if it.y == 1 or it.y == 0 {
-      strong(it)
-    } else {
+    if it.y == 0 or it.y == 1{
+      align(center + horizon, strong(it))
+    } else if it.y == 2 {
+      align(center, it)
+    } else if it.x == 0 {
+      align(left, it)
+    } else if it.x == 1 {
       it
+    } else {
+      align(right, it)
     }
   }
 
-  let g = (x, body) => {
+  let g = (min, max, current, p: 2, ..additional) => {
+    let x = (current - min)/(max - min)
     let text_color = if x > 0.5 {
       white
     } else {
       black
     }
-    table.cell(fill: gradient.linear(..color.map.viridis).sample(100% - x * 100%),  text(fill: text_color, body))
+    let content = if additional.pos().len() > 0 {
+        additional.pos().at(0) + [#format_num(current, precision: p)]
+    } else {
+      [#format_num(current, precision: p)]
+    }
+    table.cell(fill: gradient.linear(..color.map.viridis).sample(100% - x * 100%),  text(fill: text_color, content))
   }
 
   grid(
     columns: (auto, auto),
-    gutter: 2em,
+    gutter: 1em,
     table(
-      columns: 6,
-      align: (left, center, left, left, left, left),
+      columns: 8,
       stroke: 0.3pt,
       table.header(
-        [], [], table.cell(colspan: 2)[Sizes (bytes)], table.cell(colspan: 2)[CPU time (lower is better)],
-        [Name], [PQ], [Public Key], [Signature], [Signing], [Verification]),
-      
-        [Ed25519],      [#emoji.crossmark],     g(32/1312)[32],     g(64/17088)[64],     g(1/8000)[1 (baseline)],      g(1/7)[1 (baseline)],
-        [RSA-2048],     [#emoji.crossmark],     g(256/1312)[256],    g(256/17088)[256],    g(70/8000)[70],             g(0.3/7)[0.3],
-        [ML-DSA-44],    [#emoji.checkmark.box], g(1312/1312)[1,312],  g(2420/17088)[2,420],  g(4.8/8000)[4.8],         g(0.5/7)[0.5],
-        [SLH-DSA-128s], [#emoji.checkmark.box], g(32/1312)[32],     g(7856/17088)[7,856],  g(8000/8000)[8,000],        g(2.8/7)[2.8],
-        [SLH-DSA-128f], [#emoji.checkmark.box], g(32/1312)[32],     g(17088/17088)[17,088], g(550/8000)[550],          g(7/7)[7],
-        [FN-DSA-512],   [#emoji.checkmark.box], g(897/1312)[897],    g(666/17088)[666],   g(8/8000)[8 #h(.3em) #box(height: 0.7em, inset: -1pt,  image("images/red-alert-icon.svg"))], g(0.5/7)[0.5],
+        [], [], table.cell(colspan: 2)[Sizes (bytes)], table.cell(colspan: 4)[CPU cycles],
+        table.cell(rowspan: 2)[Name], table.cell(rowspan: 2)[PQ], table.cell(rowspan: 2)[Public Key], table.cell(rowspan: 2)[Signature], table.cell(colspan: 2)[Signing], table.cell(colspan: 2)[Verification],
+        [cycles], [relative], [cycles], [relative],
+        ),
+
+        [Ed25519],      [#emoji.crossmark],     g(32, 1312, 32, p: 0),    g(64, 17088, 64, p: 0),       g(46314, 260458611, 46314, p: 0),        g(1, 5623.76, 1),       g(44881, 802701, 158754, p: 0),     g(0.28, 5.06, 1),
+        [ECDSA P-256],  [#emoji.crossmark],     g(32, 1312, 32, p: 0),    g(64, 17088, 64, p: 0),       g(46314, 260458611, 108545, p: 0),       g(1, 5623.76, 2.34),    g(44881, 802701, 255095, p: 0),     g(0.28, 5.06, 1.61),
+        [RSA-2048],     [#emoji.crossmark],     g(32, 1312, 256, p: 0),   g(64, 17088, 256, p: 0),      g(46314, 260458611, 1850021, p: 0),      g(1, 5623.76, 39.95),   g(44881, 802701, 44881, p: 0),      g(0.28, 5.06, 0.28),
+        [ML-DSA-44],    [#emoji.checkmark.box], g(32, 1312, 1312, p: 0),  g(64, 17088, 2420, p: 0),     g(46314, 260458611, 152827, p: 0),       g(1, 5623.76, 3.30),    g(44881, 802701, 68674, p: 0),      g(0.28, 5.06, 0.43),
+        [SLH-DSA-128s], [#emoji.checkmark.box], g(32, 1312, 32, p: 0),    g(64, 17088, 7856, p: 0),     g(46314, 260458611, 260458611, p: 0),    g(1, 5623.76, 5623.76), g(44881, 802701, 341835, p: 0),     g(0.28, 5.06, 2.15),
+        [SLH-DSA-128f], [#emoji.checkmark.box], g(32, 1312, 32, p: 0),    g(64, 17088, 17088, p: 0),    g(46314, 260458611, 15385413, p: 0),     g(1, 5623.76, 332.20),  g(44881, 802701, 802701, p: 0),     g(0.28, 5.06, 5.06),
+        [FN-DSA-512],   [#emoji.checkmark.box], g(32, 1312, 897, p: 0),   g(64, 17088, 666, p: 0),      g(46314, 260458611, 327217, p: 0),       g(1, 5623.76, 7.07, [#box(height: 0.7em, inset: -1pt,  image("images/red-alert-icon.svg")) #h(.3em)]), g(44881, 802701, 62934, p: 0), g(0.28, 5.06, 0.40),
     ),
     align(horizon,
     grid(
       gutter: .5em,
+      align: center,
       text(size: .8em)[bad\ performance],
       rect(
-        width: 10pt,
+        width: 1em,
         height: 8em,
         fill: gradient.linear(
           dir: ttb,
@@ -174,7 +193,104 @@ table(
   )
 }
 
-#let x509_certificate_sizes(kem: true, results_only: false) = {
+#let mtc_cpu_cycles = {
+  show table.cell: it => {
+    if it.y == 0 or it.x == 2 {
+      strong(it)
+    } else {
+      it
+    }
+  }
+
+  let f = (x) => table.cell(format_num(x, precision: 0))
+  
+table(
+    columns: 4,
+
+    fill: (x, y) => {
+      if calc.even(y) and y > 0 {
+        gray.lighten(40%)
+      }
+    },
+
+    align: (x, y) => {
+      if calc.even(y) and y > 0 and x != 3 {
+        right
+      } else if y > 0 and x != 3 {
+        left
+      } else {
+        center
+      }
+    },
+
+    table.header(
+      [Handshake signature], [Tree Traversal],  [$sum$], [PQ],
+    ),
+
+    [ECDSA-256],    [280M active APs],   [],         [],
+    f(255095),      f(35734),      f(290829), [#emoji.crossmark],
+
+    [RSA-2048],     [1B active APs],    [],         [],
+    f(44881),       f(42243),      f(87124),  [#emoji.crossmark],
+
+    [ML-DSA-44],    [280M active APs],  [],         [],
+    f(68674),       f(35734),       f(104408),  [#emoji.checkmark.box],
+
+    [ML-DSA-44],    [1B active APs],    [],         [],
+    f(68674),       f(42243),      f(110917),  [#emoji.checkmark.box],
+)
+}
+
+#let x509_cpu_cycles = {
+  show table.cell: it => {
+    if it.y == 0 or it.y == 1 or it.x == 4 {
+      strong(it)
+    } else {
+      it
+    }
+  }
+
+  let f = (x) => table.cell(format_num(x, precision: 0))
+  
+table(
+    columns: 6,
+
+    fill: (x, y) => {
+      if calc.odd(y) and y > 1 {
+        gray.lighten(40%)
+      }
+    },
+
+    align: (x, y) => {
+      if calc.odd(y) and y > 1 and x != 5 {
+        right
+      } else if y > 1 and x != 5 {
+        left
+      } else {
+        center
+      }
+    },
+
+    table.header(
+      table.cell(colspan: 4)[Signatures],             [$sum$], [PQ],
+      [Handshake],[SCT + OCSP], [EE], [Intermediate],                [], []
+    ),
+
+    [ECDSA-256],    [ECDSA-256],    [ECDSA-256],    [ECDSA-256],    [],         [],
+    f(255095),      f(765285),      f(255095),      f(255095),      f(1530570), [#emoji.crossmark],
+
+    [RSA-2048],     [ECDSA-256],    [RSA-2048],     [RSA-4096],     [],         [],
+    f(44881),       f(765285),      f(44881),       f(120280),      f(975327),  [#emoji.crossmark],
+
+    [ML-DSA-44],    [ML-DSA-44],    [ML-DSA-44],    [ML-DSA-44],    [],         [],
+    f(68674),       f(206022),      f(68674),       f(68674),       f(412044),  [#emoji.checkmark.box],
+
+    [ML-DSA-44],    [ML-DSA-44],    [ML-DSA-44],    [SLH-DSA-128s], [],         [],
+    f(68674),       f(206022),      f(68674),       f(341835),      f(685205),  [#emoji.checkmark.box],
+)
+}
+
+#let x509_certificate_sizes(kem: true) = {
   
   show table.cell: it => {
     if it.y == 0 or it.y == 1 or it.x == 6 {
@@ -211,7 +327,7 @@ table(
     [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [ECDSA-256],  [],               [],
     [64],     [192],    [64],     [64],     [32],     [32],     [448],            [#emoji.crossmark],
     
-    [RSA-2048], [ECDSA],  [RSA-2048], [RSA-4096], [RSA-2048], [RSA-2048], [],       [],
+    [RSA-2048], [ECDSA-256],  [RSA-2048], [RSA-4096], [RSA-2048], [RSA-2048], [],       [],
     [256],      [192],    [256],      [512],      [256],      [256],      [1,728],  [#emoji.crossmark],
     
     [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [ML-DSA-44], [],               [],

@@ -46,7 +46,8 @@ Compared to today's Web@pki it has a reduced scope and assumes more prerequisite
 - A #emph([Transparency Service]) mirrors the @ca:pl, validates the batches, and forwards them to the @rp:pl.
 - A #emph([Monitor]) monitors the transparency services for suspicious or unauthorized certificates.
 - An #emph([Assertion]) is information that an @ap gets certified by a @ca, i.e., a public key and one or multiple domain name(s) or #gls("ip", long: false) address(es). An #emph([Abridged Assertion]) hashes the public key stored in an assertion to reduce the size, especially for potentially large @pq keys.
-- A #emph([Batch]) is a collection of assertions that are certified simultaneously. The recommended #emph([Batch Duration]) is one hour, meaning that all assertions collected within this hour are certified at the same time.
+- A #emph([Batch]) is a collection of assertions that are certified simultaneously.
+- The #emph([Batch Duration]) is the time the batch spans. The authors recommend a Batch Duration of one hour, meaning that all assertions collected within this hour are certified at the same time in one Batch.
 - A #emph([Batch Tree Head]) is the Merkle Tree root node over all assertions of one batch.
 - An #emph([Inclusion Proof]) is a proof that a certain assertion is included in a batch. The proof consists of the hashes required to rebuild the path up to the Batch Tree Head.
 - A #emph([Validity Window]) is the range of consecutive batch tree heads that are valid at a time.
@@ -61,7 +62,7 @@ Compared to today's Web@pki it has a reduced scope and assumes more prerequisite
 With this terminology, the following explains the certificate issuance flow depicted in @fig:mtc_overview
 + First, the @ap requests a certificate from the @ca.
   Due to the frequency of that operation, this should be an automated process using the @acme protocol, for example.
-+ Every time a batch becomes ready, the @ca builds the Merkle Tree, signs the Batch Tree Head with a @pq algorithm, and publishes the tree to the Transparency Services.
++ Every time a batch becomes ready, the @ca builds the Merkle Tree, signs the whole Validity Window, which includes the new Batch Tree Head, with a @pq algorithm, and publishes the tree to the Transparency Services.
 + The @ca also sends the inclusion proof back to the @ap, which can subsequently use it to authenticate against #glspl("rp") that trust this batch.
 // + The Transparency Services recompute the Merkle Tree to validate the Merkle Tree Head contains exactly what is advertised and validate the signature of the Batch Tree Head.
 + Monitors mirror all Assertions published to the Transparency Services and check for fraudulent behavior. 
@@ -74,7 +75,7 @@ With this terminology, the following explains the certificate issuance flow depi
 The following sections elaborate on the responsibilities and objectives of the components involved. 
 
 == Certification Authority
-A @ca is defined by the following parameters that are publically known and cannot change. In particular, the Transparency Service trusts certain @ca:pl and uses these parameters to validate the signed validity windows it receives from the @ca:pl.
+A @ca is defined by the following parameters that are publicly known and cannot change. In particular, the Transparency Service trusts certain @ca:pl and uses these parameters to validate the signed validity windows it receives from the @ca:pl.
 - `hash`: The hash function used to build the Merkle Tree. Currently, only #gls("sha")-256 is supported.
 - `issuer_id`: A @tai as defined in @rfc_tai. That is a relative @oid under the prefix `1.3.6.1.4.1`. Organizations append their @pen registered at the @iana.
 - `public_key`: The public key is used by the Transparency Services to validate the signed validity window.
@@ -97,9 +98,15 @@ This will typically be a small time frame in which the @ca builds the Merkle Tre
 Subsequently, the batch transfers to the issued state, i.e., the @ca published the signed validity window and abridged assertions.
 As an invariant, all batches before the latest issued one must be issued as well, i.e., no gaps are allowed.
 
-Every time a batch becomes ready, the @ca converts all assertions it found to be valid into abridged assertions by hashing the (possibly large) signature key in that assertion.
-Afterward, it builds a Merkle Tree as depicted in @merkle_tree_abridged_assertion.
-Lastly, the @ca signs a `LabeledValidityWindow` that contains the domain separator `Merkle Tree Crts ValidityWindow\0` to prevent cross protocol attacks, the `issuer_id`, the `batch_number`, and all Merkle Tree root hashes that are currently valid.
+Every time a batch becomes ready, the @ca converts all assertions it found to be valid into abridged assertions by hashing the -- possibly large -- signature key in that assertion.
+Afterward, it builds a Merkle Tree as depicted in @fig:merkle_tree_abridged_assertion.
+Lastly, the @ca signs a `LabeledValidityWindow` that contains the domain separator `Merkle Tree Crts ValidityWindow\0`, the `issuer_id`, the `batch_number`, and all Merkle Tree root hashes that are currently valid.
+The domain separator allows the protocol to be extended in the future, if the @ca would need to sign different structs with the same key.
+One example could be the introduction of a revocation mechanism that requires the @ca to sign some data with the same key.
+Signing the entire validity window instead of each tree root individually has two advantages:
+For one, if a client or Transparency Service is behind more than one Tree Head, only a single signature needs to be transferred instead of multiple, which saves bandwidth and computational effort for the signature verification.
+The second benefit is that it complicates split-view attacks.
+A @ca would have to keep the split view for an entire validity window instead of just a single tree head, which increases the chances of it being noticed.
 
 
 // - As mentioned earlier: Merkle Trees
@@ -112,7 +119,7 @@ Lastly, the @ca signs a `LabeledValidityWindow` that contains the domain separat
 
 #figure(
   merkle_tree_abridged_assertion(),
-caption: [Example Merkle Tree for three abridged assertions ($"aa"_0", aa"_1", aa"_2$)]) <merkle_tree_abridged_assertion>
+caption: [Example Merkle Tree for three assertions]) <fig:merkle_tree_abridged_assertion>
 
 
 == The Role of the Transparency Service

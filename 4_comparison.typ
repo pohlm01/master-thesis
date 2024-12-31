@@ -7,6 +7,7 @@
 Based on the introduction to @pki in @sec:pki and the explanation of @mtc in @sec:mtc, it becomes obvious that there are significant differences between these architectures.
 This chapter presents the results of the analysis we conducted about the differences and the advantages and disadvantages the architectures result in.
 
+// #heading("Advantages", level: 4, outlined: false, numbering: none)
 The most obvious change is the significant reduction of the certificate lifetime.
 The authors of @mtc propose a lifetime of 14 days.
 In contrast, as of October 2024, @tls leaf certificates for the Web@pki may be issued for at most 13 months, i.e., 398 days~@chrome_cert_lifetime @apple_cert_lifetime.
@@ -24,8 +25,9 @@ As @ocsp entails high operational costs for @ca:pl, it is likely that @ocsp will
 Let's Encrypt already announced to end their @ocsp support "as soon as possible"~@lets_encrypt_end_ocsp.
 Instead, the CA/Browser forum tightens the requirements for @crl:pl and Mozilla is working on accumulating all revoked certificates into a small list called #emph("CRLite") since 2017, but did not enable this mechanism by default in Firefox as of version 132 from October 2024~@crlite_paper @mozilla_crlite.
 
-Furthermore, certificate transparency is built into @mtc, as opposed to the X.509 certificate infrastructure, where it was added later on.
+// Furthermore, certificate transparency is built into @mtc, as opposed to the X.509 certificate infrastructure, where it was added later on.
 
+// #heading("Disadvantages", level: 4, outlined: false, numbering: none)
 A significant downside of @mtc compared to the classical certificate infrastructure is the longer issuance times.
 There are two aspects to this: First, the issuance of the certificate itself takes up to `batch_duration` seconds, i.e., one hour assuming the default values, and second, the time the new tree heads propagate to a relevant number of @rp:pl.
 The first one will not make up for the major part of the difference in practice.
@@ -349,11 +351,11 @@ This does save development resources and reduces the attack surface as there exi
 
 Nowadays, Linux based operating systems such as Debian, RHEL, or Android store certificates on a well-known location for other programs to access it @go_root_store.
 // Debian, as an example, provides the trusted root certificates as a normal system package, which can be updated with the built-in package manager @debian_ca_certificates.
-We use the X.509 file structure of Debian as an inspiration to propose a common file structure.
+We use the X.509 file structure of Debian as an inspiration to bring up a common file structure.
 @fig:mtc_client_file_tree shows the file structure we propose for a @rp.
 The absolute path (`/etc/ssl/mtc`) might vary per distribution.
 The structure thereafter is more interesting.
-We propose that each @ca lives in its own subdirectory, with the Issuer ID as the directory name.
+We suggest that each @ca lives in its own subdirectory, with the Issuer ID as the directory name.
 The Issuer ID for @mtc:pl is an @oid, so directory names would look like `123.54.2`.
 The directory contains the @ca parameters, the root hashes of the validity window and optionally the signature of the validity window.
 As mentioned above, the signature is not necessary if the @rp trusts the Transparency Service and update mechanism.
@@ -361,13 +363,13 @@ In this case, the Transparency Service is not operated by a browser vendor, but 
 Still, the argument remains that a user needs to trust its @os vendor either way and may therefore skip synchronizing the signature.
 In the proposed structure, the validity window contains the same data as specified in the Internet-Draft, namely the batch number and the hashes of all valid tree heads.
 The @ca parameters contain the following information:
-- The issuer ID, i.e., the @oid of the @ca
-- The signature scheme used to sign the validity windows
-- The public key of the @ca. It must match the signature scheme
-- The proof type used for inclusion proof in the certificates. As of now, the only option is a #gls("sha")-256 based Merkle Tree inclusion proof
-- The start time of the @ca, i.e., the time the @ca was set up. This is required to calculate the validity of a certificate based on its batch number
-- The batch duration. This is required to calculate the validity of a certificate based on its batch number as well
-- The validity window size. Again, This is required to calculate the validity of a certificate based on its batch number
+- The issuer ID, i.e., the @oid of the @ca.
+- The signature scheme used to sign the validity windows.
+- The public key of the @ca. It must match the signature scheme.
+- The proof type used for inclusion proof in the certificates. As of now, the only option is a #gls("sha")-256 based Merkle Tree inclusion proof.
+- The start time of the @ca, i.e., the time the @ca was set up. This is required to calculate the validity of a certificate based on its batch number.
+- The batch duration. This is required to calculate the validity of a certificate based on its batch number as well.
+- The validity window size. Again, This is required to calculate the validity of a certificate based on its batch number.
 
 
 #figure(
@@ -393,4 +395,65 @@ At the same time, storing some information on the @ap that is not strictly requi
 ) <fig:mtc_server_file_tree>
 
 
-// - The signature over the validity window has the advantage that a CA would need to keep a split view over the whole window instead of for a single batch. See https://github.com/davidben/merkle-tree-certs/issues/84
+// - The signature over the validity window has the advantage that a CA would need to keep a split view over the whole window instead of for a single batch. See https://github.com/davidben/merkle-tree-certs/issues/84.
+
+== CPU Usage
+The previous sections spend attention on the bytes that need to be transferred for a #gls("pq")-secure server authentication.
+This section focuses on the computation required for server authentication in both systems, the classical, X.509 based and the @mtc based.
+A low computational effort is beneficial for client devices, even though most have sufficient resources for complex computations.
+Nevertheless, battery-powered devices may last longer and the available computing power can be used for different tasks.
+For servers, which often handle numerous @tls connections, the computational efficiency is important as well, as they may need to be equipped with more powerful and therefore expensive hardware if @tls handshakes are significantly more laborious.
+
+We fund our estimates on the SUPERCOP project.
+SUPERCOP is an acronym for #emph[System for Unified Performance Evaluation Related to Cryptographic Operations and Primitives].
+SUPERCOP publishes a database with benchmarks for various cryptographic primitives on various hardware configurations~@supercop.
+All performance metrics we use were measured on the same machine with an AMD Ryzen~7~7700 with eight CPU cores at 3.8~GHz.
+Unfortunately, there are no metrics for the final @pq signature algorithms available in the database yet.
+Therefore, we used the benchmarks of the corresponding, preliminary algorithm versions.
+For example, we used the metrics from Dilithium with level two security parameters from the third round of the @nist post quantum competition instead of #gls("mldsa")-44.
+
+It quickly becomes clear that a client verifying an #gls("mtc")-based server authentication requires fewer signature verifications compared to an X.509-based server authentication.
+To verify an X.509 certificate chain, the client must typically verify two @sct:pl, maybe an @ocsp staple, one signature in the @ee certificate and one signature in the intermediate certificate.
+Additionally, the client must verify the handshake signature.
+To verify an @mtc certificate, the client must traverse up the Merkle Tree up to the root node, but does not require any asymmetric cryptography, assuming the @ca signature was verified either ahead of time or by the Transparency Service.
+Just as for the X.509 system, the client must verify the handshake signature nevertheless.
+
+To estimate computational costs associated with the tree traversal, we assume a single hash operation with an input length of 4096-byte to create the abridged assertion. Additionally, we consider 21 or 26 hash operations, each with a 576-byte input, to reconstruct the internal nodes up to the root.
+The 21 or 26 level correspond to 280 million or one billion active @ap:pl for a single @ca, as described in @sec:certificate_size.
+
+@tab:x509_cpu_cyles approximates the CPU cycles required for verifying an X.509 certificate chain with the same parameters as in @sec:certificate_size.
+A first observation is that the verification of @rsa signatures is less computationally expensive than the verification of @ecdsa signatures.
+Possibly more surprising is that the @pq secure @mldsa signature verification is less expensive than an @ecdsa signature verification.
+Therefore, a certificate chain using @mldsa for all signatures requires only 27~% of the computation of a fully #gls("ecdsa")-based certificate chain.
+Moreover, both @pq scenarios are less computationally expensive for a client compared to the classical scenarios.
+
+Nevertheless, using the @mtc architecture additionally decreases the computational costs for a client.
+@tab:mtc_cpu_cyles displays the approximated CPU cycles required for validating an @mtc with the same parameters as in @sec:certificate_size.
+As mentioned, only a single signature verification for the handshake is required.
+The second variable which determines the computational cost is the number of active @ap:pl for a @ca.
+Comparing an @ecdsa X.509 certificate chain with an @mtc that holds an @ecdsa key, reveals that the @mtc uses only 19~% of the computation the certificate chain requires.
+Comparing the same @ecdsa certificate chain with an @mtc with 280 million active @ap:pl, shows that the @mtc case uses only 6.8~% of the computation the certificate chain requires.
+Moreover, comparing the @pq use-cases with each other, we observe a reduction of 73~% to 85~% in the advantage of @mtc.
+
+#figure(
+  x509_cpu_cycles,
+  caption: [CPU cycles for verifying the server identity on a client device when using X.509 certificates. The numbers are based on the SUPERCOP database~@supercop-asym.]
+) <tab:x509_cpu_cyles>
+
+#figure(
+  mtc_cpu_cycles,
+  caption: [CPU cycles for verifying the server identity on a client device when using @mtc. The numbers are based on the SUPERCOP database~@supercop-asym @supercop-hash.]
+) <tab:mtc_cpu_cyles>
+
+In terms of computation required, using @mtc or X.509 does not result in any difference for the server.
+The signatures contained in the X.509 certificate are computed ahead of time by the @ca and Transparency Logs and are treated as opaque bytes by the server.
+The same is true for the @mtc.
+The certificate is mostly opaque to the server and, most importantly, sent as-is.
+The server only computes the handshake signature during the handshake, which is necessary in the same manner for @mtc and X.509.
+
+// - Estimate the CPU cycles
+// - Important for battery life
+// - Nothing changes for the server. Either way, it has to create a single signature and send an already existing certificate.
+// - We use the SUPERCOP database. SUPERCOP stands for "System for Unified Performance Evaluation Related to Cryptographic Operations and Primitives".
+// - We assume SHA-256. Uses the same computer as the signatures in @tab:pq_signature_comp, an AMD Ryzen 7 7700 with 8 x 3800MHz.
+// - For the path traversal, we assume 1 hash with 4096 bytes (abridged assertion) + 21/26 hashes of 576 bytes (inner nodes)

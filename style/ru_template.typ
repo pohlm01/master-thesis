@@ -29,8 +29,8 @@
   set par(spacing: 0.55em, leading: 0.55em, first-line-indent: 1.8em, justify: true)
 
   show heading: it => block({
-    if counter(heading).get() != (0,) {
-      box(counter(heading).display(), inset: (right: 1em))
+    if counter(heading).get() != (0,) and it.numbering != none {
+      box(counter(heading).display(it.numbering), inset: (right: 1em))
     }
     it.body
   })
@@ -76,7 +76,9 @@
   }
 
   counter(page).update(0)
-  set page(numbering: "1", margin: (x: 8em, top:10em, bottom: 14em))
+  set page(
+    numbering: "1",
+    margin: (x: 8em, top:10em, bottom: 14em))
 
   doc
 }
