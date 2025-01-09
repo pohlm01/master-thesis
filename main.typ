@@ -2,7 +2,7 @@
 
 
 #import "imports.typ": *
-#import "style/radboud_cover.typ": title_page
+#import "style/radboud_cover.typ": *
 #import "style/ru_template.typ": report, appendix
 #import "style/todo.typ": outline-todos
 #import "A_abbreviations.typ": abbreviations
@@ -36,12 +36,10 @@
 
 #set document(title: [#title - #subtitle], author: author)
 
-// #outline-todos()
-
 #show: make-glossary
-#show: doc => report(table_of_contents: true, doc)
-
 #register-glossary(abbreviations)
+
+#show: doc => report(doc, table_of_contents: true, abstract: [#include "0_abstract.typ"])
 
 // #word-count(total => [
 #include "1_introduction.typ"

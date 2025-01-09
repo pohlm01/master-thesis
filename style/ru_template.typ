@@ -1,4 +1,4 @@
-#let report(doc, table_of_contents: true) = {
+#let report(doc, table_of_contents: true, abstract: none) = {
   set text(font: "New Computer Modern")
 
   show link: set text(fill: rgb(0, 0, 180))
@@ -67,6 +67,15 @@
     )
   }
 
+  if abstract != none {
+    set page(margin: 6cm)
+    align(horizon, box[
+      #align(center, strong[Abstract])
+      #v(1em)
+      #abstract 
+    ])
+  }
+
 
   if table_of_contents {
     set par(spacing: 0.0em)
@@ -78,7 +87,8 @@
   counter(page).update(0)
   set page(
     numbering: "1",
-    margin: (x: 8em, top:10em, bottom: 14em))
+    margin: (x: 8em, top:10em, bottom: 14em)
+  )
 
   doc
 }

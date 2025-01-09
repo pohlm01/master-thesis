@@ -5,16 +5,16 @@
 = Preliminaries <sec:preliminaries>
 This section provides information relevant to understanding the architecture of #gls("mtc", long: true) and its implications.
 It starts with a reminder of Merkle Trees and continues with an explanation of the present #gls("pki", long: true), including its building blocks, the #gls("acme", long: true), the #gls("ocsp", long: true), and the #gls("ct", long: true) design.
-Afterward, this section provides a summary of the @tls protocol and the optimization @kemtls, and ends with a list of relevant #gls("pq", long: true) secure signature algorithms.
+Afterward, this section summarizes the @tls protocol and the optimization @kemtls, and ends with a list of relevant #gls("pq", long: true) secure signature algorithms.
 
-== Merkle Trees
+== Merkle Trees <sec:merkle_trees>
 Merkle Trees, also known as Hash Trees, are binary trees with the property that each inner node is the result of a cryptographic hash function on its child nodes.
 Merkle Trees are tamper-evident and enable efficient verification of whether an element is included in the tree.
 The term "tamper-evident" refers to the inability to add, delete, or modify information contained within the Merkle Tree without changing the root node.
-An efficient verification means that, given the information and a proof, one can easily verify that the information is contained in the root hash.
+An efficient verification means that, given the information and proof, one can easily verify that the information is contained in the root hash.
 
-As a reminder: A hash function takes an arbitrary length input and produces a fix-length output.
-In the following, we will use $h = H(x)$ to denote that $h$ is the result of applying the hash function $H$ in the input $x$.
+As a reminder, a hash function takes an arbitrary length input and produces a fix-length output.
+In the following, we will use $h = H(x)$ to denote that $h$ results from applying the hash function $H$ in the input $x$.
 In addition, a cryptographic hash function typically has three properties: Collision resistance, first preimage resistance, and second preimage resistance.
 Collision resistance means that it is hard to find any two inputs $x eq.not x'$ that result in the same hash output $H(x) = H(x')$.
 First preimage resistance means that it is hard to find an input $x$ that produces a given hash output $h$. 
@@ -26,23 +26,23 @@ Hard in this context means that something is computationally infeasible, i.e., c
 #figure(
   merkle_tree,
 caption:  [Visualization of a Merkle Tree with an inclusion proof for information $x_1$.
-          The inclusion proof consists of the yellow marked $h_0$ and $h_5$ node, which allows a verifier to recalculate the red, thick path up to the rood node.
+          The inclusion proof consists of the yellow marked $h_0$ and $h_5$ node, which allows a verifier to recalculate the red, thick path up to the root node.
 ]) <fig:merkle_tree>
 
 @fig:merkle_tree shows an example tree for the information $x_0$, $x_1$, $x_2$ and $x_3$.
 The leaf nodes contain the hash of the information as $h_i = H_1(x_i)$.
-Each of the inner nodes is the result of the hash function $H_2(h_i, h_(i+1))$ with the content of the two child nodes.
-That way, one can build an inclusion proof to the root node without reveling any other information.
-The inclusion proof contains the sibling hash for each node along the way to traverse up to the root note, so $h_0$ and $h_5$ in the example in @fig:merkle_tree.
+Each inner node is the result of the hash function $H_2(h_i, h_(i+1))$ with the content of the two child nodes.
+That way, one can build an inclusion proof to the root node without revealing any other information.
+The inclusion proof contains the sibling hash for each node traversing up to the root note, so $h_0$ and $h_5$ in the example in @fig:merkle_tree.
 
 Please note that the leaf and internal node use two different hash functions, $H_1$ and $H_2$.
-This is to ensure that an internal node can never be interpreted as leaf node.
-This would allow constructing multiple Merkle Trees with the same root hash~@merkle_tree_second_preimage.
-In practice, it is enough to slightly alter the hash function, such as by prepending a single domain separator byte which is different for the leaf and internal nodes~@rfc_ct.
+This ensures that an internal node can never be interpreted as a leaf node.
+This would allow the construction of multiple Merkle Trees with the same root hash~@merkle_tree_second_preimage.
+In practice, it is enough to slightly alter the hash function, such as by prepending a single domain separator byte, which is different for the leaf and internal nodes~@rfc_ct.
 The internal hash function $H_2$ takes two arguments, even though hash functions generally only take a single input.
-However, there are multiple ways to circumvent this restriction, for example, by concatenating the two inputs into one.
+However, there are multiple ways to circumvent this restriction, such as concatenating the two inputs into one.
 
-As long as the used hash function is collision resistant, it is not possible to alter, add, or delete any information included in the Merkle Tree without changing the hash of the root node~@handbook_applied_crypto[Section~13.4.1].
+As long as the used hash function is collision-resistant, it is impossible to alter, add, or delete any information included in the Merkle Tree without changing the hash of the root node~@handbook_applied_crypto[Section~13.4.1].
 Instead, it is possible to add information to the tree and create a consistency proof showing that only specific data was added, but nothing else has changed in the tree.
 This property can be used to build logs that are verifiably append-only~@rfc_ct.
 
@@ -61,13 +61,13 @@ This property can be used to build logs that are verifiably append-only~@rfc_ct.
 //   - Securing local networks and smart card authentication
 //   - Restricted access to #glspl("vpn")
 
-A #gls("pki", long: true) is a crucial part of ensuring security in various digital systems.
+A #gls("pki", long: true) is crucial to ensuring security in various digital systems.
 Its core functionality is to bind a cryptographic public key to a set of verified information~@rfc_pki.
 Typically, this information represents an identity such as a domain name, company name, or the name of a natural person.
-However, in some cases, the verified information instead contains permissions, or ownership, without an identity.
-An example of that is the @rpki, which is used to secure @bgp announcements and therefore harden the security of routing on the internet @rfc_rpki.
+However, in some cases, the verified information instead contains permissions or ownership without an identity.
+An example is the @rpki, which is used to secure @bgp announcements and, therefore, harden the security of routing on the internet~@rfc_rpki.
 
-The verified information and public key are combined with a cryptographic signature of the @ca and form a #emph([certificate]) that way.
+The verified information and public key are combined with a cryptographic signature of the @ca to form a #emph([certificate]) that way.
 The common format to encode the verified information and signature is X.509.
 Later, a #gls("rp", long: true) can parse the certificate, verify the signature, and trust the signed information given that it trusts the @ca.
 
@@ -76,34 +76,34 @@ To name a few examples: It is used to encrypt and sign emails, to sign documents
 
 This work focuses on this last use case, the web browsing.
 The corresponding @pki infrastructure is often referred to as #emph([WebPKI]).
-It combines the domain name and possibly a company name with a public key, such that a @rp can verify it connected to the intended website.
+It combines the domain name and possibly a company name with a public key, so an @rp can verify that it is connected to the intended website.
 This verification is built into the @https protocol, which combines the @http with the @tls security layer.
 Typically, the @ca does not issue a certificate from its root certificate that is stored as trusted in the @rp:pl.
-Instead, a @ca uses an intermediate certificate, signed with the root certificate, to sign the so called #gls("ee", long: true) certificate, i.e., the one attesting the link between the domain name and public key.
+Instead, an @ca uses an intermediate certificate, signed with the root certificate, to sign the so-called #gls("ee", long: true) certificate, i.e., the one attesting the link between the domain name and public key.
 Together, the @ee and corresponding intermediate and root certificates are referred to as #emph[certificate chain].
 
-For security reasons, certificates have only a limited lifetime, especially the @ee in the web ecosystem.
-Since 2020 Chrome and Apple enforce new @ee certificates to be valid for at most 398 days @chrome_cert_lifetime @apple_cert_lifetime.
-Let's Encrypt, a @ca which is responsible for 57~% of all currently valid certificates, issues certificates for just 90 days @merkle_town @lets_encrypt_cert_lifetime.
+For security reasons, certificates have a limited lifetime, especially the @ee in the web ecosystem.
+Since 2020, Chrome and Apple have enforced new @ee certificates to be valid for at most 398 days~@chrome_cert_lifetime @apple_cert_lifetime.
+Let's Encrypt, a @ca responsible for 57~% of all currently valid certificates, issues certificates for just 90~days~@merkle_town @lets_encrypt_cert_lifetime.
 Let's Encrypt provides two reasons for their comparably short certificate lifetimes:
-They want to limit the damage a miss issuance or key compromise can do, and they want to encourage an automated issuance process, which they see as a crucial part of a widespread @https adoption.
+They want to limit the damage a miss-issuance or key compromise can do and encourage an automated issuance process, which they see as a crucial part of widespread @https adoption.
 
 Nevertheless, it is important to have a mechanism in place to revoke certificates.
-This can be necessary if a private key leaked or the assured information is not accurate (anymore).
+This can be necessary if a private key leaks or the assured information is not accurate (anymore).
 There are two mechanisms in place for that:
-The @crl:pl are regularly published by the @ca in which all revoked certificates are listed and the #gls("ocsp", long: true) allows @rp:pl to query the @ca if a certificate was revoked in real-time.
+The @ca:pl regularly publish @crl:pl, listing all revoked certificates and the #gls("ocsp", long: true) allows @rp:pl to query the @ca if a certificate was revoked in real-time.
 
 // As it will become relevant later on, the following section will explain @ocsp a bit more in-depth.
 
 === OCSP
-@ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list of all blocked certificates occasionally, but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
+@ocsp is meant as an improvement over the classical @crl, as it avoids downloading a list of all blocked certificates occasionally but instead allows querying a @ca about the status of one specific certificate whenever it is needed.
 The @ca includes an #gls("http", long: false) endpoint to an @ocsp responder in the certificates it issues, which @rp:pl such as browsers can query for recent information about whether a certificate is valid~@rfc_ocsp.
 
-In practice, this comes with a couple of issues: Speed, high load on @ca servers, availability, and privacy.
+In practice, this comes with a couple of issues: speed, high load on @ca servers, availability, and privacy.
 Every time a @rp checks a certificate, an additional round trip to the @ocsp responder is required, which slows down the connection by about 30~%~@ocsp_30p_faster.
-Moreover, the @ca:pl have to answer these status requests, which results in a high server load and therefore costs.
-If an @ocsp responder is not reachable, the @rp either cannot connect to the server or has to ignore the failure, called fail-close and fail-open, respectively.
-The German health care system showcases that a fail-close approach can be very fragile in practice~@e-rezept.
+Moreover, the @ca:pl have to answer these status requests, which results in a high server load and, therefore, costs.
+If an @ocsp responder is not reachable, the @rp either cannot connect to the server or has to ignore the failure, which is called fail-close and fail-open, respectively.
+The German healthcare system showcases that a fail-close approach can be very fragile in practice~@e-rezept.
 Browsers opted for a fail-open approach in favor of service availability.
 This decision, however, limits the benefit of recent information, as an attacker can block access to the @ocsp endpoint and thereby block the information that a certificate was revoked~@ocsp_soft_fail.
 Furthermore, @ocsp raises privacy concerns, as @ca:pl can build profiles of users based on which certificates they query.
@@ -115,21 +115,21 @@ This reduces the load on the @ca, eliminates the need for an additional round tr
 // Knowing about the existence of a certificate might be less obvious, but is undoubtedly an essential building block to revocation.
 // The following section explains why this is not self-evident and how to ensure it anyway.
 
-=== ACME
+=== ACME <sec:acme>
 As mentioned earlier, present certificate lifetimes are often 90 days, but not longer than 398 days.
 Short certificate lifetimes require automation to not overload humans with constant certificate renewals.
-Additionally, automation facilitates widespread adoption of @https as it lowers the (human) effort -- and consequently costs -- associated.
+Additionally, automation facilitates widespread adoption of @https by lowering the (human) effort -- and consequently costs -- associated.
 Therefore, Let's Encrypt initiated the development of the #gls("acme", long: true) in 2015 and started issuing certificates in that highly automated way in the same year~@first_acme.
 The @acme protocol finally became an #gls("ietf", long: false) standard in 2019~@rfc_acme.
 
 Please note that the fully automated @acme mechanism allows for #emph([Domain Validation]) (DV) certificates only.
-This means that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]) which require human interaction to verify the authenticity of the requesting organization.
-@mtc requires a high degree of automation, so that DV certificates are the only practical certificate type for @mtc.
+This means that the @ca verifies that the requestor has effective control over the domain, as opposed to #emph([Organization Validation]) and #emph([Extended Validation]), which require human interaction to verify the authenticity of the requesting organization.
+@mtc requires a high degree of automation so DV certificates are the only practical certificate type for @mtc.
 However, this is only a limited drawback for the applicable scope of @mtc as 93~% of all valid certificates are DV certificates as of 2024-09-21~@merkle_town.
 
 
-There exist three standardized methods to verify a user requesting a certificate has effective control over the domain; the `HTTP-01`, `DNS-01`, and `TLS-ALPN` challenges.
-Each of them generally works by placing a specific challenge value provided by the @ca into a place that only an owner of a domain can do.
+Three standardized @acme methods exist to verify that a user requesting a certificate has effective control over the domain: the `HTTP-01`, `DNS-01`, and `TLS-ALPN` challenges.
+Each generally works by placing a specific challenge value provided by the @ca in a place that only the domain owner can do.
 As the names suggest, this is either a web page at a specific path, a TXT #gls("dns", long: false) entry, or a specific ALPN protocol in the @tls stack, respectively.
 // Each of them has different advantages and disadvantages, 
 
@@ -145,7 +145,7 @@ As the names suggest, this is either a web page at a specific path, a TXT #gls("
 // )
 
 
-=== Certificate Transparency
+=== Certificate Transparency <sec:ct>
 // - WebPKI contains a lot of trusted CA (as of 21.09.2024: 153 Firefox @firefox_root_store, 135 Chrome @chrome_root_store)
 // - Response to 2011 attack on DigiNotar
 // - Any of them could be compromised and issue certificates for any website
@@ -155,10 +155,10 @@ As the names suggest, this is either a web page at a specific path, a TXT #gls("
 Browser vendors ship a list of @ca:pl which are trusted to issue genuine certificates only.
 As of November 6, 2024, there are 176 trusted root @ca:pl built into Firefox and 134 in Chrome~@firefox_root_store @chrome_root_store.
 If only a single @ca misbehaves, this can tremendously impact the security of the whole system.
-One infamous example is the security breach of DigiNotar in 2011, which allowed the attacker to listen into the connection of about 300,000 Iranian citizens with Google~@diginotar.
+One infamous example is DigiNotar's 2011 security breach, which allowed the attacker to listen into the connections of about 300,000 Iranian citizens with Google~@diginotar.
 This was possible because the domain owner, i.e., Google, could not know that a certificate was issued in their name.
-In such a case, even the best certificate revocation mechanism is meaningless, as there is nobody who could initiate it.
-As a direct consequence, Google initiated a program to ensure that all issued certificates must be logged publicly such that a domain owner can recognize maliciously issued certificates and take action retroactively.
+In such a case, even the best certificate revocation mechanism is meaningless, as nobody could initiate it.
+As a direct consequence, Google initiated a program to ensure that all issued certificates are logged publicly so that a domain owner can recognize maliciously issued certificates and take action retroactively.
 This is referred to as #gls("ct", long: true).
 
 #figure(
@@ -173,7 +173,7 @@ The pre-certificate breaks the cyclic dependency, that a #gls("ct")-log needs th
 To issue the final certificate, the @ca must send this pre-certificate to at least two independent #gls("ct")-logs, which will ensure the certificate is logged publicly to an append-only log.
 In return, each log provides a @sct to the @ca for including it in the final certificate.
 Subsequently, the @ca returns the certificate with the embedded @sct:pl to the @ap, which can use it whenever a @rp connects thereafter.
-At the same time, Monitors are constantly watching the logs and possibly notify a @ap for every certificate issued on their name.
+At the same time, Monitors constantly watch the logs and possibly notify an @ap for every certificate issued under their name.
 In addition to Monitors, there are also Auditors -- not shown in the figure -- that check the consistency of the log.
 This includes the append-only property, that all certificates are actually logged as promised, and that the log provides the same answers to all clients, independent of the location or other properties~@certificate_transparency.
 If the answers provided differ, this is called a #emph[split-view] attack.
@@ -181,7 +181,7 @@ If the answers provided differ, this is called a #emph[split-view] attack.
 The functionality of an auditor may be spread over multiple entities.
 For example, the consistency checks could be performed by the monitors, while they are receiving the added certificates anyway.
 Additionally, there exists some specific and hardened hardware across the world that checks the log consistency over time and additionally tries to notice any split-view~@verification_transparency_dev @armored_witness.
-To check that a certificate actually gets included into the log after the log operator sent a @sct is more complex.
+It is more complex to check that a certificate actually gets included in the log after the log operator sends an @sct.
 To detect if a certificate was included in the log, browsers can request inclusion proof of a specific certificate for a Signed Tree Head they trust.
 Unfortunately, this is difficult to do in practice, as browsers would leak which websites they visited to the log operators.
 
@@ -191,7 +191,7 @@ Chrome and Apple require their trusted root @ca:pl to include at least two indep
 That way, effectively every certificate must be logged publicly to be of any value.
 This solves the problem of certificates that are unknown to an @ap, and @ct allows Monitors to analyze certificates and @ca:pl for misbehavior.
 
-== TLS
+== TLS <sec:tls>
 // - Standardized by the @ietf
 // - successor of @ssl, developed by Netscape Communications in the 1990s
 // - Focus on newest version: @tls 1.3 from #cite(<rfc_tls13>, form: "year") specified in @rfc_tls13
@@ -213,7 +213,7 @@ It improved security and incorporated protocol simplifications and speed improve
 
 The following will focus on @tls~1.3 as it is used for 94~% of all @https requests according to Cloudflare Radar on 2024-09-23 and support for @tls 1.1 and older has been dropped by all relevant browsers in 2020~@cloudflare_radar @chrome_drop_tls @firefox_drop_tls @microsoft_drop_tls @apple_drop_tls.
 
-@tls consists of two sub-protocols, the handshake protocol for authentication and negotiation of cryptographic ciphers, followed by the record protocol to transmit the application data.
+@tls consists of two sub-protocols: the handshake protocol for authentication and negotiation of cryptographic ciphers, followed by the record protocol for transmitting application data.
 The following concentrates on the handshake protocol and skips some functionality such as client certificates, the usage of previously or out-of-band negotiated keys, and 0-RTT data that can be used to send application data before the handshake is finished.
 This allows focus on the parts relevant to this thesis. 
 
@@ -227,37 +227,37 @@ This allows focus on the parts relevant to this thesis.
 @tls_handshake_overview illustrates the messages and extensions sent during the @tls handshake and whether they are encrypted.
 A @tls connection is always initiated by the client through a `ClientHello` message.
 This message contains extensions with a key share and signature algorithms the client supports.
-The server responds with a `ServerHello` message, which contains a key share as an extension as well.
+The server responds with a `ServerHello` message, which also includes a key share as an extension.
 Knowing both key shares, the server and client derive a shared symmetric secret and use it to protect all subsequent messages.
 
 The following messages authenticate the server to the client by sending its certificate chain and a `CertificateVerify` message.
 The `CertificateVerify` message contains the signature over the handshake transcript up to that point.
-This proves the server is in the possession of the private key corresponding to the certificate and messages have not been tampered with.
+This proves that the server is in possession of the private key corresponding to the certificate and that messages have not been tampered with.
 The handshake ends with a `Finished` message each side sends and verifies.
 It contains a @mac over the transcript and thus assures the integrity and authenticity of the handshake.
-This @mac is not strictly necessary for the security when performing a full handshake as described in this work, but is essential if protocol optimizations are used which allow using out-of-band or previously negotiated keys, for example~@finished_message_tls13.
+This @mac is not strictly necessary for security when performing a full handshake, as described in this work, but it is essential if protocol optimizations are used that allow using out-of-band or previously negotiated keys~@finished_message_tls13.
 
 After the successful handshake, @tls continues to the record layer to exchange the application data.
 
-=== KEMTLS
+=== KEMTLS <sec:kem_tls>
 @kemtls aims to improve the communication cost of @tls handshakes using the fact that the best currently available @pq @kem:pl are smaller than the @pq signatures.
 Instead of explicitly authenticating the server in the `CertificateVerify` using a signature, @kemtls uses @kem:pl to authenticate the key exchange.
-The exact differences with the standard @tls handshake are not relevant for this work, so we refrain from explaining them here.
+The exact differences with the standard @tls handshake are not relevant to this work, so we refrain from explaining them here.
 However, it is relevant to note that a @kemtls handshake requires a @kem public key in the @ee certificate instead of a signature key~@kem_tls.
-Hence, the utilization of @kemtls has an impact on the size of the certificate, as shown in @sec:certificate_size.
+Hence, the utilization of @kemtls impacts the size of the certificate, as shown in @sec:certificate_size.
 
-== Post-Quantum Signatures
+== Post-Quantum Signatures <sec:pq_signatures>
 // - Two PQ signatures are standardized by @nist in @fips_204 (ML-DSA, formally known as CRYSTALS-Dilithium) and @fips_205 (SLH-DSA formally known as Sphincs+)
 // - The third - FN-DSA / Falcon - specified later. It relies on dangerous floating-point arithmetic that produces side-channel leakage.
 
 // This section provides a short overview of the @pq signatures available today.
 // It helps with understanding size and performance considerations later on.
 
-@tab:pq_signature_comp shows a comparison of @ecdsa and #gls("rsa", long: false)-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
+@tab:pq_signature_comp compares @ecdsa and #gls("rsa", long: false)-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
 @mldsa was known as #box[CRYSTALS]-Dilithium and @nist standardized it as FIPS 204 in 2024, together with the @slhdsa as FIPS 205 @fips_204 @fips_205.
 A @nist draft for the @fndsa is expected in late 2024.
 
-The @nist decided to specify three signature algorithms, as each of them has their benefits and drawbacks.
+The @nist decided to specify three signature algorithms, as each of them has its benefits and drawbacks.
 @mldsa is the recommended algorithm for most applications, as it has reasonable values in all categories.
 @slhdsa is currently the most trusted algorithm, as it relies on the security of the well-established #gls("sha", long: false)--2 or #gls("sha")--3 hashing algorithms, that would need to be dramatically broken to harm the security of @slhdsa~@sphincs_proposal.
 This makes @slhdsa a suitable candidate for long-term keys or situations where an upgrade is hard.
@@ -274,5 +274,9 @@ Moreover, verifying does not rely on floating-point arithmetic, and even if it d
   pq_signatures,
   caption: [
     Comparison of selected classical signature schemes with algorithms (to be) standardized by the @nist. 
-    The #box(baseline: 0.2em, height: 1em, image("images/red-alert-icon.svg")) symbols fast, but dangerous floating-point arithmetic~@bas_westerbaan_state_2024. The CPU cycles taken from the SUPERCOP database, measured on a AMD Ryzen 7 7700; 8 x 3800MHz machine~@supercop-asym. The @pq algorithms were not listed in their final versions yet. Therefore, we used benchmarks of preliminary versions that are closest to the final standard.]
+    The #box(baseline: 0.2em, height: 1em, image("images/red-alert-icon.svg")) symbols fast, but dangerous floating-point arithmetic~@bas_westerbaan_state_2024.
+    The CPU cycles were taken from the SUPERCOP database and measured on an AMD Ryzen 7 7700; 8 x 3800MHz machine~@supercop-asym.
+    The @pq algorithms were not listed in their final versions yet.
+    Therefore, we used benchmarks of preliminary versions that are closest to the final standard.
+  ]
 ) <tab:pq_signature_comp>
