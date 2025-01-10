@@ -1,8 +1,8 @@
-#let report(doc, table_of_contents: true, abstract: none) = {
+#let report(doc, table_of_contents: true, print: false, abstract: none) = {
   set text(font: "New Computer Modern")
 
-  show link: set text(fill: rgb(0, 0, 180))
-  show ref: set text(fill: rgb(0, 0, 180))
+  show link: set text(fill: rgb(0, 0, 180)) if not print
+  show ref: set text(fill: rgb(0, 0, 180)) if not print
   show table: set text(size: 8pt)
   set figure(gap: 1em)
   set list(indent: 2em)
@@ -68,11 +68,11 @@
   }
 
   if abstract != none {
-    set page(margin: 6cm)
+    set page(margin: 5cm)
     align(horizon, box[
-      #align(center, strong[Abstract])
+      #align(center, heading(outlined: false, level: 4, numbering: none, bookmarked: true, "Abstract"))
       #v(1em)
-      #abstract 
+      #abstract
     ])
   }
 

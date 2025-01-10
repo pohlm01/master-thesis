@@ -39,7 +39,16 @@
 #show: make-glossary
 #register-glossary(abbreviations)
 
-#show: doc => report(doc, table_of_contents: true, abstract: [#include "0_abstract.typ"])
+#show: doc => report(
+  doc, 
+  table_of_contents: true,
+  print: false,
+  abstract: [
+    // #word-count(total => [
+    #include "0_abstract.typ"
+    // #total.words words in total])
+  ]
+)
 
 // #word-count(total => [
 #include "1_introduction.typ"

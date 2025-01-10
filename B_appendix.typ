@@ -3,28 +3,29 @@
 = Appendix
 
 == Byte-Level Analysis of Handshake Messages <sec:byte_analysis_handshake>
-The implementation of the @tls negotiation mechanisms necessary for @mtc cannot be tested against a independently developed peer, as there exist no other implementation as of now.
-Instead, we opted to manually analyze the messages exchanged between the client and server using Wireshark.
-The setup contains a simple @tls server and client, both build upon the modified Rustls version supporting @mtc.
+The implementation of the @tls negotiation mechanisms necessary for @mtc cannot be tested against an independently developed peer, as there is no other implementation.
+Instead, we manually analyzed the messages exchanged between the client and server using Wireshark.
+The setup contains a simple @tls server and client, both built upon the modified Rustls version supporting @mtc.
 The server has a @mtc certificate and a fallback X.509 certificate available.
 The client had the @ca parameters, a validity window, and the signature over this validity window available.
-On startup, the client validated the signature over the validity window and parsed it if the @ca signature is valid.
+On startup, the client validated the signature over the validity window and parsed it if the @ca signature was valid.
 For each request, it adds a `server_certificate_type` and `trust_anchors` extension to the `ClientHello` message, specified in RFC~7250 and an ongoing Internet-Draft, respectively~@rfc_raw_public_keys @rfc_tai.
 
 The relevant parts of the `ClientHello` message are shown in @fig:wireshark_client_hello and @fig:bytes_trust_anchors.
 The top part of @fig:wireshark_client_hello shows that Wireshark detected an extension to the `ClientHello` that it does not recognize.
-The identifier is 64512 or in hexadecimal representation `0xfc00`.
-This is the identifier we assigned in our implementation, as the @iana did not allocate an identifier for this extension yet.
+The identifier is 64512 or, in hexadecimal representation, `0xfc00`.
+This is the identifier we assigned in our implementation, as @iana has not allocated an identifier for this extension yet.
 The payload of this extension is shown in @fig:bytes_trust_anchors.
 It starts with a two-byte #text(red)[length prefix] encoding the total length of the `TrustAnchorIdentifierList` in bytes.
-Each of the list items has some #highlight[part in common].
+Each list item has some #highlight[part in common].
 It consists of a one-byte #highlight[#text(red)[length prefix]] for this specific item, followed by the item, i.e., `TrustAnchorIdentifier` itself.
-Each of them starts with the sequence #highlight[`3e 0c 0f`], which is the binary @oid encoding for 62.12.15; the Issuer ID we used for the test @ca.
+Each starts with the sequence #highlight[`3e 0c 0f`], which is the binary @oid encoding for 62.12.15, the Issuer ID we used for the test @ca.
 The byte thereafter encodes the *batch number*.
-Our implementation is missing an optimization in which only the most recent batch number known to the client is sent, and the server implicitly knows that all older batches are also known to the client.
-Going back to the second part of @fig:wireshark_client_hello, we can see that Wireshark correctly parsed the `server_certificate_type` extension and recognized that the client advertises support for X.509, but prefers `0xe0`.
+Our implementation lacks an optimization in which only the most recent batch number known to the client is sent, and the server implicitly knows that all older batches are also known to the client.
+
+Going back to the second part of @fig:wireshark_client_hello, we can see that Wireshark correctly parsed the `server_certificate_type` extension and recognized that the client advertises support for X.509 but prefers `0xe0`.
 The preference is expressed by the order in the list.
-We chose the code point `0xe0` to represent @mtc in our implementation, as the @iana did not assign a value yet.
+We chose the code point `0xe0` to represent @mtc in our implementation, as @iana has not yet assigned a value.
 
 #figure(
   image("images/wireshark_extension_client_hello.png", width: 60%),
@@ -41,26 +42,26 @@ box(align(start)[#text(font: "DejaVu Sans Mono", size: 0.8em)[
 caption: [Extension data in `trust_anchors` extension]
 ) <fig:bytes_trust_anchors>
 
-As a reply to the `ClientHello`, the server sends a couple handshake messages, namely `ServerHello`, `Change Cipher Spec`, `Encrypted Extensions`, `Certificate`, `Certificate Verify`, and `Finished`.
+As a reply to the `ClientHello`, the server sends a couple of handshake messages, namely `ServerHello`, `Change Cipher Spec`, `Encrypted Extensions`, `Certificate`, `Certificate Verify`, and `Finished`.
 Most of these messages stay the same with @mtc.
-The only differences are the `server_certificate_type` extension sent in `Encrypted Extensions` message, and the `Certificate` message.
+The only differences are the `server_certificate_type` extension sent in the `Encrypted Extensions` message and the `Certificate` message.
 @fig:wireshark_server_hello and @fig:bytes_certificate_message show the parsed messages in Wireshark and the bytes of the `Certificate` message, respectively.
 The top of @fig:wireshark_server_hello shows that the server selected the certificate type with code point `0xe0`, i.e., @mtc.
-The second part shows that Wireshark had problem parsing the `Certificate` message and therefore highlights errors in yellow.
-This is not a surprise, as Wireshark does not understand the certificate type negotiation and cannot parse @mtc.
-Therefore, @fig:bytes_certificate_message show the payload bytes of the `Certificate` message.
+The second part shows that Wireshark had trouble parsing the `Certificate` message and, therefore, highlights errors in yellow.
+This is expected, as Wireshark does not understand the certificate type negotiation and cannot parse @mtc.
+Therefore, @fig:bytes_certificate_message displays the payload bytes of the `Certificate` message.
 It starts with a three-byte #text(red)[length prefix]
 #footnote[
   This is different from the Internet-Draft in version 3, the newest available as of writing.
-  Instead, this is specified in our Pull Request #link("https://github.com/davidben/merkle-tree-certs/pull/95", `#95`) which will be published with the next draft version~@add_array_embedding.
+  Instead, this is specified in our Pull Request #link("https://github.com/davidben/merkle-tree-certs/pull/95", `#95`), which will be published with the next draft version~@add_array_embedding.
 ]
 followed by the #text(gray.darken(20%))[Merkle Tree Certificate] itself.
-We will not analyze the certificate itself byte-by-byte, as it generated by the Go-based @ca application and successfully parses in the Rust application, which are developed independently to a large extent.
-As specified by the length prefix, the @mtc is `0x8c`, i.e., 140 bytes long.
+We will not analyze the certificate itself byte-by-byte, as it is generated by the Go-based @ca application and successfully parses in the Rust application, which is developed independently to a large extent.
+As the length prefix specifies, the @mtc is `0x8c`, i.e., 140 bytes long.
 After that follows the two-byte #text(red)[length prefix] for the extension list and the two-byte #highlight(fill: blue.lighten(50%), radius: 1mm)[extension type].
 As in the `ClientHello` message, `0xfc00` encodes the `trust_anchors` extension. 
-This extension is extension exists, because
-  #quote(attribution: <rfc_mtc>, "If the authenticating party sends a certification path that matches the relying party's trust_anchors extension, as described in Section 4.2, the authenticating party MUST send an empty trust_anchors extension in the first CertificateEntry of the Certificate message")
+This extension is extension exists because
+  #block(quote(attribution: <rfc_mtc>, "If the authenticating party sends a certification path that matches the relying party's trust_anchors extension, as described in Section 4.2, the authenticating party MUST send an empty trust_anchors extension in the first CertificateEntry of the Certificate message"), breakable: false)
 After the extension type follows a two-byte #text(red)[length prefix] that encodes the extension length, which is zero, meaning the extension is empty.
 
 #figure(
