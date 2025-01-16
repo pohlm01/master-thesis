@@ -131,7 +131,7 @@ Knowing that certificates issued by Let's Encrypt are always valid for 90 days, 
 In a @mtc setup, @ap:pl are recommended to renew their certificates every ten days.
 Assuming that a batch lasts for one hour, each batch contains $(280 dot 10^9)/(10 dot 24) = 1.16 dot 10^9$ certificates.
 To accommodate this number of assertions, the Merkle Tree requires $ceil(log_2 1.16 dot 10^9)  = 21$ level, resulting in a proof length of 21 hashes.
-The current draft only allows #gls("sha")-256 as the hashing algorithm, and future iterations are unlikely to extend the length of the digest, even if the algorithm is changed.
+The current draft only allows #gls("sha")#{"-256"} as the hashing algorithm, and future iterations are unlikely to extend the length of the digest, even if the algorithm is changed.
 Therefore, the proof length for this scenario is $21 dot 32 "bytes" = 672 "bytes"$.
 
 The second scenario indicates a worst-case scenario, assuming a big increase in @ap:pl or centralization to a few certificate authorities.
@@ -172,7 +172,7 @@ Focusing on the classical case first:
 In the best X.509 case, when using only 256-bit @ecdsa for all signatures, @mtc performs slightly worse in terms of the number of authentication bytes.
 While the X.509 case requires 448 authentication-related bytes, @mtc requires 768~bytes, an absolute difference of 320~bytes, i.e., the X.509 certificate requires 41.67~% fewer bytes than the @mtc.
 Comparing @mtc to a mostly #gls("rsa", long: false)-based certificate, @mtc demonstrates its advantages, as the X.509 certificate grows to 1,728~bytes.
-An @mtc certificate with the same #gls("rsa", long: false)-2048-bit algorithm and the conservative estimate of one billion active @ap:pl requires 384~bytes, or 22~% less.
+An @mtc certificate with the same #gls("rsa", long: false)#{"-2048-bit"} algorithm and the conservative estimate of one billion active @ap:pl requires 384~bytes, or 22~% less.
 
 Moving on to the @pq algorithms, the drastic improvement of @mtc shows up.
 Compared to the best X.509 case using only @mldsa signatures, @mtc saves 12,740~bytes or 12,580~bytes, resulting in a reduction by 74.31~% or 73.38~% depending on the number of active @ap:pl.
@@ -251,7 +251,7 @@ We assume 150 trusted root @ca:pl, which is somewhere between the number of @ca:
 Furthermore, we assume each @ca uses a batch duration of one hour and a lifetime of 14~days, as recommended in the Internet-Draft~@rfc_mtc[Section 5.1].
 According to a recent post by D. O’Brien, working in the Chrome Security team at Google, Chrome strives for an update frequency of six hours or less~@mtc_fallback_estimate.
 Therefore, we assume six hours as the default browser update frequency for @mtc tree heads.
-Lastly, we assume each @ca to use #gls("slhdsa")-128s to sign their validity window as the security guarantees for this algorithm are better compared to @mldsa, which is relevant for a long-lasting key.
+Lastly, we assume each @ca to use #gls("slhdsa")#{"-128s"} to sign their validity window as the security guarantees for this algorithm are better compared to @mldsa, which is relevant for a long-lasting key.
 
 In addition to the basic assumptions, the update size depends on what exactly a @rp pulls from the Transparency Service.
 The straightforward way is to regularly pull all signed validity windows of all trusted root @ca:pl.
@@ -369,7 +369,7 @@ The @ca parameters contain the following information:
 - The issuer ID, i.e., the @oid of the @ca.
 - The signature scheme used to sign the validity windows.
 - The public key of the @ca. It must match the signature scheme.
-- The proof type used for inclusion proof in the certificates. Currently, the only option is a #gls("sha")-256-based Merkle Tree inclusion proof.
+- The proof type used for inclusion proof in the certificates. Currently, the only option is a #gls("sha")#{"-256-based"} Merkle Tree inclusion proof.
 - The start time of the @ca, i.e., the time the @ca was set up. This is required to calculate the validity of a certificate based on its batch number.
 - The batch duration. This is also required to calculate a certificate's validity based on its batch number.
 - The validity window size. Again, this is required to calculate a certificate's validity based on its batch number.
@@ -413,7 +413,7 @@ SUPERCOP publishes a database with benchmarks for various cryptographic primitiv
 All performance metrics we use were measured on the same machine with an AMD Ryzen~7~7700 with eight CPU cores at 3.8~GHz.
 Unfortunately, there are no metrics for the final @pq signature algorithms available in the database yet.
 Therefore, we used the benchmarks of the corresponding, preliminary algorithm versions.
-For example, we used the metrics from Dilithium with level two security parameters from the third round of the @nist post-quantum competition instead of #gls("mldsa")-44.
+For example, we used the metrics from Dilithium with level two security parameters from the third round of the @nist post-quantum competition instead of #gls("mldsa")#{"-44"}.
 
 It quickly becomes clear that a client verifying an #gls("mtc")-based server authentication requires fewer signature verifications than an X.509-based server authentication.
 To verify an X.509 certificate chain, the client must typically verify two @sct:pl, maybe an @ocsp staple, one signature in the @ee certificate, and one signature in the intermediate certificate.

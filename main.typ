@@ -14,23 +14,28 @@
 #let title = "Master Thesis"
 #let subtitle = "Implementation and Analysis of Merkle Tree Certificates for Post-Quantum Secure authentication in TLS"
 #let author = "Maximilian Pohl"
+#let student_number = "s1103073"
+
 
 
 #title_page(
   title: title,
   subtitle: subtitle,
-  author: author,
+  author: [#author \ #student_number],
   others: ((
     function: "Supervisor",
     name: "dr. ir. Bart Mennink",
+    email: "b.mennink@cs.ru.nl"
   ),
   (
     function: "Second Reader",
     name: "prof. dr. Peter Schwabe",
+    email: "p.schwabe@cs.ru.nl"
   ),
   (
     function: "Daily Supervisor",
     name: "Marlon Baeten M.Sc.",
+    email: "marlon@tweedegolf.com"
   )),
 )
 
@@ -49,6 +54,7 @@
     // #total.words words in total])
   ]
 )
+
 
 // #word-count(total => [
 #include "1_introduction.typ"

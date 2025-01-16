@@ -253,13 +253,13 @@ Hence, the utilization of @kemtls impacts the size of the certificate, as shown 
 // This section provides a short overview of the @pq signatures available today.
 // It helps with understanding size and performance considerations later on.
 
-@tab:pq_signature_comp compares @ecdsa and #gls("rsa", long: false)-2048 as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
+@tab:pq_signature_comp compare the @ecdsa and #gls("rsa", long: false)#{"-2048"} as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
 @mldsa was known as #box[CRYSTALS]-Dilithium and @nist standardized it as FIPS 204 in 2024, together with the @slhdsa as FIPS 205 @fips_204 @fips_205.
 A @nist draft for the @fndsa is expected in late 2024.
 
 The @nist decided to specify three signature algorithms, as each of them has its benefits and drawbacks.
 @mldsa is the recommended algorithm for most applications, as it has reasonable values in all categories.
-@slhdsa is currently the most trusted algorithm, as it relies on the security of the well-established #gls("sha", long: false)--2 or #gls("sha")--3 hashing algorithms, that would need to be dramatically broken to harm the security of @slhdsa~@sphincs_proposal.
+@slhdsa is currently the most trusted algorithm, as it relies on the security of the well-established #gls("sha", long: false)#{"-2"} or #gls("sha")#{"-3"} hashing algorithms, that would need to be dramatically broken to harm the security of @slhdsa~@sphincs_proposal.
 This makes @slhdsa a suitable candidate for long-term keys or situations where an upgrade is hard.
 @fndsa might seem to have the best statistics, but it has the big drawback of relying on fast floating-point operations for signature generation.
 Without that, signing is about 20 times slower.

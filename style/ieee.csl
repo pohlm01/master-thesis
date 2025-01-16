@@ -393,10 +393,10 @@
         <else-if type="report">
           <group delimiter=", " suffix=".">
             <text macro="title"/>
-            <text macro="publisher"/>
+            <text variable="authority"/>
             <group delimiter=" ">
               <text variable="genre"/>
-              <text variable="number"/>
+              <text variable="issue"/>
             </group>
             <text macro="issued"/>
           </group>

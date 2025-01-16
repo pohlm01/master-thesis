@@ -1,6 +1,6 @@
-#import "@preview/fletcher:0.5.2" as fletcher: node, edge, shapes
+#import "@preview/fletcher:0.5.4" as fletcher: node, edge, shapes
 #import "@preview/treet:0.1.1": *
-#import "@preview/touying:0.5.3": touying-reducer, pause
+#import "@preview/touying:0.5.5": touying-reducer, pause
 
 #let fletcher-diagram = touying-reducer.with(reduce: fletcher.diagram, cover: fletcher.hide)
 #let ruRed = rgb("#B82B22");
@@ -321,7 +321,7 @@
     e(label("t11" + str(-layer)), label("a3" + str(-layer)), layer: layer)
   },
 
-  pause,
+  // pause,
 
   node((rel: (1, -5), to: <root0>), text(fill: ruRed, weight: "semibold", "Batch Tree Heads"), name: <tree_heads>, defocus: 4),
   edge(<tree_heads>, <root0>),

@@ -52,7 +52,7 @@ On startup, the library automatically loads all validated root tree heads into m
 For each @tls handshake that negotiated to use @mtc as certificate type, our library
 + parses the certificate,
 + rebuilds the path through the Merkle Tree,
-+ checks if the recomputed tree head matches the stored,
++ checks if the recomputed tree head matches the stored tree head,
 + and checks that the certificate falls in the latest validity window based on the stored @ca parameters and batch number in the certificate.
 If there are no errors, the certificate validates.
 Note that no signature validation is necessary during the certificate validation, as the @ca signature was checked when loading the tree heads into memory.

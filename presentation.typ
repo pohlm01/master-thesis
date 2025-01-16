@@ -87,6 +87,13 @@
 )}]
 
 = Merkle Tree Certificates
+== The Idea
+- An optional optimization of the X.509 architecture
+
+- Use hashes instead of signatures
+  - Multiple #emph[assertions] are bundled in one #emph[batch]
+  #math.arrow.double Longer issuance delays
+
 == A Single Batch
 #slide[#{
   set text(size: 0.9em)
@@ -224,12 +231,14 @@
     - MTC is smaller than X.509 in all cases
     
     - MTC can perform the certificate signature checks ahead of time
+
+    - Less CPU cost at client side
     
     - Revocation is not (as) necessary
   ], [
-    - Longer issuance delays
+    - Short issuance delays
     
-    - Requires regular update channel
+    - Does not require regular update channel
   ]
 )}
 
@@ -278,7 +287,7 @@
     
     - The implementation is backward-compatible
     
-    - Classical and especially post-quantum certificates are a lot smaller
+    - Classical and especially post-quantum cer tificates are a lot smaller
     
     - The update channel bandwidth is reasonable
 ]}]

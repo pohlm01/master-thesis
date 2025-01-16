@@ -24,11 +24,11 @@
     (key: "ct", short: "CT", long: "Certificate Transparency"),
     (key: "sct", short: "SCT", long: "Signed Certificate Timestamp"),
     (key: "pq", short: "PQ", long: "Post-Quantum"),
-    (key: "mldsa", short: "ML-DSA", long: "Module-Lattice-Based Digital Signature Algorithm", 
+    (key: "mldsa", short: [ML-DSA], long: "Module-Lattice-Based Digital Signature Algorithm", 
       description: [@pq signature algorithm, previously known as CRYSTALS-Dilithium]),
-    (key: "slhdsa", short: "SLH-DSA", long: "Stateless Hash-Based Digital Signature Algorithm", 
+    (key: "slhdsa", short: [SLH-DSA], long: "Stateless Hash-Based Digital Signature Algorithm", 
       description: [@pq signature algorithm, previously known as Sphincs+]),
-    (key: "fndsa", short: "FN-DSA", long: "FFT (Fast-Fourier transform) over NTRU-Lattice-Based Digital Signature Algorithm",
+    (key: "fndsa", short: [FN-DSA], long: "FFT (Fast-Fourier transform) over NTRU-Lattice-Based Digital Signature Algorithm",
       description: [@pq signature algorithm, previously known as FALCON]),
     (key: "sha", short: "SHA", long: "Secure Hash Algorithm"),
     (key: "mtc", short: "MTC", long: "Merkle Tree Certificate"),
@@ -48,7 +48,7 @@
     (key: "api", short: "API", long: "Application Programming Interface"),
     (key: "rsa", short: "RSA", long: "Rivest–Shamir–Adleman",
       description: [Old and widely adopted asymmetric crypto system developed by Ron Rivest, Adi Shamir and Leonard Adleman. Not secure against Quantum computers.]),
-    (key: "mlkem", short: "ML-KEM", long: [Module-Lattice-Based Key-Encapsulation Mechanism],
+    (key: "mlkem", short: [ML-KEM], long: [Module-Lattice-Based Key-Encapsulation Mechanism],
       description: [@pq @kem algorithm, previously known as CRYSTALS-Kyber]),
     (key: "asn1", short: "ASN.1", long: "Abstract Syntax Notation One"),
     (key: "der", short: "DER", long: "Distinguished Encoding Rules"),
@@ -58,4 +58,24 @@
     (key: "svcb", short: "SVCB", long: "Service Binding"),
 )
 
-#print-glossary(abbreviations, disable-back-references: true)
+#let __has_attribute(entry, key) = {
+  let attr = entry.at(key, default: "")
+  return attr != "" and attr != []
+}
+
+#let has-short(entry) = __has_attribute(entry, "short")
+#let has-long(entry) = __has_attribute(entry, "long")
+
+#let user-print-title(entry) = {
+  if has-long(entry) and has-short(entry) {
+    return strong(entry.short) + [ -- ] + entry.long
+  } else if has-long(entry) {
+    return entry.long
+  } else {
+    return strong(entry.short)
+  }
+}
+
+
+
+#print-glossary(abbreviations, disable-back-references: true, user-print-title: user-print-title)

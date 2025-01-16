@@ -55,7 +55,7 @@ Compared to today's Web@pki, it has a reduced scope and assumes more prerequisit
 
 #figure(
   mtc_terms(),
-  caption: [This figure shows an illustration of the Batch, Batch Tree Head, Validity Window (and maybe inclusion proof)]
+  caption: [This figure illustrates the terms Batch Duration, Batch Tree Head, Validity Window, and Assertion]
 ) <fig:mtc_terms_overview>
 
 
@@ -77,7 +77,7 @@ The following sections elaborate on the responsibilities and objectives of the c
 == Certification Authority <sec:mtc_ca>
 A @ca is defined by the following publicly known parameters that cannot change.
 In particular, the Transparency Service trusts certain @ca:pl and uses these parameters to validate the signed validity windows it receives from the @ca:pl.
-- `hash`: The hash function used to build the Merkle Tree. Currently, only #gls("sha")-256 is supported.
+- `hash`: The hash function used to build the Merkle Tree. Currently, only #gls("sha")#{"-256"} is supported.
 - `issuer_id`: A @tai as defined in @rfc_tai. That is a relative @oid under the prefix `1.3.6.1.4.1`. Organizations append their @pen registered at the @iana.
 - `public_key`: The Transparency Services use the public key to validate the signed validity window.
 - `start_time`: Is the issuance time of the first batch as POSIX timestamp @posix[pp.~113].
@@ -136,7 +136,7 @@ Due to the collision resistance of the hash function, it is computationally infe
 Conceptually, the Transparency Service is a single instance.
 In practice, though, it should consist of multiple services hosted by independent organizations.
 This reduces the chance that a @ca can collude with a single Transparency Service to provide a split view.
-Also, the draft authors imagine that, in practice, browser vendors would run such a Transparency Service for their product and use their update mechanism to frequently provide the most recent tree heads.
+Also, the draft authors imagine that, in practice, browser vendors would run such a Transparency Service for their product and use their update mechanism to frequently provide the most recent tree heads~@rfc_mtc.
 
 
 // == The Transparency Service -- Relying Party link
@@ -181,7 +181,7 @@ For that, the @mtc specification refers to an Internet-Draft called #emph[TLS Tr
 It allows the @rp to send the newest batch tree heads it supports to the @ap, such that the @ap can choose to send a certificate that the @rp trusts.
 In particular, this allows the @ap to know which @mtc certificate to send during a certificate rotation.
 
-In practice, it is not possible to send the whole list of known trust anchors to an @ap for two main reasons: Size and privacy.
+In practice, it is not possible to send the whole list of known trust anchors to an @ap for two main reasons: size and privacy.
 The list of all supported trust anchors is potentially large, considering that the trust anchor mechanism is not exclusively designed for @mtc but explicitly also for other mechanisms, such as X.509.
 Assuming that just 50 @ca:pl would participate in this mechanism with an average identifier length of four bytes, each `ClientHello` would carry 250 additional bytes, 200 for the identifiers and 50 for the encoding with length prefixes.
 The second concern is that a server can use the detailed information about the client for fingerprinting.

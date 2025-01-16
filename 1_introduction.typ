@@ -32,8 +32,8 @@ The architecture is designed for most common use cases but has a reduced scope c
 Thus, the proposed architecture is meant to enhance the current certificate infrastructure rather than replace it.
 
 == Our Contributions <sec:our_contributions>
-This work analyzes the Internet-Draft for @mtc:pl regarding the computational effort and number of bytes transferred during the @tls handshake and implements the necessary changes in a @tls stack for the first time.
-First, we compare the size of @tls handshake messages in a classical, X.509-based @pki with the message size of the proposed @mtc architecture.
+This work analyzes the Internet-Draft for #glspl("mtc", long: true) regarding the computational effort and number of bytes transferred during the @tls handshake and implements the necessary changes in a @tls stack for the first time.
+First, we compare the size of @tls handshake messages in a classical, X.509-based #gls("pki", long: true) with the message size of the proposed @mtc architecture.
 We do this for both classical, non-@pq secure signature schemes and with the @pq signature schemes that the @nist recently specified.
 We show that the @mtc architecture is more size efficient in all cases and handles the big sizes of @pq signatures much better than an X.509-based setup.
 Furthermore, the @mtc setup requires a new update channel, as @rp:pl must regularly refresh their roots of trust.
