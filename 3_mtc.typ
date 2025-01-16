@@ -65,7 +65,7 @@ With this terminology, the following explains the certificate issuance flow depi
 + Every time a batch becomes ready, the @ca builds the Merkle Tree, signs the whole Validity Window, which includes the new Batch Tree Head, with a @pq algorithm, and publishes the tree to the Transparency Services.
 + The @ca also sends the inclusion proof back to the @ap, which can subsequently use it to authenticate against #glspl("rp") that trust this batch.
 // + The Transparency Services recompute the Merkle Tree to validate the Merkle Tree Head contains exactly what is advertised and validate the signature of the Batch Tree Head.
-+ Monitors mirror all Assertions published to the Transparency Services and check for fraudulent behavior. 
++ Monitors mirror all Assertions published to the Transparency Services and check for fraudulent behavior.
   This can include, but is not limited to, notifying domain owners about certificates issued.
 + @rp:pl regularly update their trust anchors to the most recent Batch Tree Heads validated by their trusted Transparency Service(s).
 + When connecting to an @ap, the @rp signals which trust anchors it supports, i.e., which tree heads it trusts.

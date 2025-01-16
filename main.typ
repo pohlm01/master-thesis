@@ -72,4 +72,4 @@
 #include "B_appendix.typ"
 
 = Bibliography
-#bibliography("references.bib", title: none)
+#bibliography("references.yaml", title: none)
