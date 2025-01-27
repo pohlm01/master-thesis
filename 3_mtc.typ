@@ -11,9 +11,9 @@
 //   - Monitors: Monitors transparency service for suspicious or unauthorized certificates
 
 // - *Terms*
-//   - Assertion: Protocol-specific statement that a @ca is certifying. E.g., DNS name or IP address.
-//   - Abridged assertion: Partially hashed Assertion to save space.
-//   - Certificate: Assertions with proof
+//   - assertion: Protocol-specific statement that a @ca is certifying. E.g., DNS name or IP address.
+//   - Abridged assertion: Partially hashed assertion to save space.
+//   - Certificate: assertions with proof
 //   - Batch: Collection of assertions certified at the same time
 //   - Batch tree head: Merkle Tree head over all assertions of one batch
 //   - Inclusion proof: Proof that something is included in the head
@@ -42,32 +42,32 @@ Compared to today's Web@pki, it has a reduced scope and assumes more prerequisit
 @fig:mtc_overview provides an overview of the @mtc architecture. The following introduces the roles and terminology used in the figure and later sections:
 - An #emph(gls("ap", long: true)) is an entity to be authenticated, such as a web server.
 - A #emph(gls("rp", long: true)) authenticates an @ap by verifying the certificate. This could be a browser, for example.
-- A #emph(gls("ca", long: true)) collects Assertions from @ap:pl, validates them, and issues certificates.
+- A #emph(gls("ca", long: true)) collects assertions from @ap:pl, validates them, and issues certificates.
 - A #emph([Transparency Service]) mirrors the @ca:pl, validates the batches, and forwards them to the @rp:pl.
 - A #emph([Monitor]) monitors the transparency services for suspicious or unauthorized certificates.
-- An #emph([Assertion]) is information that an @ap gets certified by a @ca, i.e., a public key and one or multiple domain name(s) or #gls("ip", long: false) address(es). An #emph([Abridged Assertion]) hashes the public key stored in an assertion to reduce the size, especially for potentially large @pq keys.
-- A #emph([Batch]) is a collection of assertions that are certified simultaneously.
-- The #emph([Batch Duration]) is the time the batch spans. The authors recommend a Batch Duration of one hour, meaning that all assertions collected within this hour are certified simultaneously in one Batch.
-- A #emph([Batch Tree Head]) is the Merkle Tree root node over all assertions of one batch.
-- An #emph([Inclusion Proof]) is a proof that a certain assertion is included in a batch. The proof consists of the hashes required to rebuild the path up to the Batch Tree Head.
-- A #emph([Validity Window]) is the range of consecutive batch tree heads valid at a time.
-- A #emph([Certificate]) combines an assertion with an inclusion proof.
+- An #emph([assertion]) is information that an @ap gets certified by a @ca, i.e., a public key and one or multiple domain name(s) or #gls("ip", long: false) address(es). An #emph([Abridged assertion]) hashes the public key stored in an assertion to reduce the size, especially for potentially large @pq keys.
+- A #emph([batch]) is a collection of assertions that are certified simultaneously.
+- The #emph([batch duration]) is the time the batch spans. The authors recommend a batch duration of one hour, meaning that all assertions collected within this hour are certified simultaneously in one batch.
+- A #emph([batch tree head]) is the Merkle Tree root node over all assertions of one batch.
+- An #emph([inclusion proof]) is a proof that a certain assertion is included in a batch. The proof consists of the hashes required to rebuild the path up to the batch tree head.
+- A #emph([validity window]) is the range of consecutive batch tree heads valid at a time.
+- A #emph([certificate]) combines an assertion with an inclusion proof.
 
 #figure(
-  mtc_terms(),
-  caption: [This figure illustrates the terms Batch Duration, Batch Tree Head, Validity Window, and Assertion]
+  mtc_terms(dist: 3em),
+  caption: [This figure illustrates the terms batch duration, batch tree head, validity window, and assertion]
 ) <fig:mtc_terms_overview>
 
 
 With this terminology, the following explains the certificate issuance flow depicted in @fig:mtc_overview
 + First, the @ap requests a certificate from the @ca.
   Due to its frequency, this operation should be automated using the @acme protocol, for example.
-+ Every time a batch becomes ready, the @ca builds the Merkle Tree, signs the whole Validity Window, which includes the new Batch Tree Head, with a @pq algorithm, and publishes the tree to the Transparency Services.
++ Every time a batch becomes ready, the @ca builds the Merkle Tree, signs the whole validity window, which includes the new batch tree head, with a @pq algorithm, and publishes the tree to the Transparency Services.
 + The @ca also sends the inclusion proof back to the @ap, which can subsequently use it to authenticate against #glspl("rp") that trust this batch.
-// + The Transparency Services recompute the Merkle Tree to validate the Merkle Tree Head contains exactly what is advertised and validate the signature of the Batch Tree Head.
-+ Monitors mirror all Assertions published to the Transparency Services and check for fraudulent behavior.
+// + The Transparency Services recompute the Merkle Tree to validate the Merkle tree head contains exactly what is advertised and validate the signature of the Batch tree head.
++ Monitors mirror all assertions published to the Transparency Services and check for fraudulent behavior.
   This can include, but is not limited to, notifying domain owners about certificates issued.
-+ @rp:pl regularly update their trust anchors to the most recent Batch Tree Heads validated by their trusted Transparency Service(s).
++ @rp:pl regularly update their trust anchors to the most recent batch tree heads validated by their trusted Transparency Service(s).
 + When connecting to an @ap, the @rp signals which trust anchors it supports, i.e., which tree heads it trusts.
 + If the @ap has a valid @mtc certificate for one of the supported trust anchors, it will send this instead of a classical X.509 certificate.
 
@@ -98,16 +98,16 @@ A batch is always in one of three states: #emph([pending]), #emph([ready]), or #
 A pending batch is not yet due, i.e., the `start_time`~+~`batch_number`~$dot$~`batch_duration` is bigger than the current time.
 A batch in the ready state is due at the current time but has not yet been issued.
 This will typically be a small time frame in which the @ca builds the Merkle Tree and signs the validity window.
-Subsequently, the batch transfers to the issued state, i.e., the @ca published the signed validity window and abridged assertions.
+Subsequently, the batch transfers to the issued state, i.e., the @ca published the signed validity window and Abridged assertions.
 As an invariant, all batches before the latest issued one must be issued as well; no gaps are allowed.
 
-Every time a batch becomes ready, the @ca converts all assertions it found to be valid into abridged assertions by hashing the -- possibly large -- signature key in that assertion.
+Every time a batch becomes ready, the @ca converts all assertions it found to be valid into Abridged assertions by hashing the -- possibly large -- signature key in that assertion.
 Afterward, it builds a Merkle Tree as depicted in @fig:merkle_tree_abridged_assertion.
-Lastly, the @ca signs a `LabeledValidityWindow` that contains the domain separator `Merkle Tree Crts ValidityWindow\0`, the `issuer_id`, the `batch_number`, and all Merkle Tree root hashes that are currently valid.
+Lastly, the @ca signs a `LabeledValidityWindow` that contains the null-terminated domain separator string "`Merkle Tree Crts ValidityWindow\0`", the `issuer_id`, the `batch_number`, and all Merkle Tree root hashes that are currently valid.
 The domain separator allows the protocol to be extended in the future, if the @ca would need to sign different structs with the same key.
 One example could be introducing a revocation mechanism that requires the @ca to sign some data with the same key.
 Signing the entire validity window instead of each tree root individually has two advantages:
-For one, if a client or Transparency Service is behind more than one Tree Head, only a single signature needs to be transferred instead of multiple, which saves bandwidth and computational effort for the signature verification.
+For one, if a client or Transparency Service is behind more than one tree head, only a single signature needs to be transferred instead of multiple, which saves bandwidth and computational effort for the signature verification.
 The second benefit is that it complicates split-view attacks.
 A @ca would have to keep the split view for an entire validity window instead of just a single tree head, which increases the chances of it being noticed.
 
@@ -128,9 +128,9 @@ caption: [Example Merkle Tree for three assertions]) <fig:merkle_tree_abridged_a
 == The Role of the Transparency Service <sec:mtc_ts>
 While transparency was an afterthought in the current certificate infrastructure, it is an integral part of the @mtc architecture.
 The main task of the Transparency Service is to validate and mirror the signed validity windows produced by @ca:pl and serve them to @rp:pl as well as monitors.
-To check a signed validity window, the Transparency Service fetches the latest signed validity window and all abridged assertions from a @ca.
+To check a signed validity window, the Transparency Service fetches the latest signed validity window and all Abridged assertions from a @ca.
 It then checks that the signature of the validity window matches the public key of that @ca.
-By rebuilding the Merkle Tree from the abridged assertions, the Transparency Service ensures that @ca produced certificates for exactly what the @ca serves as abridged assertions.
+By rebuilding the Merkle Tree from the Abridged assertions, the Transparency Service ensures that @ca produced certificates for exactly what the @ca serves as Abridged assertions.
 Due to the collision resistance of the hash function, it is computationally infeasible for the @ca to secretly include another assertion, leave one out, or modify an assertion.
 
 Conceptually, the Transparency Service is a single instance.
@@ -189,7 +189,7 @@ Especially with the quickly changing @mtc system, users might have recognizable 
 
 To circumvent these downsides, the @rp has two options.
 The @ap can create a @svcb @dns record listing all the trust anchors it supports, which is a short and not privacy-sensitive list.
-Based on this information, the @rp can decide with trust anchor to offer to the @ap during the handshake.
+Based on this information, the @rp can decide which trust anchor to offer to the @ap during the handshake.
 Requiring information from the @dns complicates the deployment, but the #emph[Encrypted Client Hello] relies on a @svcb @dns record as well~@rfc_ech and is deployed in practice already~@firefox_ech@apple_ech@cloudflare_ech@chrome_ech.
 The second option a @rp has is to guess trust anchors an @ap may support and do a retry if the guess was not correct.
 The main downside is that a retry causes an additional round trip and, therefore, higher latency.

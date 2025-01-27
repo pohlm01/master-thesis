@@ -226,6 +226,10 @@
         <!-- doi: 10.1000/xyz123. -->
         <text variable="DOI" prefix=" doi: " suffix="."/>
       </else-if>
+      <else-if match="any" variable="ISBN">
+        <!-- doi: 10.1000/xyz123. -->
+        <text variable="ISBN" prefix=" ISBN: " suffix="."/>
+      </else-if>
       <else-if variable="URL">
         <!-- Accessed: Mon. DD, YYYY. [Medium]. Available: https://URL.com/ -->
         <group delimiter=". " prefix=" " suffix=". ">
@@ -414,6 +418,7 @@
         <else-if type="software">
           <group delimiter=". " suffix=".">
             <text macro="title"/>
+            <text variable="note" />
             <text macro="issued" prefix="(" suffix=")"/>
             <text variable="genre"/>
             <text macro="publisher"/>
@@ -432,8 +437,9 @@
           <text macro="access"/>
         </else-if>
         <else-if type="webpage post-weblog post" match="any">
-          <group delimiter=", " suffix=".">
+          <group delimiter=" " suffix=".">
             <text macro="title"/>
+            <text macro="issued" />
             <text variable="container-title"/>
           </group>
           <text macro="access"/>

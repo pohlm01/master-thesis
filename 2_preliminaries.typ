@@ -4,11 +4,11 @@
 
 = Preliminaries <sec:preliminaries>
 This section provides information relevant to understanding the architecture of #gls("mtc", long: true) and its implications.
-It starts with a reminder of Merkle Trees and continues with an explanation of the present #gls("pki", long: true), including its building blocks, the #gls("acme", long: true), the #gls("ocsp", long: true), and the #gls("ct", long: true) design.
+It starts with a refresher of Merkle Trees and continues with an explanation of the present #gls("pki", long: true), including its building blocks, the #gls("acme", long: true), the #gls("ocsp", long: true), and the #gls("ct", long: true) design.
 Afterward, this section summarizes the @tls protocol and the optimization @kemtls, and ends with a list of relevant #gls("pq", long: true) secure signature algorithms.
 
 == Merkle Trees <sec:merkle_trees>
-Merkle Trees, also known as Hash Trees, are binary trees with the property that each inner node is the result of a cryptographic hash function on its child nodes.
+Merkle Trees, also known as Hash Trees, are binary trees with the property that the root and each inner node is the result of a cryptographic hash function on its child nodes.
 Merkle Trees are tamper-evident and enable efficient verification of whether an element is included in the tree.
 The term "tamper-evident" refers to the inability to add, delete, or modify information contained within the Merkle Tree without changing the root node.
 An efficient verification means that, given the information and proof, one can easily verify that the information is contained in the root hash.
@@ -16,7 +16,7 @@ An efficient verification means that, given the information and proof, one can e
 As a reminder, a hash function takes an arbitrary length input and produces a fix-length output.
 In the following, we will use $h = H(x)$ to denote that $h$ results from applying the hash function $H$ in the input $x$.
 In addition, a cryptographic hash function typically has three properties: Collision resistance, first preimage resistance, and second preimage resistance.
-Collision resistance means that it is hard to find any two inputs $x eq.not x'$ that result in the same hash output $H(x) = H(x')$.
+Collision resistance means that it is hard to find any two inputs #box($x eq.not x'$) that result in the same hash output $H(x) = H(x')$.
 First preimage resistance means that it is hard to find an input $x$ that produces a given hash output $h$. 
 In other words, given a hash $h$, it is hard to find $x$ such that $h = H(x)$.
 Second preimage resistance means that it is hard to find a second input $x'$ that produces the same hash as a given input $x$.
@@ -32,7 +32,7 @@ caption:  [Visualization of a Merkle Tree with an inclusion proof for informatio
 @fig:merkle_tree shows an example tree for the information $x_0$, $x_1$, $x_2$ and $x_3$.
 The leaf nodes contain the hash of the information as $h_i = H_1(x_i)$.
 Each inner node is the result of the hash function $H_2(h_i, h_(i+1))$ with the content of the two child nodes.
-That way, one can build an inclusion proof to the root node without revealing any other information.
+Therefore, one can build an inclusion proof to the root node without revealing any other information.
 The inclusion proof contains the sibling hash for each node traversing up to the root note, so $h_0$ and $h_5$ in the example in @fig:merkle_tree.
 
 Please note that the leaf and internal node use two different hash functions, $H_1$ and $H_2$.
@@ -42,7 +42,7 @@ In practice, it is enough to slightly alter the hash function, such as by prepen
 The internal hash function $H_2$ takes two arguments, even though hash functions generally only take a single input.
 However, there are multiple ways to circumvent this restriction, such as concatenating the two inputs into one.
 
-As long as the used hash function is collision-resistant, it is impossible to alter, add, or delete any information included in the Merkle Tree without changing the hash of the root node~@handbook_applied_crypto[Section~13.4.1].
+As long as the used hash function is collision-resistant, it is infeasible to alter, add, or delete any information included in the Merkle Tree without changing the hash of the root node~@handbook_applied_crypto[Section~13.4.1].
 Instead, it is possible to add information to the tree and create a consistency proof showing that only specific data was added, but nothing else has changed in the tree.
 This property can be used to build logs that are verifiably append-only~@rfc_ct.
 
@@ -67,7 +67,7 @@ Typically, this information represents an identity such as a domain name, compan
 However, in some cases, the verified information instead contains permissions or ownership without an identity.
 An example is the @rpki, which is used to secure @bgp announcements and, therefore, harden the security of routing on the internet~@rfc_rpki.
 
-The verified information and public key are combined with a cryptographic signature of the @ca to form a #emph([certificate]) that way.
+The verified information and public key are combined with a cryptographic signature of the @ca to form a #emph([certificate]).
 The common format to encode the verified information and signature is X.509.
 Later, a #gls("rp", long: true) can parse the certificate, verify the signature, and trust the signed information given that it trusts the @ca.
 
@@ -89,7 +89,8 @@ Let's Encrypt provides two reasons for their comparably short certificate lifeti
 They want to limit the damage a miss-issuance or key compromise can do and encourage an automated issuance process, which they see as a crucial part of widespread @https adoption.
 
 Nevertheless, it is important to have a mechanism in place to revoke certificates.
-This can be necessary if a private key leaks or the assured information is not accurate (anymore).
+The CA/Browser Form requires revocation mechanisms for all @ee certificates that are valid for more than seven days~@cab_ocsp_optional_crl_mandatory.
+Revocation becomes necessary if a private key leaks or the assured information is not accurate (anymore).
 There are two mechanisms in place for that:
 The @ca:pl regularly publish @crl:pl, listing all revoked certificates and the #gls("ocsp", long: true) allows @rp:pl to query the @ca if a certificate was revoked in real-time.
 
@@ -131,7 +132,6 @@ However, this is only a limited drawback for the applicable scope of @mtc as 93~
 Three standardized @acme methods exist to verify that a user requesting a certificate has effective control over the domain: the `HTTP-01`, `DNS-01`, and `TLS-ALPN` challenges.
 Each generally works by placing a specific challenge value provided by the @ca in a place that only the domain owner can do.
 As the names suggest, this is either a web page at a specific path, a TXT #gls("dns", long: false) entry, or a specific ALPN protocol in the @tls stack, respectively.
-// Each of them has different advantages and disadvantages, 
 
 
 // - Used to issue "Domain Validation" (DV) certificates
@@ -182,7 +182,7 @@ The functionality of an auditor may be spread over multiple entities.
 For example, the consistency checks could be performed by the monitors, while they are receiving the added certificates anyway.
 Additionally, there exists some specific and hardened hardware across the world that checks the log consistency over time and additionally tries to notice any split-view~@verification_transparency_dev @armored_witness.
 It is more complex to check that a certificate actually gets included in the log after the log operator sends an @sct.
-To detect if a certificate was included in the log, browsers can request inclusion proof of a specific certificate for a Signed Tree Head they trust.
+To detect if a certificate was included in the log, browsers can request inclusion proof of a specific certificate for a signed tree head they trust.
 Unfortunately, this is difficult to do in practice, as browsers would leak which websites they visited to the log operators.
 
 Nevertheless, @ct is a success and practically unavoidable in the current Web@pki.
@@ -255,7 +255,7 @@ Hence, the utilization of @kemtls impacts the size of the certificate, as shown 
 
 @tab:pq_signature_comp compare the @ecdsa and #gls("rsa", long: false)#{"-2048"} as classical signature schemes and the @pq signature schemes selected by the @nist for standardization.
 @mldsa was known as #box[CRYSTALS]-Dilithium and @nist standardized it as FIPS 204 in 2024, together with the @slhdsa as FIPS 205 @fips_204 @fips_205.
-A @nist draft for the @fndsa is expected in late 2024.
+A @nist draft for the @fndsa was expected in late 2024, but has hot been published as of January 2025.
 
 The @nist decided to specify three signature algorithms, as each of them has its benefits and drawbacks.
 @mldsa is the recommended algorithm for most applications, as it has reasonable values in all categories.
@@ -274,7 +274,7 @@ Moreover, verifying does not rely on floating-point arithmetic, and even if it d
   pq_signatures,
   caption: [
     Comparison of selected classical signature schemes with algorithms (to be) standardized by the @nist. 
-    The #box(baseline: 0.2em, height: 1em, image("images/red-alert-icon.svg")) symbols fast, but dangerous floating-point arithmetic~@bas_westerbaan_state_2024.
+    The #box(baseline: 0.2em, height: 1em, image("images/red-alert-icon.svg")) indicates floating-point arithmetic, which is often susceptible to side-channel attacks~@bas_westerbaan_state_2024.
     The CPU cycles were taken from the SUPERCOP database and measured on an AMD Ryzen 7 7700; 8 x 3800MHz machine~@supercop-asym.
     The @pq algorithms were not listed in their final versions yet.
     Therefore, we used benchmarks of preliminary versions that are closest to the final standard.

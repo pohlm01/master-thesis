@@ -15,6 +15,7 @@ In this thesis, we analyzed theoretical improvements in data transmission when i
 // and implemented a client as well as a server that use @mtc:pl to prove the server identity.
 We showed that @mtc saves about 74~% to 80~% of the bytes related to the cryptographic server authentication compared to X.509 certificates when using #gls("pq")-secure signature schemes.
 The actual improvement is even more significant, as @mtc:pl use more efficient encoding and require fewer additional attributes in the certificate, such as not before / not after timestamps or @crl and @ocsp endpoints.
+As a result, @pq#{"-secure"} @mtc certificates are around the same size as today's median certificate chains, which are non-@pq#{"-secure"}.
 
 In favor of small certificates, the @mtc architecture introduces an update mechanism between the Transparency Service and the @rp.
 We listed three update scenarios with either 150 or 15~@ca:pl and argued that the new update mechanism does not harm the @mtc architecture too much.
@@ -34,7 +35,7 @@ This is mainly because clients have to perform way fewer signature verifications
 Instead, clients have to perform hash operations to rebuild the Merkle Tree.
 Because hash operations are much more lightweight than signature verifications, the client saves computational resources, which in turn helps with a longer battery life or frees up resources for other tasks.
 
-To explore the practicality of the @mtc architecture, we adopted the @tls library #emph[Rustls] to support @mtc:pl.
+To explore the practicality of the @mtc architecture, we modified the @tls library #emph[Rustls] to support @mtc:pl.
 This included the negotiation mechanisms for the certificate type and the specific trust anchor, i.e., the specific @mtc batch.
 Additionally, we developed a library that validates @mtc:pl and integrated this into Rustls.
 We successfully performed a handshake between the modified client and server and analyzed it on a byte level to conform with the specification.
@@ -47,7 +48,7 @@ To be practical, it must be reasonably small, i.e., the overhead to create a sec
 At the same time, this update protocol must be secured against quantum computers to create an end-to-end secure architecture.
 Lastly, it must not solely rely on @mtc:pl, as it is designed to bootstrap @mtc.
 
-Finally, it is up to the big companies to run real-world experiments and use their telemetry collection mechanism to gather information that shows how the mostly theoretical numbers from this work translate to big deployments.
+Finally, it is up to the major technology companies to run real-world experiments and use their telemetry collection mechanism to gather information that shows how the mostly theoretical numbers from this work translate to big deployments.
 From what I perceived from the community, I expect this will happen in 2025.
 
 

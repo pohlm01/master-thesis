@@ -18,15 +18,16 @@ The @ca is implemented in the programming language Go.
 
 We chose to use Rustls for multiple reasons.
 Firstly, writing a whole @tls implementation ourselves seems overcomplicated for this work and fails to demonstrate that the new @mtc system can be integrated well with existing software.
-Therefore, we decided to adopt an existing implementation.
+Therefore, we decided to modify an existing implementation.
 Rustls is a comparably modern implementation of the @tls protocol and is cleanly implemented.
 One reason is that it never supported @tls~1.1 or older, which helps keep the code base clean and organized.
 Nevertheless, Rustls is a serious project that gained adoption in big production deployments~@lets_encrypt_rustls @rustls_openssl_nginx.
 Furthermore, Rustls is written in the programming language Rust, which, in contrast to C used in other famous @tls implementations such as OpenSSL, BoringSSL, or wolfSSL, provides memory safety.
 Additionally, Rust's strong type system makes catching possible mistakes in the implementation comparably easy already during compilation.
-Moreover, we avoided using the same programming language as for the @ca implementation.
+As a side note: Rustls does rely on optimized assembly and C implementations for cryptographic operations from the #emph[aws-lc] library~@aws-lc.
+Besides the advantages of Rust itself, we also avoided using the same programming language as for the @ca implementation.
 This requires rewriting some common parts, such as parsing the binary certificate format and checking the signature.
-It also ensures that neither of the implementations covertly behaves differently from expected.
+However, this additional work ensures that neither of the implementations behaves differently from expected and actually revealed errors in the @ca implementation.
 
 
 // We started by adding the type definitions required for the certificate type and trust anchor negotiation mechanisms.
@@ -37,13 +38,11 @@ It also ensures that neither of the implementations covertly behaves differently
 The integration of @mtc into Rustls necessitated numerous modifications.
 First, we added the negotiation mechanism for the certificate type based on RFC~7250~@rfc_raw_public_keys.
 The negotiation mechanism relies on extensions exchanged during the `ClientHello` and `ServerHello` messages.
-This adoption entailed several changes to the Rustls code base, as it needs to keep state about which certificate type was negotiated.
+This adaption entailed several changes to the Rustls code base, as it needs to keep state about which certificate type was negotiated.
 Previously, Rustls assumed X.509 certificates and related structures like stapled @ocsp responses at various places.
 In addition to negotiating the certificate type, we implemented the negotiation mechanism for the #glspl("tai", long: true) as described in @sec:negotiation_tls.
 Therefore, we extended the certificate selection logic to first match on the requested @tai:pl and fall back to the previously used certificate selection based on the @sni.
 We simplified the @tai negotiation so that the client does not preselect the @tai:pl it requests in the `ClientHello` based on a @dns query, simplifying the implementation and testing.
-// Instead, the client sends all the @tai:pl it supports, which is only a very limited set in our test setup.
-// In a real deployment, this is not practical due to the possibly large set of supported @tai:pl and fingerprinting possibilities.
 
 For checking X.509 certificates, Rustls uses the #emph[WebPKI]~@github_rustls_webpki library.
 Similarly, we developed an @mtc verifier library~@github_mtc_verifier.
@@ -63,14 +62,14 @@ Along the way, we identified some issues in the specification and @ca implementa
 // Along the way, the @ca implementation required a few adoptions.
 First, we found a mismatch between the test vectors provided in the draft specification due to the use of a 16-bit instead of 8-bit length encoding for @dns names.
 The test vectors served as examples for assertions and abridged assertions for given inputs.
-We adopted the @ca implementation and standard accordingly~@fix_mtc_length_prefix_1 @fix_mtc_length_prefix_2 @fix_mtc_length_prefix_3.
+We adapted the @ca implementation and standard accordingly~@fix_mtc_length_prefix_1 @fix_mtc_length_prefix_2 @fix_mtc_length_prefix_3.
 
 While we worked on this thesis, the Internet-Draft switched to using #glspl("tai", long: true) to identify the batches.
 Before, @mtc contained an Issuer ID as an opaque byte string and a batch number.
 During this switch, the authors of the proposed standard forgot to update the definitions for the hash nodes of the Merkle Tree; we fixed this inconsistency.
 Additionally, we removed the batch number from the hash input, as it is included in the newly added #gls("tai")-based `batch_id`.
 Moreover, we introduced a more concise naming convention distinguishing `issuer_id` and `batch_id` to make it clear where only the @oid part for the issuer is used and where the batch number is appended to the issuer ID~@fix_consitently_use_tai.
-Lastly, we also adopted the @ca implementation to the @tai:pl~@add_mtc_tai @fix_mtc_tai.
+Lastly, we also adapted the @ca implementation to the @tai:pl~@add_mtc_tai @fix_mtc_tai.
 
 When implementing the parser for the @tls `Certificate` message, we noticed that a consistent way of embedding the certificate in the @tls message -- independent of the type -- keeps the parsing logic free of external state.
 Up to that point, the bytes of the @mtc were embedded into the `Certificate` message without a length prefix.
@@ -91,7 +90,7 @@ The idea was to combine the certificate type negotiation with the negotiation of
 As the trust anchors negotiation mechanism works not only for @mtc but also for X.509 and possibly other certificate types, we proposed that the peer contains the selected trust anchor in the @tai extension of the `Certificate` message.
 So far, the negotiation mechanism merely indicates that one of the proposed trust anchors was selected, but it does not specify which one.
 By changing this indication to include the selected @tai, the peer could deduce the certificate type and therefore a separate certificate type negotiation would be superfluous.
-However, D. Benjamin identified some issues that might arise from the fact that not all certificates participate in the @tai negotiation mechanism.
+However, D. Benjamin identified some issues that might arise from the fact that not all certificates participate in the @tai negotiation mechanism~@supersede_certificate_type.
 Therefore, some niche cases are not properly covered.
 For example, if a server sends a fallback certificate that does not participate in the @tai negotiation, or of which the @tai is unknown to the client, the client does not know what certificate type to expect.
 As a result, the client cannot parse the certificate even if the client would accept it anyway, such as a widely accepted X.509 certificate.

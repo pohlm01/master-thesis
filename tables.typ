@@ -119,8 +119,8 @@ table(
     [], [150 CAs], [15 CAs], [150 CAs], [15 CAs],
   ),
   [A full update for every fetch],          g(2800),   g(280),    g(11200),  g(1120),
-  [Only new Tree Heads + Signature], g(1200),   g(120),   g(4800),   g(480),
-  [Only new Tree Heads],             g(29.40),  g(2.94),  g(117.6),  g(11.76)
+  [Only new tree heads + signature], g(1200),   g(120),   g(4800),   g(480),
+  [Only new tree heads],             g(29.40),  g(2.94),  g(117.6),  g(11.76)
 )
 }
 
@@ -230,14 +230,14 @@ table(
     [ECDSA-256],    [280M active APs],   [],         [],
     f(255095),      f(35734),      f(290829), [#emoji.crossmark],
 
-    [RSA-2048],     [1B active APs],    [],         [],
-    f(44881),       f(42243),      f(87124),  [#emoji.crossmark],
+    [RSA-2048],     [2B active APs],    [],         [],
+    f(44881),       f(38337),      f(83218),  [#emoji.crossmark],
 
     [ML-DSA-44],    [280M active APs],  [],         [],
     f(68674),       f(35734),       f(104408),  [#emoji.checkmark.box],
 
-    [ML-DSA-44],    [1B active APs],    [],         [],
-    f(68674),       f(42243),      f(110917),  [#emoji.checkmark.box],
+    [ML-DSA-44],    [2B active APs],    [],         [],
+    f(68674),       f(38337),      f(107011),  [#emoji.checkmark.box],
 )
 }
 
@@ -375,14 +375,14 @@ table(
     [ECDSA],  [ECDSA],  [280M active APs],  [], [],
     [64],     [32],     [672],            [768], [#emoji.crossmark],
         
-    [RSA-2048],  [RSA-2048],  [1B active APs],  [], [],
-    [256],     [256],     [832],            [1,344], [#emoji.crossmark],
+    [RSA-2048],  [RSA-2048],  [2B active APs],  [], [],
+    [256],     [256],     [736],            [1,238], [#emoji.crossmark],
     
     [ML-DSA-44], [ML-DSA-44], [280M active APs],  [], [],
     [2,420],  [1,312],  [672],            [4,404], [#emoji.checkmark.box],
     
-    [ML-DSA-44], [ML-DSA-44], [1B active APs],  [], [],
-    [2,420],  [1,312],  [832],            [4,564], [#emoji.checkmark.box],
+    [ML-DSA-44], [ML-DSA-44], [2B active APs],  [], [],
+    [2,420],  [1,312],  [736],            [4,468], [#emoji.checkmark.box],
 
     ..if kem {(
     y[ML-KEM-768], y[ML-KEM-768], [280M active APs],  [], [],
@@ -390,8 +390,8 @@ table(
     )},
 
     ..if kem {(
-    y[ML-KEM-768], y[ML-KEM-768], [1B active APs],  [], [],
-    [1,088],    [1,184],  [832],            [3,104], [#emoji.checkmark.box],
+    y[ML-KEM-768], y[ML-KEM-768], [2B active APs],  [], [],
+    [1,088],    [1,184],  [736],            [3,008], [#emoji.checkmark.box],
     )},
   )
 }
@@ -455,9 +455,9 @@ table(
         ),
     
         [768 bytes],    [#emoji.crossmark],
-        [1,344 bytes],    [#emoji.crossmark],
+        [1,238 bytes],    [#emoji.crossmark],
         [4,404 bytes],  [#emoji.checkmark.box],
-        [4,564 bytes],  [#emoji.checkmark.box],
+        [4,468 bytes],  [#emoji.checkmark.box],
       ),
       caption: [MTC]
     )

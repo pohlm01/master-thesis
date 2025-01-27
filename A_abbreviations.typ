@@ -47,7 +47,7 @@
     (key: "ecdsa", short: "ECDSA", long: "Elliptic Curve Digital Signature Algorithm"),
     (key: "api", short: "API", long: "Application Programming Interface"),
     (key: "rsa", short: "RSA", long: "Rivest–Shamir–Adleman",
-      description: [Old and widely adopted asymmetric crypto system developed by Ron Rivest, Adi Shamir and Leonard Adleman. Not secure against Quantum computers.]),
+      description: [Widely adopted asymmetric crypto system developed by Ron Rivest, Adi Shamir and Leonard Adleman. First published in 1977. Not secure against quantum computers.]),
     (key: "mlkem", short: [ML-KEM], long: [Module-Lattice-Based Key-Encapsulation Mechanism],
       description: [@pq @kem algorithm, previously known as CRYSTALS-Kyber]),
     (key: "asn1", short: "ASN.1", long: "Abstract Syntax Notation One"),

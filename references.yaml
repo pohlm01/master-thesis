@@ -1,7 +1,26 @@
+cloudflare_connection_size:
+  type: web
+  title: A look at the latest post-quantum signature standardization candidates
+  author:
+    - Westerbaan, Bas
+    - Valenta, Luke
+  date: 2024-11-07
+  url:
+    value: https://blog.cloudflare.com/another-look-at-pq-signatures/
+    date: 2025-01-24
+
+lets_encrypt_six_day_certs:
+  type: web
+  title: Announcing Six Day and IP Address Certificate Options in 2025
+  author: Aas, Josh
+  date: 2025-01-16
+  url:
+    value: https://letsencrypt.org/2025/01/16/6-day-and-ip-certs/
+    date: 2025-01-24
 lets_encrypt_new_crl:
   type: web
   title: A New Life for Certificate Revocation Lists
-  author: Aaron Gable
+  author: Gable, Aaron
   date: 2022-09-07
   url:
     value: https://letsencrypt.org/2022/09/07/new-life-for-crls/
@@ -32,44 +51,63 @@ dennis_cert_size:
   author: Jackson, Dennis
   date: 2024-09-16
   organization: Internet Engineering Task Force
-  genre: Internet Draft
+  genre: Internet-Draft
   issue: draft-ietf-tls-cert-abridge-02
   url:
     value: https://datatracker.ietf.org/doc/draft-ietf-tls-cert-abridge-02
     date: 2024-11-25
+aws-lc:
+  type: misc
+  title: aws-lc
+  author:
+    - Benjamin, David
+    - Langley, Adam
+    - jargh
+    - Chiang, Samuel
+    - Smith, Justin W
+    - Smith, Brian
+    - torben-hansen
+    - Hopkins, Andrew
+  url: 
+    value: https://github.com/aws/aws-lc
+    date: 2024-01-27
 add_mtc_tai:
   type: web
   title: 'Adopt `{TrustAnchorIdentifiers}` from v03 of {MTC} draft by pohlm01 · Pull Request #5 · bwesterb/mtc'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-09-11
   url:
     value: https://github.com/bwesterb/mtc/pull/5
     date: 2024-11-19
 fix_mtc_length_prefix_2:
   type: web
   title: 'Adopt tests for fixed length prefix in #2 by pohlm01 · Pull Request #4 · bwesterb/mtc'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-09-11
   url:
     value: https://github.com/bwesterb/mtc/pull/4
     date: 2024-11-19
 fix_mtc_tai:
   type: web
   title: 'Adopt to davidben/merkle-tree-certs#91 by pohlm01 · Pull Request #8 · bwesterb/mtc'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-09-20
   url:
     value: https://github.com/bwesterb/mtc/pull/8
     date: 2024-11-19
 supersede_certificate_type:
   type: web
-  title: 'Adoptions to supersede `server/client_certificate_type` extensions · Issue #76 · davidben/tls-trust-expressions'
-  author: Maximilian Pohl
+  title: 'Adaptions to supersede `server/client_certificate_type` extensions · Issue #76 · davidben/tls-trust-expressions'
+  author: Pohl, Maximilian
+  date: 2024-10-15
   url:
     value: https://github.com/davidben/tls-trust-expressions/issues/76
     date: 2024-11-19
 merkle_tree_second_preimage:
   type: web
   title:
-    value: Answer to "What is the purpose of using different hash functions for the leaves and internals of a hash tree?"
-    short: Answer to "What is the purpose of using different hash functions for the leaves and internals of a hash tree?
+    value: 'Answer to "What is the purpose of using different hash functions for the leaves and internals of a hash tree?"'
+    short: 'Answer to "What is the purpose of using different hash functions for the leaves and internals of a hash tree?"'
   author: Karonen, Ilmari
   date: 2012-03-17
   url:
@@ -77,7 +115,7 @@ merkle_tree_second_preimage:
     date: 2024-12-04
 apple_enforce_ct:
   type: web
-  title: Apple's Certificate Transparency policy – Apple Support ({UK})
+  title: "Apple's Certificate Transparency policy – Apple Support ({UK})"
   date: 2023-11-30
   url:
     value: https://support.apple.com/en-gb/103214
@@ -103,8 +141,8 @@ cab_ocsp_optional_crl_mandatory:
   type: misc
   title: Baseline Requirements for the Issuance and Management of Publicly-Trusted {TLS} Server Certificates
   author:
-  - Iñigo Barreira
-  - Clint Wilson
+  - Barreira, Iñigo
+  - Wilson, Clint
   date: 2024-10-02
   url:
     value: https://github.com/cabforum/servercert/blob/d820f37f9e1550805c210dcaf5162b7f86ccfb69/docs/BR.md
@@ -114,7 +152,7 @@ cab_ocsp_optional_crl_mandatory:
 chrome_cert_lifetime:
   type: web
   title: Certificate Lifetimes
-  author: Ryan Sleevi
+  author: Sleevi, Ryan
   date: 2020-06-23
   url:
     value: https://chromium.googlesource.com/chromium/src/+/b9ee8e9f75279615be7c153ce2520a40cec4c14f/net/docs/certificate_lifetimes.md
@@ -138,7 +176,7 @@ rfc_ct:
 chrome_enforce_ct:
   type: web
   title: Certificate Transparency Enforcement in Google Chrome
-  author: Devon O'Brien
+  author: "O'Brien, Devon"
   date: 2018-07-02
   url:
     value: https://groups.google.com/a/chromium.org/g/ct-policy/c/wHILiYf31DE/m/iMFmpMEkAQAJ
@@ -154,26 +192,28 @@ chrome_releases:
   type: web
   title: Chrome Releases
   url:
-    value: https://chromereleases.googleblog.com/search/label/Desktop%20Update?updated-max=2024-12-11T10:45:00-08:00
+    value: "https://chromereleases.googleblog.com/search/label/Desktop%20Update?updated-max=2024-12-11T10:45:00-08:00"
     date: 2024-12-11
 chrome_root_store:
-  type: web
+  type: repository
   title: Chrome root store
   url:
-    value: https://chromium.googlesource.com/chromium/src/+/main/net/data/ssl/chrome_root_store/root_store.md
+    value: "https://chromium.googlesource.com/chromium/src/+/main/net/data/ssl/chrome_root_store/root_store.md"
     date: 2024-11-06
   note: 'Version: 17'
 fix_consitently_use_tai:
   type: web
   title: 'Consistently use {TAI} instead of issuer_id by pohlm01 · Pull Request #91 · davidben/merkle-tree-certs'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-09-15
   url:
     value: https://github.com/davidben/merkle-tree-certs/pull/91
     date: 2024-11-19
 fix_mtc_length_prefix_3:
   type: web
   title: 'Corrects test vectors based on a wrong length encoding of the {DNS} name by pohlm01 · Pull Request #90 · davidben/merkle-tree-certs'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-09-12
   url:
     value: https://github.com/davidben/merkle-tree-certs/pull/90
     date: 2024-11-19
@@ -217,7 +257,8 @@ debian_ca_certificates:
 file_structure:
   type: web
   title: 'Default file structure for {RP} and {AP} · Issue #97 · davidben/merkle-tree-certs'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-10-30
   url:
     value: https://github.com/davidben/merkle-tree-certs/issues/97
     date: 2024-11-19
@@ -263,7 +304,7 @@ e-rezept:
   title:
     value: 'E-Rezept: Regelmäßige {TI}-Störungen, Betroffene genervt von Informationspolitik'
     short: E-Rezept
-  author: Marie-Claire Koch
+  author: Koch, Marie-Claire
   date: 2024-03-12
   url:
     value: https://www.heise.de/news/eHealth-TI-regelmaessig-gestoert-Betroffene-von-Informationspolitik-genervt-9651330.html
@@ -272,10 +313,10 @@ cloudflare_ech:
   type: web
   title: Encrypted Client Hello - the last puzzle piece to privacy
   author:
-  - Achiel van der Mandele
-  - Alessandro Ghedini
-  - Christopher Wood
-  - Rushil Mehra
+  - van der Mandele, Achiel
+  - Ghedini, Alessandro
+  - Wood, Christopher
+  - Mehra, Rushil
   date: 2023-09-29
   url:
     value: https://blog.cloudflare.com/announcing-encrypted-client-hello
@@ -302,24 +343,27 @@ reddit_ocsp_firefox:
   title: Firefox - The only browser doing certificate revocation checks right
   author: MorrocMaster
   date: 2024-03-10
+  url: 
+    value: "https://www.reddit.com/r/firefox/comments/1bb89vl/firefox_the_only_browser_doing_certificate/"
+    date: 2024-10-31
 firefox_ech:
   type: web
   title: Firefox 119.0, See All New Features, Updates and Fixes
   date: 2023-10-24
   url:
-    value: https://www.mozilla.org/en-US/firefox/119.0/releasenotes/
+    value: "https://www.mozilla.org/en-US/firefox/119.0/releasenotes/"
     date: 2024-11-26
 firefox_125_nightly:
   type: web
   title: Firefox Nightly 125.0a1, See All New Features, Updates and Fixes
   date: 2024-02-19
   url:
-    value: https://www.mozilla.org/en-US/firefox/125.0a1/releasenotes/
+    value: "https://www.mozilla.org/en-US/firefox/125.0a1/releasenotes/"
     date: 2024-10-04
 first_acme:
   type: web
   title: First Let’s Encrypt Free Certificate Goes Live
-  author: Michael Mimoso
+  author: Mimoso, Michael
   date: 2015-09-15
   url:
     value: https://threatpost.com/first-lets-encrypt-free-certificate-goes-live/114675/
@@ -327,21 +371,22 @@ first_acme:
 fix_mtc_length_prefix_1:
   type: web
   title: 'Fix prefix length for {DNSName} by pohlm01 · Pull Request #2 · bwesterb/mtc'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-09-06
   url:
     value: https://github.com/bwesterb/mtc/pull/2
     date: 2024-11-19
 verification_transparency_dev:
-  type: misc
+  type: video
   title: From Witnessing to Transparent Ecosystems
   author:
-  - Martin Hutchinson
-  - Andrea Barisani
-  - Al Cutter
-  - Fillipo Valsorda
+  - Hutchinson, Martin
+  - Barisani, Andrea
+  - Cutter, Al
+  - Valsorda, Fillipo
   date: 2024-10-09
   url:
-    value: https://www.youtube.com/watch?v=v9cgvZXRRZU
+    value: "https://www.youtube.com/watch?v=v9cgvZXRRZU"
     date: 2024-12-02
 crl_sets_effectiveness:
   type: web
@@ -392,7 +437,7 @@ tls1.3_hybrid:
   - Gueron, Shay
   date: 2023-09-07
   organization: Internet Engineering Task Force
-  genre: Internet Draft
+  genre: Internet-Draft
   issue: draft-ietf-tls-hybrid-design-09
   url: https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/09/
 posix:
@@ -429,12 +474,12 @@ falcon_power_analysis:
       location: Cham
 lets_encrypt_end_ocsp:
   type: web
-  title: Intent to End {OCSP} Service
-  author: Josh Aas
-  date: 2024-07-23
+  title: Ending OCSP Support in 2025
+  author: Aas, Josh
+  date: 2024-12-05
   url:
-    value: https://letsencrypt.org/2024/07/23/replacing-ocsp-with-crls/
-    date: 2024-10-31
+    value: https://letsencrypt.org/2024/12/05/ending-ocsp/
+    date: 2025-01-24
 boeyen_internet_2008:
   type: report
   title: Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List ({CRL}) Profile
@@ -462,7 +507,7 @@ rfc_pki:
   - Chokhani, Santosh
   - Wu, Stephen S.
   - Sabett, Randy V.
-  - Merrill, Charles (Chas) R.
+  - Merrill, Charles~(Chas) R.
   date: 2003-11
   organization: Internet Engineering Task Force
   genre: Request for Comments
@@ -498,13 +543,12 @@ lets_encrypt_stats:
     value: https://letsencrypt.org/stats/
     date: 2024-11-07
 chromium_ct_log_list:
-  type: misc
+  type: repository
   title: log_list.json - Chromium Code Search
   url:
     value: https://source.chromium.org/chromium/chromium/src/+/ddf98abcbd6101328e98ffd05ab07d6e8741f518:components/certificate_transparency/data/log_list.json
     date: 2024-11-14
-  serial-number:
-    version: ddf98ab
+  note: "Version: ddf98ab"
 chrome_update_size:
   type: web
   title: Manage Chrome updates (Windows) - Chrome Enterprise and Education Help
@@ -515,8 +559,8 @@ supercop-hash:
   type: web
   title: 'Measurements of hash functions on one machine: amd64; Zen 4 (a60f12); 2023 {AMD} Ryzen 7 7700; 8 x 3800MHz; hertz, supercop-20241022'
   author:
-  - Daniel J. Bernstein
-  - Tanja Lange
+  - J. Bernstein, Daniel
+  - Lange, Tanja
   url:
     value: http://bench.cr.yp.to/results-hash/amd64-hertz.html
     date: 2024-12-20
@@ -525,8 +569,8 @@ supercop-asym:
   type: web
   title: 'Measurements of public-key signature systems on one machine: amd64; Zen 4 (a60f12); 2023 {AMD} Ryzen 7 7700; 8 x 3800MHz; hertz, supercop-20241022'
   author:
-  - Daniel J. Bernstein
-  - Tanja Lange
+  - J. Bernstein, Daniel
+  - Lange, Tanja
   url:
     value: http://bench.cr.yp.to/results-sign/amd64-hertz.html
     date: 2024-12-20
@@ -546,7 +590,7 @@ rfc_mtc:
   - Westerbaan, Bas
   date: 2024-09-05
   organization: Internet Engineering Task Force
-  genre: Internet Draft
+  genre: Internet-Draft
   issue: draft-davidben-tls-merkle-tree-certs-03
   url:
     value: https://datatracker.ietf.org/doc/draft-davidben-tls-merkle-tree-certs-03
@@ -556,7 +600,7 @@ go_mtc_ca:
   title: Merkle Tree Certificates for {TLS}
   author:
   - Westerbaan, Bas
-  - Maximilian Pohl
+  - Pohl, Maximilian
   date: 2024-11-15
   url: https://github.com/bwesterb/mtc
   serial-number:
@@ -565,7 +609,6 @@ microsoft_drop_tls:
   type: web
   title: Modernizing {TLS} connections in Microsoft Edge and Internet Explorer 11
   author:
-  - Blog, Microsoft Edge
   - Pflug, Kyle
   date: 2018-10-15
   url:
@@ -574,7 +617,7 @@ microsoft_drop_tls:
 chrome_drop_tls:
   type: web
   title: Modernizing Transport Security
-  author: David Benjamin
+  author: Benjamin, David
   date: 2018-10-15
   url:
     value: https://security.googleblog.com/2018/10/modernizing-transport-security.html
@@ -596,7 +639,7 @@ lets_encrypt_rustls:
   title:
     value: 'More Memory Safety for Let’s Encrypt: Deploying ntpd-rs'
     short: More Memory Safety for Let’s Encrypt
-  author: Josh Aas
+  author: Aas, Josh
   date: 2024-06-24
   url:
     value: https://letsencrypt.org/2024/06/24/ntpd-rs-deployment/
@@ -618,9 +661,9 @@ mtc_fallback_estimate:
   type: web
   title: '{MTC} Fallback Estimates'
   author:
-  - Lena Heimberger
-  - Bas Westerbaan
-  - Devon O'Brien
+  - Heimberger, Lena
+  - Westerbaan, Bas
+  - O'Brien, Devon
   date: 2024-08-26
   url:
     value: https://github.com/davidben/merkle-tree-certs/issues/89
@@ -630,43 +673,20 @@ ocsp_30p_faster:
   title:
     value: '{OCSP} Stapling: How {CloudFlare} Just Made {SSL} 30% Faster'
     short: '{OCSP} Stapling'
-  author: Matthew Prince
+  author: Prince, Matthew
   date: 2012-10-29
   url:
     value: https://blog.cloudflare.com/ocsp-stapling-how-cloudflare-just-made-ssl-30
     date: 2024-09-22
-raavi_performance_2021:
-  type: article
-  title: Performance Characterization of Post-Quantum Digital Certificates
-  author:
-  - Raavi, Manohar
-  - Chandramouli, Pranav
-  - Wuthier, Simeon
-  - Zhou, Xiaobo
-  - Chang, Sang-Yoon
-  date: 2021-07
-  page-range: 1-9
-  url:
-    value: https://ieeexplore.ieee.org/abstract/document/9522179
-    date: 2024-02-16
-  serial-number:
-    doi: 10.1109/ICCCN52240.2021.9522179
-  note: '{ISSN}: 2637-9430'
-  parent:
-  - type: proceedings
-    title: 2021 International Conference on Computer Communications and Networks ({ICCCN})
-  - type: conference
-    title: 2021 International Conference on Computer Communications and Networks ({ICCCN})
 github_mtc_verifier:
   type: misc
   title: pohlm01/mtc-verifier
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
   date: 2024-11-15
   url:
     value: https://github.com/pohlm01/mtc-verifier
     date: 2024-11-15
-  serial-number:
-    version: 3b72ecc
+  note: "Version: 3b72ecc"
 czajkowski_post-quantum_2017:
   type: misc
   title: Post-quantum security of the sponge construction
@@ -714,18 +734,18 @@ firefox_drop_tls:
 mtc_use_mldsa:
   type: web
   title: 'Replace Dilithium with {ML}-{DSA} by pohlm01 · Pull Request #9 · bwesterb/mtc'
+  date: 2024-11-15
   url:
     value: https://github.com/bwesterb/mtc/pull/9
     date: 2024-11-19
 go_root_store:
-  type: misc
+  type: repository
   title: root_linux.go {|} golang/go
-  author: Filippo Valsorda
+  author: Valsorda, Filippo
   url:
     value: https://github.com/golang/go/blob/c759ea7471de5a62c88325981e8c86beab78bed8/src/crypto/x509/root_linux.go
     date: 2024-11-13
-  serial-number:
-    version: b01cb72
+  note: "Version: b01cb72"
 linux_kernel_rust:
   type: web
   title: Rust — The Linux Kernel documentation
@@ -741,7 +761,7 @@ rust:
 rustls_openssl_nginx:
   type: web
   title: Rustls Gains {OpenSSL} and Nginx Compatibility
-  author: Josh Aas
+  author: Aas, Josh
   date: 2024-05-08
   url:
     value: https://www.memorysafety.org/blog/rustls-nginx-compatibility-layer/
@@ -750,16 +770,16 @@ github_rustls:
   type: misc
   title: 'rustls/rustls: A modern {TLS} library in Rust'
   author:
-  - Joe Birr-Pixton
-  - Dirkjan Ochtman
-  - Daniel McCarney
-  - Brian Smith
-  - Jacob Hoffman-Andrews
-  - Jorge Aparicio
-  - Benjamin Saunders
-  - Christian Poveda Ruiz
-  - Adolfo Ochagavía
-  - Mend Renovate
+  - Birr-Pixton, Joe
+  - Ochtman, Dirkjan
+  - McCarney, Daniel
+  - Smith, Brian
+  - Hoffman-Andrews, Jacob
+  - Aparicio, Jorge
+  - Saunders, Benjamin
+  - Ruiz, Christian Poveda
+  - Ochagavía, Adolfo
+  - Renovate, Mend
   date: 2024-10-17
   url:
     value: https://github.com/rustls/rustls
@@ -770,15 +790,15 @@ github_rustls_webpki:
   type: misc
   title: 'rustls/webpki: {WebPKI} X.509 Certificate Validation in Rust'
   author:
-  - Brian Smith
-  - Daniel McCarney
-  - Dirkjan Ochtman
-  - Joe Birr-Pixton
-  - Jasper Patterson
-  - Alex Gaynor
-  - Rafael Fernández López
-  - Stepan Koltsov
-  - Sietse Ringers
+  - Smith, Brian
+  - McCarney, Daniel
+  - Ochtman, Dirkjan
+  - Birr-Pixton, Joe
+  - Patterson, Jasper
+  - Gaynor, Alex
+  - López, Rafael Fernández
+  - Koltsov, Stepan
+  - Ringers, Sietse
   date: 2024-11-02
   publisher: rustls
   url:
@@ -789,7 +809,7 @@ github_rustls_webpki:
 apple_45_days_cert:
   type: misc
   title: '{SC}-081: Introduce Schedule of Reducing Validity and Data Reuse Periods by clintwilson'
-  author: Clint Wilson
+  author: Wilson, Clint
   date: 2024-10-10
   url:
     value: https://github.com/cabforum/servercert/pull/553
@@ -833,24 +853,24 @@ sphincs_proposal:
   type: report
   title: '{SPHINCS}+ {|} Submission to the {NIST} post-quantum project, v.3.1'
   author:
-  - Jean-Philippe Aumasson
-  - Daniel J. Bernstein
-  - Ward Beullens
-  - Christoph Dobraunig
-  - Maria Eichlseder
-  - Scott Fluhrer
-  - Stefan-Lukas Gazdag
-  - Andreas Hülsing
-  - Panos Kampanakis
-  - Stefan Kölbl
-  - Tanja Lange
-  - Martin M. Lauridsen
-  - Florian Mendel
-  - Ruben Niederhagen
-  - Christian Rechberger
-  - Joost Rijneveld
-  - Peter Schwabe
-  - Bas Westerbaan
+  - Aumasson, Jean-Philippe
+  - Bernstein, Daniel J.
+  - Beullens, Ward
+  - Dobraunig, Christoph
+  - Eichlseder, Maria
+  - Fluhrer, Scott
+  - Gazdag, Stefan-Lukas
+  - Hülsing, Andreas
+  - Kampanakis, Panos
+  - Kölbl, Stefan
+  - Lange, Tanja
+  - Lauridsen, Martin M.
+  - Mendel, Florian
+  - Niederhagen, Ruben
+  - Rechberger, Christian
+  - Rijneveld, Joost
+  - Schwabe, Peter
+  - Westerbaan, Bas
   date: 2022-06-10
   url:
     value: https://sphincs.org/data/sphincs+-r3.1-specification.pdf
@@ -892,8 +912,8 @@ supercop:
   type: web
   title: '{SUPERCOP}'
   author:
-  - Daniel J. Bernstein
-  - Tanja Lange
+  - J. Bernstein, Daniel
+  - Lange, Tanja
   url:
     value: https://bench.cr.yp.to/supercop.html
     date: 2024-12-26
@@ -908,7 +928,7 @@ mozilla_crlite:
 bas_westerbaan_state_2024:
   type: web
   title: The state of the post-quantum Internet
-  author: Bas Westerbaan
+  author: Westerbaan, Bas
   date: 2024-03-05
   url:
     value: https://blog.cloudflare.com/pq-2024
@@ -927,9 +947,9 @@ david_adrian_tldrfail_2023:
   type: web
   title: tldr.fail
   author:
-  - David Adrian
-  - Emily Stark
-  - Ryan Dickson
+  - Adrian, David
+  - Stark, Emily
+  - Dickson, Ryan
   date: 2023-09-28
   url:
     value: https://tldr.fail/
@@ -944,7 +964,7 @@ rfc_ech:
   - Wood, Christopher A.
   date: 2024-09-15
   organization: Internet Engineering Task Force
-  genre: Internet Draft
+  genre: Internet-Draft
   issue: draft-ietf-tls-esni-22
   url:
     value: https://datatracker.ietf.org/doc/draft-ietf-tls-esni
@@ -952,6 +972,7 @@ rfc_ech:
 apple_ech:
   type: web
   title: '{TLS} Encrypted Client Hello · Issue #46 · {WebKit}/standards-positions'
+  date: 2022-08-12
   url:
     value: https://github.com/WebKit/standards-positions/issues/46
     date: 2024-11-26
@@ -967,12 +988,11 @@ rfc_tai:
   title: '{TLS} Trust Anchor Identifiers'
   author:
   - Beck, Bob
-  - Bob Beck
   - Benjamin, David
   - O'Brien, Devon
   date: 2024-10-10
   organization: Internet Engineering Task Force
-  genre: Internet Draft
+  genre: Internet-Draft
   issue: draft-beck-tls-trust-anchor-ids-02
   url:
     value: https://datatracker.ietf.org/doc/draft-beck-tls-trust-anchor-ids-02
@@ -1003,12 +1023,12 @@ armored_witness:
   type: misc
   title: transparency-dev/armored-witness
   author:
-  - Al Cutter
-  - Jay Hou
-  - Martin Hutchinson
-  - Roger Ng
-  - Philippe Boneff
-  - Jussi Kukkonen
+  - Cutter, Al
+  - Hou, Jay
+  - Hutchinson, Martin
+  - Ng, Roger
+  - Boneff, Philippe
+  - Kukkonen, Jussi
   date: 2024-11-25
   publisher: transparency-dev
   url:
@@ -1025,7 +1045,7 @@ rfc_ocsp_stapling:
   date: 2011-01
   organization: Internet Engineering Task Force
   genre: Request for Comments
-  issue: RFC6066
+  issue: RFC 6066
   serial-number:
     doi: 10.17487/RFC6066
 trillian_firmware_transparency:
@@ -1040,7 +1060,8 @@ trillian_firmware_transparency:
 add_array_embedding:
   type: web
   title: 'Use `{<}1..2{^}24-1{>}` encoding for all certificate types by pohlm01 · Pull Request #95 · davidben/merkle-tree-certs'
-  author: Maximilian Pohl
+  author: Pohl, Maximilian
+  date: 2024-10-14
   url:
     value: https://github.com/davidben/merkle-tree-certs/pull/95
     date: 2024-11-19
@@ -1076,7 +1097,7 @@ lets_encrypt_cert_lifetime:
   title:
     value: Why ninety-day lifetimes for certificates?
     short: Why ninety-day lifetimes for certificates?
-  author: Josh Aas
+  author: Aas, Josh
   date: 2015-11-09
   url:
     value: https://letsencrypt.org/2015/11/09/why-90-days.html
@@ -1105,7 +1126,7 @@ rfc_ocsp:
 chrome_kyber:
   type: web
   title: X25519Kyber768 key encapsulation for {TLS} - Chrome Platform Status
-  author: David Adrian
+  author: Adrian, David
   date: 2023-04-28
   url:
     value: https://chromestatus.com/feature/5257822742249472

@@ -104,7 +104,7 @@
 == MCT Terms
 #slide[#{
   set align(horizon)
-  figure(mtc_terms(dist: 5em, env: "presentation"),
+  figure(mtc_terms(dist: 6em, env: "presentation"),
 )}]
 
 == Overall Architecture

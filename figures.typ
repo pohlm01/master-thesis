@@ -235,7 +235,7 @@
     node((rel: (-0.8, 1), to: <t10>), $h_0 = H_1(x_0)$, name: <t00>, fill: yellow)
     node((rel: (0.8, 1), to: <t10>), $h_1 = H_1(x_1)$, name: <t01>)
     node((rel: (-0.8, 1), to: <t11>), $h_2 = H_1(x_2)$, name: <t02>)
-    node((rel: (0.8, 1), to: <t11>), $h_3 = H_1(x_4)$, name: <t03>)
+    node((rel: (0.8, 1), to: <t11>), $h_3 = H_1(x_3)$, name: <t03>)
 
     node((rel: (0, 1), to: <t00>), $x_0$, name: <a0>)
     node((rel: (0, 1), to: <t01>), $x_1$, name: <a1>, fill: yellow)
@@ -323,7 +323,7 @@
 
   // pause,
 
-  node((rel: (1, -5), to: <root0>), text(fill: ruRed, weight: "semibold", "Batch Tree Heads"), name: <tree_heads>, defocus: 4),
+  node((rel: (1, -6), to: <root0>), text(fill: ruRed, weight: "semibold", "Batch Tree Heads"), name: <tree_heads>, defocus: 4),
   edge(<tree_heads>, <root0>),
   edge(<tree_heads>, <root1>),
   edge(<tree_heads>, <root2>),
@@ -335,11 +335,11 @@
   
   pause,
   
-  edge((rel: (0 * dist, 0.5 * dist), to: <root0>), (rel: (0 * dist, 0.5 * dist), to: <root1>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, text(fill: ruRed, weight: "semibold", "Batch Duration"), label-side: left, snap-to: none, label-pos: 0),
+  edge((rel: (0 * dist, 0.5 * dist), to: <root0>), (rel: (0 * dist, 0.5 * dist), to: <root1>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, box(fill: white, inset: .2em, text(fill: ruRed, weight: "semibold", "Batch Duration")), label-side: left, snap-to: none, label-pos: 0.5),
 
   pause,
   
-  edge((rel: (0.8 * dist, 0.5 * dist), to: <root0>), (rel: (0.8 * dist, 0.5 * dist), to: <root2>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, text(fill: ruRed, weight: "semibold", "Validity Window"), label-side: right, label-angle: auto, snap-to: none, label-sep: 0.5em, label-pos: 0.6)
+  edge((rel: (0.7 * dist, -0.3 * dist), to: <root0>), (rel: (0.7 * dist, -0.3 * dist), to: <root2>), stroke: (paint: ruRed, dash: none), "|--|", layer: 1, text(fill: ruRed, weight: "semibold", "Validity Window"), label-side: right, label-angle: auto, snap-to: none, label-sep: 0.5em, label-pos: 0.6)
 )
 
 
@@ -403,7 +403,7 @@
   etc\
   - ssl
     - mtc
-      - \<tai\>
+      - \<issuer_id\>
         - ca-params
         - validity-window
         - signature\*
@@ -417,7 +417,7 @@
   
   [
   \<some_dir>\
-  - \<tai\>
+  - \<issuer_id\>
     - 0.mtc
     - 240.mtc
     - ca-params
