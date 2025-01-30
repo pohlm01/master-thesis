@@ -12,7 +12,7 @@
 // ...
 
 #let title = "Master Thesis"
-#let subtitle = "Implementation and Analysis of Merkle Tree Certificates for Post-Quantum Secure authentication in TLS"
+#let subtitle = "Implementation and Analysis of Merkle Tree Certificates for Post-Quantum Secure Authentication in TLS"
 #let author = "Maximilian Pohl"
 #let student_number = "s1103073"
 

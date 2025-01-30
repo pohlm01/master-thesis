@@ -30,7 +30,7 @@ Other scenarios require a bigger update bandwidth, but we expect them to be rele
 
 In addition to the size analysis, we estimated the computational cost associated with X.509 and @mtc.
 We pointed out that there is no difference for a server.
-Still, clients can save about 81~% to 93~% in computational cost per handshake when using classical signature algorithms and about 73~% to 85~% when using #gls("pq")-save signature algorithms.
+Still, clients can save about 81~% to 93~% in computational cost per handshake when using classical signature algorithms and about 73~% to 85~% when using #gls("pq")-safe signature algorithms.
 This is mainly because clients have to perform way fewer signature verifications, which are computationally expensive.
 Instead, clients have to perform hash operations to rebuild the Merkle Tree.
 Because hash operations are much more lightweight than signature verifications, the client saves computational resources, which in turn helps with a longer battery life or frees up resources for other tasks.

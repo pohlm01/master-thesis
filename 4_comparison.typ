@@ -211,7 +211,7 @@ Note that this does not contain the @ocsp staple or handshake signature included
 In comparison, a comparable Bikeshed certificate with a 256-bit ECDSA key would contain 704 authentication-related bytes, assuming 280 million active @ap:pl.
 The full certificate would be 785 bytes in size.
 Thus, the X.509 certificate chain has an overhead of 1,238 bytes, or 99~%, while the Bikeshed certificate has an overhead of 81 bytes, or 12~%.
-Even though we only analyzed a single example that closely, this indicates that the X.509/@asn1 format produces a significant overhead, that can be reduced by introducing a new certificate format.
+Even though we only analyzed a single example, it indicates that the X.509/@asn1 format produces a significant overhead, that can be reduced by introducing a new certificate format.
 An analysis of the certificate chains of the top websites implies that certificates are often even bigger than our example.
 #cite(<dennis_cert_size>, form: "author") investigated the size of certificate chains sent by roughly 75,000 of the Tranco top sites ranking~@tranco.
 It reveals that the 5#super[th] percentile of certificate chains is 2,308~bytes big, and the median certificate chain has 4,032~bytes.
@@ -219,7 +219,7 @@ Applying existing certificate compression algorithms, this reduces to 1,619~byte
 Consequently, even though X.509 certificates require fewer authentication-related bytes if they completely rely on the size-efficient @ecdsa algorithm, the inclusion of additional attributes and inefficient encoding result in @mtc:pl being smaller in practice, not only for @pq algorithms but also for classical algorithms.
 
 == Update Mechanism Considerations <sec:update_size>
-As with many optimizations, one does not get the results from @sec:certificate_size without a trade.
+As with many optimizations, one does not get the results from @sec:certificate_size without a trade-off.
 The @mtc architecture requires the @rp to regularly update the tree heads it trusts, as shown in Step 5 of @fig:mtc_overview.
 To pull the updates, the @rp regularly requires a connection to the Transparency Service.
 
@@ -343,7 +343,7 @@ This demonstrates that even the worst-case scenario with a full update of 150~@c
 //       - Times the number of CAs: $150 dot 18,608 = 2,791,200 => 2.7 "MB"$
 //     - Daily update without the signatures:
 == Common File Structure <sec:file_structure>
-Besides small update sizes, it is desirable to store #gls("mtc")-related data in a common place on an @os.
+Besides small update sizes, it is desirable to store #gls("mtc")-related data in a common directory within an @os.
 Having a common place for certificates on a single machine has multiple advantages.
 Firstly, it reduces the number of updates required in the @mtc architecture.
 Instead of every application pulling its updates, the @os can take care of it for various applications that depend on up-to-date tree heads.
