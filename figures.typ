@@ -223,8 +223,8 @@
 
   pause,
   node((rel: (1, 0.5), to: <client_hello>), ar[Server Hello \ + key share], width: default_width + 2mm, stroke: (dash: "dotted"), name: <server_hello>),
-  node((rel: (0, 1), to: <server_hello>), ar[#emoji.lock #text(weight: if env == "presentation" {"bold"})[Certificate]], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certificate>),
-  node((rel: (0, 1), to: <certificate>), ar[#emoji.lock #text(weight: if env == "presentation" {"bold"})[Certificate Verify]], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certifcate_verify>),
+  node((rel: (0, 1), to: <server_hello>), ar[#emoji.lock #text(weight: if env == "presentation" {"bold"} else {"regular"})[Certificate]], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certificate>),
+  node((rel: (0, 1), to: <certificate>), ar[#emoji.lock #text(weight: if env == "presentation" {"bold"} else {"regular"})[Certificate Verify]], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certifcate_verify>),
   node((rel: (0, 1), to: <certifcate_verify>), ar[#emoji.lock Finished], width: default_width + 2mm, stroke: (dash: "dotted"), name: <server_finished>),
 
 
