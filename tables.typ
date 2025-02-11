@@ -133,7 +133,7 @@ table(
     } else if it.x == 0 {
       align(left, it)
     } else if it.x == 1 {
-      it
+      align(center, it)
     } else {
       align(right, it)
     }
@@ -396,15 +396,12 @@ table(
   )
 }
 
-#let bikeshed_x509_size_comp = {
+#let x509_size_short = {
   show table.cell: it => {
     strong(it)
   }
-
-  grid(
-    columns: 2,
-    gutter: 3em,
-    figure(
+  
+  figure(
       table(
         columns: 2,
         
@@ -430,7 +427,18 @@ table(
         [17,144 bytes],   [#emoji.checkmark.box],
         [22,580 bytes],   [#emoji.checkmark.box],
       ),
-    caption: [X.509]),
+    caption: [X.509])
+}
+
+#let bikeshed_x509_size_comp = {
+  show table.cell: it => {
+    strong(it)
+  }
+
+  grid(
+    columns: 2,
+    gutter: 3em,
+    x509_size_short,
   
     figure(
         table(

@@ -32,7 +32,7 @@
   fletcher.diagram(
   ..global_diagram_params,
   ..overview_params,
-  spacing: (13em, 4em),
+  spacing: (13em, 3em),
   node-inset: .5em,
   
 
@@ -93,6 +93,9 @@
   edge(<ap>,  <rp>,       "-|>", shift:  6pt, label-side: left,   [7. Certificate]),
 )}
 
+#let w(c) = text(fill: white, c)
+#let w2 = (stroke: white)
+
 #let pki_overview = {
   set enum(indent: 0em)
   
@@ -104,21 +107,22 @@
   
   node((1, 0), [Certification Authority], name: <ca>),
   
-  // node((1, 1), [Logs], name: <logs>),
-  // node((rel: (1.5mm, 1.5mm)), [Logs], layer: -1),
+  node((1, 1), w[Logs], name: <logs>, ..w2),
+  node((rel: (1.5mm, 1.5mm)), w[Logs], layer: -1, ..w2),
 
-  // node((1, 2), [Monitors], name: <monitors>),
-  // node((rel: (1.5mm, 1.5mm)), [Monitors], layer: -1),
+  node((1, 2), w[Monitors], name: <monitors>, ..w2),
+  node((rel: (1.5mm, 1.5mm)), w[Monitors], layer: -1, ..w2),
 
   node((0, 2), [Relying Party], name: <rp>),
 
   edge(<domain_owner>, <ca>, "-|>", shift: 6pt, [1. Issuance request]),
-  // edge(<ca>, <logs>, "-|>", label-side: left, shift: 6pt, [2. Pre-certificate]),
-  // edge(<logs>, <ca>, "-|>", shift: 6pt, label-side: left, [3. SCT]),
+  edge(<ca>, <logs>, "-|>", label-side: left, shift: 6pt, w[2. Pre-certificate], ..w2),
+  edge(<logs>, <ca>, "-|>", shift: 6pt, label-side: left, w[3. SCT], ..w2),
   edge(<ca>, <domain_owner>, "-|>", shift: 6pt, label-side: left, [2. Certificate]),
   edge(<domain_owner>, <rp>, "-|>", [3. Certificate]),
-  // edge(<monitors>, <logs>, "-|>", label-side: right, [6. Monitor for \ suspicious activity]),
-  // edge(<monitors>, <domain_owner>, "-|>", label-side: left, label-angle: auto, [7. Notify about new certificates issued]),
+  
+  edge(<monitors>, <logs>, "-|>", label-side: right, w[6. Monitor for \ suspicious activity], ..w2),
+  edge(<monitors>, <domain_owner>, "-|>", label-side: left, label-angle: auto, w[7. Notify about new certificates issued], ..w2),
 )}
 
 #let ct_overview = {
@@ -193,25 +197,42 @@
   // node((0, 5), width: default_width, enclose: (<ci>, <ta>, <ad>), fill: silver),
 )
 
-#let tls_handshake_overview(default_width: 45mm, heading_color: black, params: paper_protocol_diargram_params) = fletcher.diagram(
+#let adapter(env: "paper", ..args) = {
+  if env == "presentation" {
+    fletcher-diagram(
+      ..args
+    )
+  } else {
+    fletcher.diagram(
+      ..args.named(),
+      ..args.pos().filter(x => x != pause)
+    )
+  }
+}
+
+#let tls_handshake_overview(default_width: 45mm, heading_color: black, params: paper_protocol_diargram_params, env: "paper") = adapter(
   ..global_diagram_params,
   ..params,
+  env: env,
   
   node((0, 0), al(text(fill: heading_color, weight: "semibold",  "Client")), width: default_width + 4mm, stroke: gray, inset: 2mm, name: <client>),
   node((rel: (1, 0)), ar(text(fill: heading_color, weight: "semibold", "Server")), width: default_width + 4mm, stroke: gray, inset: 2mm, name: <server>),
-  
 
   node((rel: (0, 1.8), to:<client>), al[Client Hello \ + key share \ + signature algorithms], width: default_width, stroke: (dash: "dotted"), name: <client_hello>),
-  node((rel: (1, 0.5), to: <client_hello>), ar[Server Hello \ + key share], width: default_width + 2mm, stroke: (dash: "dotted"), name: <server_hello>),
   edge((rel: (0, 0.5), to: <client_hello>), <server_hello>, "--|>"),
-  
-  node((rel: (0, 1), to: <server_hello>), ar[#emoji.lock Certificate], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certificate>),
-  node((rel: (0, 1), to: <certificate>), ar[#emoji.lock Certificate Verify], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certifcate_verify>),
+
+  pause,
+  node((rel: (1, 0.5), to: <client_hello>), ar[Server Hello \ + key share], width: default_width + 2mm, stroke: (dash: "dotted"), name: <server_hello>),
+  node((rel: (0, 1), to: <server_hello>), ar[#emoji.lock #text(weight: if env == "presentation" {"bold"})[Certificate]], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certificate>),
+  node((rel: (0, 1), to: <certificate>), ar[#emoji.lock #text(weight: if env == "presentation" {"bold"})[Certificate Verify]], width: default_width + 2mm, stroke: (dash: "dotted"), name: <certifcate_verify>),
   node((rel: (0, 1), to: <certifcate_verify>), ar[#emoji.lock Finished], width: default_width + 2mm, stroke: (dash: "dotted"), name: <server_finished>),
+
 
   edge("--|>", shift: -1mm),
   
   node((rel: (-1, 0), to: <server_finished>), al[Finished  #emoji.lock], width: default_width + 2mm, stroke: (dash: "dotted"), name: <client_finished>),
+
+  pause,
   
   edge(<server_finished>, <client_finished>, "<|--", shift: .3em),
 
@@ -257,19 +278,6 @@
   }
 )
 
-#let adapter(env: "paper", ..args) = {
-  if env == "presentation" {
-    fletcher-diagram(
-      ..args
-    )
-  } else {
-    fletcher.diagram(
-      ..args.named(),
-      ..args.pos().filter(x => x != pause)
-    )
-  }
-
-}
 
 #let mtc_terms(dist: 2em, env: "paper") = adapter(
   ..global_diagram_params,

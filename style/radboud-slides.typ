@@ -212,7 +212,7 @@
         height: 2pt,
         width: 100%,
         spacing: 0pt,
-        components.progress-bar(height: 2pt, self.colors.ruLightBrown, self.colors.primary-light),
+        components.progress-bar(height: 3pt, self.colors.ruLightBrown, self.colors.ruLightTeal),
       ),
     )
     body
@@ -348,6 +348,7 @@
     config-common(
       slide-fn: slide,
       new-section-slide-fn: new-section-slide,
+      show-notes-on-second-screen: right,
     ),
     config-methods(
       init: (self: none, body) => {
