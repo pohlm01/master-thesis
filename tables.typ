@@ -187,10 +187,70 @@ table(
           ..color.map.viridis,
       )),
       text(size: .8em)[good\ performance]
-),
-)
+)))
+}
 
-  )
+#let pq_signatures_slides = {
+  show table.cell: it => {
+    if it.y == 0 or it.y == 1{
+      align(center + horizon, strong(it))
+    } else if it.x == 0 {
+      align(left, it)
+    } else if it.x == 1 {
+      align(center, it)
+    } else {
+      align(right, it)
+    }
+  }
+
+  let g = (min, max, current, p: 2, ..additional) => {
+    let x = (current - min)/(max - min)
+    let text_color = if x > 0.5 {
+      white
+    } else {
+      black
+    }
+    let content = if additional.pos().len() > 0 {
+        additional.pos().at(0) + [#format_num(current, precision: p)]
+    } else {
+      [#format_num(current, precision: p)]
+    }
+    table.cell(fill: gradient.linear(..color.map.viridis).sample(100% - x * 100%),  text(fill: text_color, content))
+  }
+
+  grid(
+    columns: (auto, auto),
+    gutter: 1em,
+    table(
+      columns: 6,
+      stroke: 0.3pt,
+      table.header(
+        [], [], table.cell(colspan: 2)[Sizes (bytes)], table.cell(colspan: 2)[CPU cycles],
+        [Name], [PQ], [Public Key], [Signature], [Signing], [Verification],
+        ),
+
+        [Ed25519],      [#emoji.crossmark],     g(32, 1312, 32, p: 0),    g(64, 17088, 64, p: 0),      g(1, 5623.76, 1),       g(0.28, 5.06, 1),
+        [ECDSA P-256],  [#emoji.crossmark],     g(32, 1312, 32, p: 0),    g(64, 17088, 64, p: 0),      g(1, 5623.76, 2.34),    g(0.28, 5.06, 1.61),
+        [RSA-2048],     [#emoji.crossmark],     g(32, 1312, 256, p: 0),   g(64, 17088, 256, p: 0),     g(1, 5623.76, 39.95),   g(0.28, 5.06, 0.28),
+        [ML-DSA-44],    [#emoji.checkmark.box], g(32, 1312, 1312, p: 0),  g(64, 17088, 2420, p: 0),    g(1, 5623.76, 3.30),    g(0.28, 5.06, 0.43),
+        [SLH-DSA-128s], [#emoji.checkmark.box], g(32, 1312, 32, p: 0),    g(64, 17088, 7856, p: 0),    g(1, 5623.76, 5623.76), g(0.28, 5.06, 2.15),
+        [SLH-DSA-128f], [#emoji.checkmark.box], g(32, 1312, 32, p: 0),    g(64, 17088, 17088, p: 0),   g(1, 5623.76, 332.20),  g(0.28, 5.06, 5.06),
+        [FN-DSA-512],   [#emoji.checkmark.box], g(32, 1312, 897, p: 0),   g(64, 17088, 666, p: 0),     g(1, 5623.76, 7.07, [#box(height: 0.7em, inset: -1pt,  image("images/red-alert-icon.svg")) #h(.3em)]), g(0.28, 5.06, 0.40),
+    ),
+    align(horizon,
+    grid(
+      gutter: .5em,
+      align: center,
+      text(size: .8em)[bad\ performance],
+      rect(
+        width: 1em,
+        height: 8em,
+        fill: gradient.linear(
+          dir: ttb,
+          ..color.map.viridis,
+      )),
+      text(size: .8em)[good\ performance]
+)))
 }
 
 #let mtc_cpu_cycles = {

@@ -24,9 +24,9 @@
 
 = Motivation
 #speaker-note[
-- Start with motivation
-- Some background
-- proposed Internet-Draft
+- Start with Motivation
+- Some Preliminaries
+- Explain Merkle Tree Certificates
 - Performance characteristics
 - Implementation
 ]
@@ -34,23 +34,23 @@
 
 == Motivation
 #slide(composer: (1fr, auto))[
-  - Many cryptographic algorithms could be broken by quantum computers
+  - Quantum computers could break many cryptographic algorithms
   
   - TLS is used a lot
   
   - Confidentiality #emoji.checkmark.box
-    - `X25519MLKEM768`
+    - "Hybrid key exchange in TLS 1.3"
   
   - Server identity #emoji.crossmark
     - X.509 certificates
 
   #speaker-note[
-    - Everyone heard the buzz word quantum computer
+    - Everyone heard the buzzword quantum computer
     - Some crypto algorithms might break
-    - TLS is used for Web browsing, Email, almost any other protocol has a TLS version
+    - TLS is used for Web browsing, Email, and almost any other protocol has a TLS version
     - "Hybrid key exchange in TLS 1.3" for confidentially
       - Against #emph[harvest now, decrypt later]
-      - `X255-19-ML-KEM-768` previously known as Kyber
+      - `X255-19-ML-KEM-768`, previously known as Kyber
     - Server identity is still unprotected against Quantum computers
       - cannot be attacked retroactively
   ]
@@ -58,38 +58,17 @@
 
 == What is the Problem?
 #slide[#{
-  set text(size: 0.8em)
-  set table(inset: (y: 0.5em, x: 0.3em))
-  align(horizon, pq_signatures)
+  set table(inset: (x: .8em, y: .6em))
+  align(horizon + center, pq_signatures_slides)
 }
   #speaker-note[
+    - Listed are popular signatures and the winners of the NIST PQ competition
     - X.509 certificate chains have 5 or more signatures + 2 keys
     - PQ signatures are significantly bigger (and/or worse CPU performance)
-    - Listed are the winners of the NIST PQ competition
-    - FN-DSA uses floating point to be fast
+    - FN-DSA uses floating-point to be fast
   ]
 ]
 
-== TL;DR Fail
-#slide(composer: (1fr, 1fr))[
-  - Many applications, routers, and firewalls assume a single package for `ClientHello`
-  
-  - Big messages might be fragmented
-  
-  - Buggy implementations break the connection #emoji.beetle
-
-  - Not directly applicable here, but similar
-
-  #speaker-note[
-    - many applications and middleware such as routers and firewalls assumed a single package
-    - applicable to `X255-19-ML-KEM-768`
-    - Some popular software still not patched (nginx ingress k8s)
-
-    - Additionally to bugs, we want the best performance
-  ]
-][
-  #align(horizon + center, image("images/tldr.svg"))
-]
 
 = Preliminaries
 
@@ -111,7 +90,7 @@
 )}
   #speaker-note[
     - Simplified TLS handshake
-    - Quick walk through
+    - Quick walk-through
     - We concentrate on the `Certificate` (and `CertificateVerify`) message
   ]
 ]
@@ -130,7 +109,7 @@
     - CA issues the cert
     - AP can use cert for connections with RP
 
-    - Well: That too easy
+    - Well, that's too easy
   ]
 ]
 
@@ -142,10 +121,11 @@
   // caption: [Certificate Transparency architecture]
 )}
   #speaker-note[
-    - Became necessary after DigiNotar was hacked
+    - Became necessary after DigiNotar was hacked in 2011
     - Certificate transparency ensures all certs are *publicly*, *verifiably* logged
+    - Signed Certificate Timestamps
     - RPs enforce the usage
-    - Keep this in mind: Now switch to TLS
+    - Now switch to Merkle Trees
   ]]
 
 
@@ -157,9 +137,12 @@
     // caption: [Example Merkle Tree]
 )}
   #speaker-note[
+    - Each data point is a leaf node
+    - Data gets hashed as three
+    - One can provide an inclusion proof
     - Various applications
       - Post Quantum signatures
-      - Data bases
+      - Databases
       - Certificate Transparency 
     - Used in Merkle Tree Certificates #emoji.face.explode
   ]
@@ -178,10 +161,14 @@
   - Multiple *assertions* are bundled in one *batch*
   - *Batch tree heads* are distributed to Relying Parties (Browsers)
   - Certificate contains *inclusion proof* to batch tree head
-  #math.arrow.double Longer issuance delays
+#math.arrow.double Longer issuance delays
 
 #speaker-note[
-  
+  - optional optimization in parallel to the X.509 architecture
+  - Multiple *assertions* are bundled in one *batch*
+    - assertions bind a public key to an identity, e.g., domain name
+  - tree heads are distributed to relying parties
+  - certificate contains inclusion proof
 ]
 
 == A Single Batch
@@ -191,7 +178,7 @@
   figure(merkle_tree_abridged_assertion())
 }
   #speaker-note[
-    - Let's zoom in to a single batch
+    - Let's zoom in on a single batch
     - bottom to top
   ]
 ]
@@ -205,6 +192,8 @@
     - Let's zoom out a little
     - Each batch, there is a new Tree
     - The trees are independent of each other
+    - Batch duration, typically 1 hour
+    - Validity Window, typically 14 days
   ]
 ]
 
@@ -234,6 +223,13 @@
   - Proof length #sym.arrow.double number of assertions per batch
   - Public key
   - Handshake signature
+
+#speaker-note[
+  - Authentication-related bytes only
+  - OCSP staple (revocation)
+  \
+  - Proof length depends on tree size, i.e., assertions per batch
+]
   
 == X.509 Certificate Size
 #slide[#{
@@ -241,7 +237,7 @@
   x509_certificate_sizes(kem: false)
 }
   #speaker-note[
-    - Comparing RSA and ECDSA with ML-DSA (and SLH-DSA), both on smallest security level
+    - Comparing RSA and ECDSA with ML-DSA (and SLH-DSA), both on the smallest security level
     - Huge increase in size for PQ
   ]
 ]
@@ -254,8 +250,8 @@
   #speaker-note[
     - Shows 280M or 2B active Authenticating parties
       - 280M is what Let's Encrypt currently has
-      - 2B a an very conservative estimate for the future
-    - Shows a ECDSA and RSA case
+      - 2B a a very conservative estimate for the future
+    - Shows an ECDSA and RSA case
     - Shows ML-DSA  
   ]
 ]
@@ -266,9 +262,9 @@
   bikeshed_x509_size_comp
 }
   #speaker-note[
-    - Looks as if X.509 is smaller in the best case
+    - Looks as if X.509 is smaller in the best-case
       - Not true (next slide)
-    - Last case is 5 times as big 
+    The last case is 5 times as big 
     - #text(fill: gray)[22,580 is #math.approx 15 packets (MTC 1,500 bytes)]
   ]
 ]
@@ -344,7 +340,7 @@
     - Only new tree heads + *single* signature 
     - Only new tree heads
     \
-    - We expect rather 15 than 150 CAs because many CA exist for political / policy reasons that are covered by "normal" CAs
+    - We expect rather 15 than 150 CAs because many CAs exist for political / policy reasons that are covered by "normal" CAs
     - Often, relying parties can trust the transparency service as it is their browser/OS vendor
   ]
 ]
@@ -413,7 +409,7 @@
     
     - Performs the signature checks ahead of time
 
-    - Less CPU cost at client side
+    - Less CPU cost on the client side
     
     - Revocation is not (as) necessary
   ], [
@@ -424,8 +420,8 @@
 )}
 #speaker-note[
   - Smaller because of encoding and metadata
-  - Smaller because of less signatures
-  - CPU costs are analyzed closer in the thesis
+  - Smaller because of fewer signatures
+  - CPU costs are analyzed closely in the thesis
   - Revocation is very hard
   \
   - Required as a fallback
@@ -480,10 +476,10 @@
 #speaker-note[
   - For the implementation
   - Used Rustls (modern, clean, Rust)
-  - Add negotiation mechanism (two extensions `server_certificate_type`, `trust_anchor_identifier`)
+  - Add negotiation mechanism (two extensions, `server_certificate_type`, `trust_anchor_identifier`)
   - Adopt code base to deal with different certificate types
   - Create an example client/server to verify that it works
-  - Use self written library to verify MTCs
+  - Use self-written library to verify MTCs
 ]
 
 == Contributions to the Internet-Draft
@@ -503,6 +499,7 @@
   - Added a couple of fixes and improvements to
   - the draft spec
   - the Go implementation of the CA
+  - wrong test vectors
 ]
 
 == Conclusion
@@ -518,13 +515,36 @@
     \
     #set list(marker: emoji.construction) 
     - Design and implement the update mechanism
-    - Real world experiments
+    - Real-world experiments
 ]})
   #speaker-note[
-    - 
+    - update mechanism PQ secure and bootstrap problem
+    - real-world deployments by big-tech
   ]
 ]
 
 = Questions?
 
 = Thank you!
+
+
+== TL;DR Fail
+#slide(composer: (1fr, 1fr))[
+  - Many applications, routers, and firewalls assume a single package for `ClientHello`
+  
+  - Big messages might be fragmented
+  
+  - Buggy implementations break the connection #emoji.beetle
+
+  - Not directly applicable here, but similar
+
+  #speaker-note[
+    - many applications and middleware, such as routers and firewalls, assumed a single package
+    - applicable to `X255-19-ML-KEM-768`
+    - Some popular software still not patched (nginx ingress k8s)
+
+    - Additionally, to bugs, we want the best performance
+  ]
+][
+  #align(horizon + center, image("images/tldr.svg"))
+]
